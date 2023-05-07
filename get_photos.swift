@@ -11,45 +11,53 @@
 
 import Photos
 
+/// Returns a list of album names for albums containing this asset.
+func getAlbumsContainingAsset(asset: PHAsset) -> [String] {
+  let collections = PHAssetCollection.fetchAssetCollectionsContaining(
+    asset, with: .album, options: nil
+  )
+
+  var titles: [String] = []
+
+  collections.enumerateObjects({ (album, index, stop) in
+    if (album.localizedTitle != nil) {
+      titles.append(album.localizedTitle!)
+    }
+  })
+
+  return titles
+}
+
 let options = PHFetchOptions()
 options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-options.fetchLimit = 10
 
-let assets = PHAsset.fetchAssets(with: options)
-print(assets.count)
+let all_assets = PHAsset.fetchAssets(with: options)
 
-print(assets.firstObject!)
+let index = IndexSet(integersIn: 750...755)
 
-// func getPhotoWith(uuid: String) -> PHAsset {
-//   let fetchResult = PHAsset.fetchAssets(withLocalIdentifiers: [uuid], options: nil)
-//
-//   if fetchResult.count == 1 {
-//     return fetchResult.firstObject!
-//   } else {
-//     fputs("Unable to find photo with ID: \(uuid).\n", stderr)
-//     exit(1)
-//   }
-// }
-//
-// let arguments = CommandLine.arguments
-//
-// if arguments.count != 1 {
-//   fputs("Usage: \(arguments[0]) PHOTO_ID\n", stderr)
-//   exit(1)
-// }
-//
-// let photo = getPhotoWith(uuid: arguments[1])
-//
-// let collections = PHAssetCollection.fetchAssetCollectionsContaining(
-//   photo, with: .album, options: nil
-// )
-//
-// var titles: [String] = []
-//
-// collections.enumerateObjects({ (album, index, stop) in
-//   if (album.localizedTitle != nil) {
-//     titles.append(album.localizedTitle!)
-//   }
-// })
-//
-// print(titles)
+struct PhotoData: Codable {
+  var uuid: String
+  var albums: [String]
+}
+
+let jsonEncoder = JSONEncoder()
+
+func getDocumentsDirectory() -> URL {
+    let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+    return paths[0]
+}
+
+var response: [PhotoData] = []
+
+for asset in all_assets.objects(at: index) {
+  let data = PhotoData(
+    uuid: asset.localIdentifier,
+    albums: getAlbumsContainingAsset(asset: asset)
+  )
+
+  response.append(data)
+}
+
+let jsonData = try jsonEncoder.encode(response)
+let json = String(data: jsonData, encoding: String.Encoding.utf8)
+print(json!)
