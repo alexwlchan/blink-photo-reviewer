@@ -33,31 +33,65 @@ options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: fals
 
 let all_assets = PHAsset.fetchAssets(with: options)
 
-let index = IndexSet(integersIn: 750...755)
+let index = IndexSet(integersIn: 0...5)
 
 struct PhotoData: Codable {
   var uuid: String
   var albums: [String]
+  var thumbnailPath: String
+  // var thumbnail: String
 }
 
-let jsonEncoder = JSONEncoder()
+import Cocoa
 
-func getDocumentsDirectory() -> URL {
-    let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-    return paths[0]
+typealias UIImage = NSImage
+
+// https://stackoverflow.com/a/48755517/1558022
+func getAssetThumbnail(asset: PHAsset, size: Double) -> NSImage {
+    let manager = PHImageManager.default()
+    let option = PHImageRequestOptions()
+    var thumbnail = UIImage()
+    option.isSynchronous = true
+    manager.requestImage(for: asset, targetSize: CGSize(width: size, height: size), contentMode: .aspectFit, options: option, resultHandler: {(result, info)->Void in
+            thumbnail = result!
+    })
+    return thumbnail
+}
+
+func jpegDataFrom(image:NSImage) -> Data {
+    let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil)!
+    let bitmapRep = NSBitmapImageRep(cgImage: cgImage)
+    let jpegData = bitmapRep.representation(using: NSBitmapImageRep.FileType.jpeg, properties: [:])!
+    return jpegData
 }
 
 var response: [PhotoData] = []
 
 for asset in all_assets.objects(at: index) {
+  let thumbnailPath = "/tmp/photos-reviewer/\(asset.localIdentifier)_65.jpg"
+
   let data = PhotoData(
     uuid: asset.localIdentifier,
-    albums: getAlbumsContainingAsset(asset: asset)
+    albums: getAlbumsContainingAsset(asset: asset),
+    thumbnailPath: thumbnailPath
+    // thumbnail: getAssetThumbnail(asset: all_assets.firstObject!, size: 65.0).base64String!
   )
+
+  if !FileManager.default.fileExists(atPath: thumbnailPath) {
+    let jpegData = jpegDataFrom(image: getAssetThumbnail(asset: asset, size: 65.0))
+
+    try! FileManager.default.createDirectory(atPath: NSString(string: thumbnailPath).deletingLastPathComponent, withIntermediateDirectories: true, attributes: nil)
+
+    try! jpegData.write(to: URL(fileURLWithPath: thumbnailPath), options: [])
+  }
 
   response.append(data)
 }
 
+let jsonEncoder = JSONEncoder()
 let jsonData = try jsonEncoder.encode(response)
 let json = String(data: jsonData, encoding: String.Encoding.utf8)
 print(json!)
+
+// print()
+//

@@ -24,7 +24,7 @@ func getPhotoWith(uuid: String) -> PHAsset {
 
 let arguments = CommandLine.arguments
 
-if arguments.count != 1 {
+if arguments.count != 2 {
   fputs("Usage: \(arguments[0]) PHOTO_ID\n", stderr)
   exit(1)
 }
