@@ -29,7 +29,7 @@ def get_asset_state(asset):
 
 class PhotosData:
     def __init__(self):
-        data = json.loads(subprocess.check_output(['swift', 'get_structural_metadata.swift']))
+        data = json.loads(subprocess.check_output(['swift', 'actions/get_structural_metadata.swift']))
 
         all_assets = sorted(data['assets'], key=lambda a: a['creationDate'])
         self.all_positions = {asset['localIdentifier']: i for i, asset in enumerate(all_assets)}
@@ -163,10 +163,7 @@ def _perform_action(request, callback):
 
     callback(local_identifier)
 
-    if request.args['direction'] == 'left':
-        redirect_to = photos_data.all_assets[position - 1]['localIdentifier']
-    else:
-        redirect_to = photos_data.all_assets[position + 1]['localIdentifier']
+    redirect_to = photos_data.all_assets[position - 1]['localIdentifier']
 
     return redirect(url_for('index', localIdentifier=redirect_to))
 
@@ -184,8 +181,6 @@ def reject():
 @app.route('/actions/needs_action')
 def needs_action():
     return _perform_action(request, photos_data.needs_action)
-
-
 
 
 @app.route('/image')

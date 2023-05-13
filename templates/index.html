@@ -190,27 +190,20 @@
 
 <img id="big" src="{{ url_for('image', localIdentifier=this_asset['localIdentifier']) }}">
 
-
-<!--{% for a in assets %}
-  <img src="{{ url_for('thumbnail', localIdentifier=a['localIdentifier']) }}">
-{% endfor %} -->
-
 <script>
 document.onkeydown = function(e) {
-  const direction = new URLSearchParams(window.location.search).get('direction') || 'left';
-
   if (e.key === "ArrowLeft") {
-    window.location = "/?localIdentifier={{ prev_five[-1]['localIdentifier'] }}&direction=left";
+    window.location = "/?localIdentifier={{ prev_five[-1]['localIdentifier'] }}";
   } else if (e.key === "ArrowRight") {
     {% if next_five %}
-      window.location = "/?localIdentifier={{ next_five[0]['localIdentifier'] }}&direction=right";
+      window.location = "/?localIdentifier={{ next_five[0]['localIdentifier'] }}";
     {% endif %}
   } else if (e.key === "1") {
-    window.location = "/actions/flag?localIdentifier={{ this_asset['localIdentifier'] }}&direction=" + direction;
+    window.location = "/actions/flag?localIdentifier={{ this_asset['localIdentifier'] }}";
   } else if (e.key === "2") {
-    window.location = "/actions/reject?localIdentifier={{ this_asset['localIdentifier'] }}&direction=" + direction;
+    window.location = "/actions/reject?localIdentifier={{ this_asset['localIdentifier'] }}";
   } else if (e.key === "3") {
-    window.location = "/actions/needs_action?localIdentifier={{ this_asset['localIdentifier'] }}&direction=" + direction;
+    window.location = "/actions/needs_action?localIdentifier={{ this_asset['localIdentifier'] }}";
   }
 }
 </script>
