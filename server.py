@@ -156,31 +156,34 @@ def get_image_path(local_identifier):
     return subprocess.check_output(['swift', 'get_asset_jpeg.swift', local_identifier, '2048']).decode('utf8')
 
 
-@app.route('/actions/flag')
-def flag():
+def _perform_action(request, callback):
     local_identifier = request.args['localIdentifier']
 
-    photos_data.flag(local_identifier)
+    position = photos_data.all_positions[local_identifier]
 
-    return redirect(url_for('index', localIdentifier=local_identifier))
+    callback(local_identifier)
+
+    if request.args['direction'] == 'left':
+        redirect_to = photos_data.all_assets[position - 1]['localIdentifier']
+    else:
+        redirect_to = photos_data.all_assets[position + 1]['localIdentifier']
+
+    return redirect(url_for('index', localIdentifier=redirect_to))
+
+
+@app.route('/actions/flag')
+def flag():
+    return _perform_action(request, photos_data.flag)
 
 
 @app.route('/actions/reject')
 def reject():
-    local_identifier = request.args['localIdentifier']
-
-    photos_data.reject(local_identifier)
-
-    return redirect(url_for('index', localIdentifier=local_identifier))
+    return _perform_action(request, photos_data.reject)
 
 
 @app.route('/actions/needs_action')
 def needs_action():
-    local_identifier = request.args['localIdentifier']
-
-    photos_data.needs_action(local_identifier)
-
-    return redirect(url_for('index', localIdentifier=local_identifier))
+    return _perform_action(request, photos_data.needs_action)
 
 
 

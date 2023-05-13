@@ -182,9 +182,8 @@
 </div>
 
 <p class="metadata">
-  {{ this_asset['localIdentifier'] }} /
-  {% if this_asset['albums'] %}
-    <strong>albums:</strong> {{ this_asset['albums'] | join(', ') }} /
+  {% if this_asset['display_albums'] %}
+    <strong>albums:</strong> {{ this_asset['display_albums'] | join(', ') }} /
   {% endif %}
   <strong>creation date:</strong> {{ this_asset['creationDate'] }}
 </p>
@@ -197,32 +196,21 @@
 {% endfor %} -->
 
 <script>
-function httpPOST(url)
-{
-  var xmlHttp = null;
-
-  xmlHttp = new XMLHttpRequest();
-  xmlHttp.open("POST", url, false);
-  xmlHttp.send(null);
-  return xmlHttp.responseText;
-}
-
 document.onkeydown = function(e) {
-  console.log(e);
-  console.log(e.key);
-  console.log(e.key === "2");
+  const direction = new URLSearchParams(window.location.search).get('direction') || 'left';
+
   if (e.key === "ArrowLeft") {
-    window.location = "/?localIdentifier={{ prev_five[-1]['localIdentifier'] }}";
+    window.location = "/?localIdentifier={{ prev_five[-1]['localIdentifier'] }}&direction=left";
   } else if (e.key === "ArrowRight") {
     {% if next_five %}
-      window.location = "/?localIdentifier={{ next_five[0]['localIdentifier'] }}";
+      window.location = "/?localIdentifier={{ next_five[0]['localIdentifier'] }}&direction=right";
     {% endif %}
   } else if (e.key === "1") {
-    window.location = "/actions/flag?localIdentifier={{ this_asset['localIdentifier'] }}";
+    window.location = "/actions/flag?localIdentifier={{ this_asset['localIdentifier'] }}&direction=" + direction;
   } else if (e.key === "2") {
-    window.location = "/actions/reject?localIdentifier={{ this_asset['localIdentifier'] }}";
+    window.location = "/actions/reject?localIdentifier={{ this_asset['localIdentifier'] }}&direction=" + direction;
   } else if (e.key === "3") {
-    window.location = "/actions/needs_action?localIdentifier={{ this_asset['localIdentifier'] }}";
+    window.location = "/actions/needs_action?localIdentifier={{ this_asset['localIdentifier'] }}&direction=" + direction;
   }
 }
 </script>
