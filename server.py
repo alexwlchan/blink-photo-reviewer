@@ -116,28 +116,26 @@ def index():
 
 
 @functools.cache
-def get_thumbnail_path(local_identifier):
-    if os.path.exists(f'/tmp/photos-reviewer/{local_identifier[0]}/{local_identifier}_170.jpg'):
-        return f'/tmp/photos-reviewer/{local_identifier[0]}/{local_identifier}_170.jpg'
+def get_jpeg(local_identifier, *, size):
+    if os.path.exists(f'/tmp/photos-reviewer/{local_identifier[0]}/{local_identifier}_{size}.jpg'):
+        return f'/tmp/photos-reviewer/{local_identifier[0]}/{local_identifier}_{size}.jpg'
 
-    # 85 * 2x
-    return subprocess.check_output(['swift', 'get_asset_jpeg.swift', local_identifier, '170']).decode('utf8')
+    return subprocess.check_output(['swift', 'actions/get_asset_jpeg.swift', local_identifier, str(size)]).decode('utf8')
 
 
 @app.route('/thumbnail')
 def thumbnail():
     local_identifier = request.args['localIdentifier']
 
-    thumbnail_path = get_thumbnail_path(local_identifier)
+    thumbnail_path = get_jpeg(local_identifier, size = 85 * 2)
     return send_file(thumbnail_path)
 
 
-@functools.cache
-def get_image_path(local_identifier):
-    if os.path.exists(f'/tmp/photos-reviewer/{local_identifier[0]}/{local_identifier}_2048.jpg'):
-        return f'/tmp/photos-reviewer/{local_identifier[0]}/{local_identifier}_2048.jpg'
-
-    return subprocess.check_output(['swift', 'get_asset_jpeg.swift', local_identifier, '2048']).decode('utf8')
+@app.route('/image')
+def image():
+    local_identifier = request.args['localIdentifier']
+    image_path = get_jpeg(local_identifier, size=2048)
+    return send_file(image_path)
 
 
 def _perform_action(request, callback):
@@ -176,11 +174,6 @@ def run_action():
         redirect_to = photos_data.all_assets[position - 1]['localIdentifier']
         return redirect(url_for('index', localIdentifier=redirect_to))
 
-@app.route('/image')
-def image():
-    local_identifier = request.args['localIdentifier']
-    image_path = get_image_path(local_identifier)
-    return send_file(image_path)
 
 
 if __name__ == '__main__':
