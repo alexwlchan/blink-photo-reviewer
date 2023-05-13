@@ -2,157 +2,6 @@
   <link rel="stylesheet" href="/static/style.css">
 </head>
 
-<style>
-  body {
-    text-align: center;
-    padding: 0;
-    margin: 10px;
-    font-family: -apple-system;
-/*    background: black;*/
-  }
-
-  a {
-    text-decoration: none;
-  }
-
-  #thumbnails {
-    margin-bottom: 1em;
-    height: 85px;
-  }
-
-  #thumbnails div.thumbnail {
-    display: inline-block;
-    border: 1px solid lightgrey;
-    margin: 1px;
-    width: 65px;
-    height: 65px;
-    padding: 1px;
-  }
-
-  #thumbnails div.thumbnail img {
-    width: 65px;
-    height: 65px;
-  }
-
-  #thumbnails div.thumbnail .state {
-    position: absolute;
-    width: 15px;
-    height: 17px;
-    color: white;
-    text-align: left;
-    padding-left: 3px;
-    padding-top: 1px;
-    font-size: 13px;
-    line-height: 16px;
-    border-bottom-right-radius: 18px;
-    margin-left: -3px;
-    margin-top: -3px;
-    font-family: serif;
-  }
-
-  #thumbnails div.this_asset div.thumbnail .state {
-    width: 19px;
-    height: 21px;
-    color: white;
-    text-align: left;
-    padding-left: 4px;
-    padding-top: 2px;
-    font-size: 17px;
-    line-height: 16px;
-    border-bottom-right-radius: 18px;
-    margin-left: -3px;
-    margin-top: -3px;
-    font-family: serif;
-  }
-
-  #thumbnails div.thumbnail.state-Flagged {
-    border-color: green;
-    border-width: 2px;
-    margin: 0;
-  }
-
-  #thumbnails div.thumbnail.state-Flagged .state {
-    background: green;
-  }
-
-  #thumbnails div.thumbnail.state-Rejected {
-    border-color: red;
-    border-width: 2px;
-    margin: 0;
-  }
-
-  #thumbnails div.thumbnail.state-Rejected .state {
-    background: red;
-  }
-
-  #thumbnails div.thumbnail.state-Needs-Action {
-    border-color: blue;
-    border-width: 2px;
-    margin: 0;
-  }
-
-  #thumbnails div.thumbnail.state-Needs-Action .state {
-    background: blue;
-  }
-
-  #thumbnails div.this_asset {
-    display: inline-block;
-  }
-
-  #thumbnails div.this_asset div.thumbnail {
-    width: 85px;
-    height: 85px;
-  }
-
-  #thumbnails div.this_asset div.thumbnail img {
-    width: 85px;
-    height: 85px;
-  }
-
-  #thumbnails img {
-    object-fit: cover;
-    aspect-ratio: 1 / 1;
-  }
-
-  #thumbnails .placeholder {
-    width: 65px;
-    height: 65px;
-    display: inline-block;
-    border: 2px solid lightgrey;
-    opacity: 0.5;
-  }
-
-  .thumbnail_big {
-    width: 85px;
-    height: 85px;
-  }
-
-  img#big {
-    max-width: calc(100vw - 20px);
-    /* screen height - 85px (thumbnail bar) - 20px (body padding) -1em (margin below thumbnail bar) - 18px (metadata) - 1em (margin below metadata)*/
-    max-height: calc(100vh - 85px - 20px - 1em - 18px - 1em);
-  }
-
-  #debug {
-    position: absolute;
-    border: 2px solid darkgrey;
-    text-align: right;
-    opacity: 0.25;
-    padding: 5px 10px;
-    border-radius: 10px;
-    background: white;
-    right: 10px;
-    top: 10px;
-    line-height: 1.25em;
-  }
-
-  #debug:hover {
-    opacity: 1;
-    box-shadow: 0px 0px 3px darkgrey;
-    z-index: 1000;
-  }
-</style>
-
 <details id="debug">
   <summary>debug</summary>
   <strong>this asset:</strong> {{ this_asset['localIdentifier'] }}
@@ -206,14 +55,18 @@ document.onkeydown = function(e) {
   if (e.key === "1") {
     window.location = "/actions?localIdentifier={{ this_asset['localIdentifier'] }}&action=toggle-flagged";
   } else if (e.key === "2") {
-    window.location = "/actions/reject?localIdentifier={{ this_asset['localIdentifier'] }}";
+    window.location = "/actions?localIdentifier={{ this_asset['localIdentifier'] }}&action=toggle-rejected";
   } else if (e.key === "3") {
-    window.location = "/actions/needs_action?localIdentifier={{ this_asset['localIdentifier'] }}";
+    window.location = "/actions?localIdentifier={{ this_asset['localIdentifier'] }}&action=toggle-needs-action";
   }
   else
   if (e.key === "f") {
-     window.location = "/actions?localIdentifier={{ this_asset['localIdentifier'] }}&action=toggle-favorite";
-   }
+    window.location = "/actions?localIdentifier={{ this_asset['localIdentifier'] }}&action=toggle-favorite";
+  }
+  else
+  if (e.key === "c") {
+    window.location = "/actions?localIdentifier={{ this_asset['localIdentifier'] }}&action=toggle-cross-stitch";
+  }
 }
 </script>
 

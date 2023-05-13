@@ -2,6 +2,7 @@
 
 import functools
 import json
+import os
 import subprocess
 import sys
 
@@ -72,55 +73,32 @@ class PhotosData:
                 this_asset['albums'].remove('Flagged')
             except KeyError:
                 this_asset['albums'].add('Flagged')
+        elif action == 'toggle-rejected':
+            this_asset['albums'].discard('Flagged')
+            this_asset['albums'].discard('Needs Action')
+
+            try:
+                this_asset['albums'].remove('Rejected')
+            except KeyError:
+                this_asset['albums'].add('Rejected')
+        elif action == 'toggle-needs-action':
+            this_asset['albums'].discard('Flagged')
+            this_asset['albums'].discard('Rejected')
+
+            try:
+                this_asset['albums'].remove('Needs Action')
+            except KeyError:
+                this_asset['albums'].add('Needs Action')
+        elif action == 'toggle-cross-stitch':
+            try:
+                this_asset['albums'].remove('Cross stitch')
+            except KeyError:
+                this_asset['albums'].add('Cross stitch')
+
 
         this_asset['state'] = get_asset_state(this_asset)
 
         self.get_response.cache_clear()
-
-    def reject(self, local_identifier):
-        subprocess.check_call(['swift', 'scripts/reject.swift', local_identifier])
-
-        this_asset = self.all_assets[self.all_positions[local_identifier]]
-
-        try:
-            this_asset['albums'].remove('Flagged')
-        except KeyError:
-            pass
-
-        try:
-            this_asset['albums'].remove('Needs Action')
-        except KeyError:
-            pass
-
-        this_asset['albums'].add('Rejected')
-
-        this_asset['state'] = get_asset_state(this_asset)
-
-        self.get_response.cache_clear()
-
-    def needs_action(self, local_identifier):
-        subprocess.check_call(['swift', 'scripts/needs_action.swift', local_identifier])
-
-        this_asset = self.all_assets[self.all_positions[local_identifier]]
-
-        try:
-            this_asset['albums'].remove('Flagged')
-        except KeyError:
-            pass
-
-        try:
-            this_asset['albums'].remove('Rejected')
-        except KeyError:
-            pass
-
-        this_asset['albums'].add('Needs Action')
-
-        this_asset['state'] = get_asset_state(this_asset)
-
-        self.get_response.cache_clear()
-
-
-
 
 
 photos_data = PhotosData()
@@ -139,6 +117,9 @@ def index():
 
 @functools.cache
 def get_thumbnail_path(local_identifier):
+    if os.path.exists(f'/tmp/photos-reviewer/{local_identifier[0]}/{local_identifier}_170.jpg'):
+        return f'/tmp/photos-reviewer/{local_identifier[0]}/{local_identifier}_170.jpg'
+
     # 85 * 2x
     return subprocess.check_output(['swift', 'get_asset_jpeg.swift', local_identifier, '170']).decode('utf8')
 
@@ -146,12 +127,16 @@ def get_thumbnail_path(local_identifier):
 @app.route('/thumbnail')
 def thumbnail():
     local_identifier = request.args['localIdentifier']
+
     thumbnail_path = get_thumbnail_path(local_identifier)
     return send_file(thumbnail_path)
 
 
 @functools.cache
 def get_image_path(local_identifier):
+    if os.path.exists(f'/tmp/photos-reviewer/{local_identifier[0]}/{local_identifier}_2048.jpg'):
+        return f'/tmp/photos-reviewer/{local_identifier[0]}/{local_identifier}_2048.jpg'
+
     return subprocess.check_output(['swift', 'get_asset_jpeg.swift', local_identifier, '2048']).decode('utf8')
 
 
@@ -184,9 +169,9 @@ def run_action():
 
     photos_data.run_action(local_identifier, action)
 
-    if action == 'toggle-favorite':
+    if action in {'toggle-favorite', 'toggle-cross-stitch'} :
         return redirect(url_for('index', localIdentifier=local_identifier))
-    else:
+    elif action in {'toggle-flagged', 'toggle-rejected', 'toggle-needs-action'}:
         position = photos_data.all_positions[local_identifier]
         redirect_to = photos_data.all_assets[position - 1]['localIdentifier']
         return redirect(url_for('index', localIdentifier=redirect_to))
