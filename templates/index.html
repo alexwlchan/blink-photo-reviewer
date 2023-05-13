@@ -210,7 +210,7 @@ document.onkeydown = function(e) {
     window.location = "/actions/needs_action?localIdentifier={{ this_asset['localIdentifier'] }}";
   }
   else if (e.key === "f") {
-     window.location = "/actions/toggle_favorite?localIdentifier={{ this_asset['localIdentifier'] }}";
+     window.location = "/actions?localIdentifier={{ this_asset['localIdentifier'] }}&action=toggle-favorite";
    }
 }
 </script>

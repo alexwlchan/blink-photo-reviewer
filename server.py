@@ -57,11 +57,13 @@ class PhotosData:
 
         return render_template('index.html', assets=all_assets, position=position, prev_five=prev_five, this_asset=this_asset, next_five=next_five)
 
-    def toggle_favorite(self, local_identifier):
-        subprocess.check_call(['swift', 'actions/run_action.swift', local_identifier, 'toggle-favorite'])
+    def run_action(self, local_identifier, action):
+        subprocess.check_call(['swift', 'actions/run_action.swift', local_identifier, action])
 
         this_asset = self.all_assets[self.all_positions[local_identifier]]
-        this_asset['isFavorite'] = not this_asset['isFavorite']
+
+        if action == 'toggle-favorite':
+            this_asset['isFavorite'] = not this_asset['isFavorite']
 
         self.get_response.cache_clear()
 
@@ -191,13 +193,15 @@ def needs_action():
     return _perform_action(request, photos_data.needs_action)
 
 
-@app.route('/actions/toggle_favorite')
-def toggle_favorite():
+@app.route('/actions')
+def run_action():
     local_identifier = request.args['localIdentifier']
+    action = request.args['action']
 
-    photos_data.toggle_favorite(local_identifier)
+    photos_data.run_action(local_identifier, action)
 
-    return redirect(url_for('index', localIdentifier=local_identifier))
+    if action == 'toggle-favorite':
+        return redirect(url_for('index', localIdentifier=local_identifier))
 
 
 @app.route('/image')
