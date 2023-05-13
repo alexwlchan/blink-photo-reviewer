@@ -1,4 +1,31 @@
 #!/usr/bin/env swift
+/// This script makes changes to my Photos library.
+///
+/// It takes two argument: an asset ID, and the name of the action to
+/// perform in my Photos library.
+///
+/// The asset ID is the 'localIdentifier' property of a PHAsset.
+///
+/// The available actions are as follows:
+///
+///     toggle-favorite
+///       If an image is already a favorite, unmark it as such.
+///       If an image isn't a favorite, mark it as a favorite.
+///
+///     toggle-flagged
+///     toggle-rejected
+///     toggle-needs-action
+///       When I review an image, it gets sorted into one of three buckets,
+///       which have corresponding albums in Photos: Flagged, Rejected,
+///       Needs Action.
+///
+///       These actions add an asset to the appropriate album, and remove it
+///       from the other albums.  If you run it a second time, it gets
+///       removed from the album, resetting it to zero.
+///
+///     toggle-cross-stitch
+///       Toggles an image's inclusion in my "Cross stitch" album.
+///
 
 import Photos
 
@@ -75,7 +102,7 @@ extension PHAsset {
   ///
   /// This expects to be run inside a performChangesAndWait change block;
   /// see https://developer.apple.com/documentation/photokit/phphotolibrary/1620747-performchangesandwait.
-  func toggle(inAlbum album: String) -> Void {
+  func toggle(inAlbum album: PHAssetCollection) -> Void {
     let changeAlbum =
       PHAssetCollectionChangeRequest(for: album)!
 
