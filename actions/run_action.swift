@@ -2,7 +2,10 @@
 
 import Photos
 
-func getAlbumWith(name: String) -> PHAssetCollection {
+/// Looks up an album by name.
+///
+/// This assumes that album names are globally unique.
+func getAlbum(withName name: String) -> PHAssetCollection {
   let collections =
     PHAssetCollection
     .fetchAssetCollections(with: .album, subtype: .albumRegular, options: nil)
@@ -25,31 +28,65 @@ func getAlbumWith(name: String) -> PHAssetCollection {
   }
 }
 
-func getPhotoWith(uuid: String) -> PHAsset {
-  let fetchResult = PHAsset.fetchAssets(withLocalIdentifiers: [uuid], options: nil)
+/// Returns the PHAsset with the given identifier, or throws if it
+/// can't be found.
+func getPhoto(withLocalIdentifier localIdentifier: String) -> PHAsset {
+  let fetchResult = PHAsset.fetchAssets(withLocalIdentifiers: [localIdentifier], options: nil)
 
   if fetchResult.count == 1 {
     return fetchResult.firstObject!
   } else {
-    fputs("Unable to find photo with ID: \(uuid).\n", stderr)
+    fputs("Unable to find photo with ID: \(localIdentifier).\n", stderr)
     exit(1)
   }
 }
 
-func isPhotoInAlbum(photo: PHAsset, collection: PHAssetCollection) -> Bool {
-  let collections = PHAssetCollection.fetchAssetCollectionsContaining(
-    photo, with: .album, options: nil
-  )
+extension PHAsset {
+  /// Returns true if an asset is in the given album, false otherwise.
+  func isInAlbum(_ album: PHAssetCollection) -> Bool {
+    var result = false
 
-  var result = false
+    PHAssetCollection
+      .fetchAssetCollectionsContaining(self, with: .album, options: nil)
+      .enumerateObjects({ (collection, index, stop) in
+        if (album == collection) {
+          result = true
+        }
+      })
 
-  collections.enumerateObjects({ (album, index, stop) in
-    if (album == collection) {
-      result = true
+    return result
+  }
+
+  /// Remove a photo from an album.
+  ///
+  /// This expects to be run inside a performChangesAndWait change block;
+  /// see https://developer.apple.com/documentation/photokit/phphotolibrary/1620747-performchangesandwait.
+  func remove(fromAlbum album: PHAssetCollection) -> Void {
+    let changeAlbum =
+      PHAssetCollectionChangeRequest(for: album)!
+
+    changeAlbum.removeAssets([self] as NSFastEnumeration)
+  }
+
+  /// Toggle a photo's inclusion in an album.
+  ///
+  /// If the photo is already in the album, remove it.  If the photo isn't
+  /// in the album, add it.
+  ///
+  /// This expects to be run inside a performChangesAndWait change block;
+  /// see https://developer.apple.com/documentation/photokit/phphotolibrary/1620747-performchangesandwait.
+  func toggle(inAlbum album: String) -> Void {
+    let changeAlbum =
+      PHAssetCollectionChangeRequest(for: album)!
+
+    let assets = [self] as NSFastEnumeration
+
+    if photo.isInAlbum(album) {
+      changeAlbum.removeAssets(assets)
+    } else {
+      changeAlbum.addAssets(assets)
     }
-  })
-
-  return result
+  }
 }
 
 let arguments = CommandLine.arguments
@@ -61,65 +98,32 @@ guard arguments.count == 3 else {
 
 let action = arguments[2]
 
-let flagged = getAlbumWith(name: "Flagged")
-let rejected = getAlbumWith(name: "Rejected")
-let needsAction = getAlbumWith(name: "Needs Action")
-let crossStitch = getAlbumWith(name: "Cross stitch")
+let flagged = getAlbum(withName: "Flagged")
+let rejected = getAlbum(withName: "Rejected")
+let needsAction = getAlbum(withName: "Needs Action")
+let crossStitch = getAlbum(withName: "Cross stitch")
 
-let photo = getPhotoWith(uuid: arguments[1])
+let photo = getPhoto(withLocalIdentifier: arguments[1])
 
 try PHPhotoLibrary.shared().performChangesAndWait {
   let changeAsset = PHAssetChangeRequest(for: photo)
 
-  let changeFlagged =
-    PHAssetCollectionChangeRequest(for: flagged)!
-  let changeRejected =
-    PHAssetCollectionChangeRequest(for: rejected)!
-  let changeNeedsAction =
-    PHAssetCollectionChangeRequest(for: needsAction)!
-  let changeCrossStitch =
-    PHAssetCollectionChangeRequest(for: crossStitch)!
-
-  let assets = [photo] as NSFastEnumeration
-
   if action == "toggle-favorite" {
     changeAsset.isFavorite = !photo.isFavorite
   } else if action == "toggle-flagged" {
-    changeRejected.removeAssets(assets)
-    changeNeedsAction.removeAssets(assets)
-
-    if (isPhotoInAlbum(photo: photo, collection: flagged)) {
-      changeFlagged.removeAssets(assets)
-    } else {
-      changeFlagged.addAssets(assets)
-    }
+    photo.toggle(inAlbum: flagged)
+    photo.remove(fromAlbum: rejected)
+    photo.remove(fromAlbum: needsAction)
   } else if action == "toggle-rejected" {
-    changeFlagged.removeAssets(assets)
-    changeNeedsAction.removeAssets(assets)
-
-    if (isPhotoInAlbum(photo: photo, collection: rejected)) {
-      changeRejected.removeAssets(assets)
-    } else {
-      changeRejected.addAssets(assets)
-    }
+    photo.remove(fromAlbum: flagged)
+    photo.toggle(inAlbum: rejected)
+    photo.remove(fromAlbum: needsAction)
   } else if action == "toggle-needs-action" {
-    changeFlagged.removeAssets(assets)
-    changeRejected.removeAssets(assets)
-
-    if (isPhotoInAlbum(photo: photo, collection: needsAction)) {
-      changeNeedsAction.removeAssets(assets)
-    } else {
-      changeNeedsAction.addAssets(assets)
-    }
+    photo.remove(fromAlbum: flagged)
+    photo.remove(fromAlbum: rejected)
+    photo.toggle(inAlbum: needsAction)
   } else if action == "toggle-cross-stitch" {
-    print("GO GO GO")
-    print(crossStitch)
-    print(isPhotoInAlbum(photo: photo, collection: crossStitch))
-    if (isPhotoInAlbum(photo: photo, collection: crossStitch)) {
-      changeCrossStitch.removeAssets(assets)
-    } else {
-      changeCrossStitch.addAssets(assets)
-    }
+    photo.toggle(inAlbum: crossStitch)
   } else {
     fputs("Unrecognised action: \(action)\n", stderr)
     exit(1)
