@@ -1,0 +1,34 @@
+<style>
+  .thumbnail {
+    object-fit: cover;
+    aspect-ratio: 1 / 1;
+    border: 2px solid red;
+  }
+
+  .thumbnail_small {
+    width: 65px;
+    height: 65px;
+  }
+
+  .thumbnail_big {
+    width: 85px;
+    height: 85px;
+  }
+</style>
+
+{% for a in prev_five %}
+  <img src="{{ url_for('thumbnail', localIdentifier=a['localIdentifier']) }}" class="thumbnail thumbnail_small">
+{% endfor %}
+
+<img src="{{ url_for('thumbnail', localIdentifier=this_asset['localIdentifier']) }}" class="thumbnail thumbnail_big">
+
+{% for a in next_five %}
+  <img src="{{ url_for('thumbnail', localIdentifier=a['localIdentifier']) }}" class="thumbnail thumbnail_small">
+{% endfor %}
+
+<img src="{{ url_for('image', localIdentifier=this_asset['localIdentifier']) }}">
+
+
+<!--{% for a in assets %}
+  <img src="{{ url_for('thumbnail', localIdentifier=a['localIdentifier']) }}">
+{% endfor %} -->
