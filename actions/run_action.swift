@@ -36,6 +36,22 @@ func getPhotoWith(uuid: String) -> PHAsset {
   }
 }
 
+func isPhotoInAlbum(photo: PHAsset, collection: PHAssetCollection) -> Bool {
+  let collections = PHAssetCollection.fetchAssetCollectionsContaining(
+    photo, with: .album, options: nil
+  )
+
+  var result = false
+
+  collections.enumerateObjects({ (album, index, stop) in
+    if (album == collection) {
+      result = true
+    }
+  })
+
+  return result
+}
+
 let arguments = CommandLine.arguments
 
 guard arguments.count == 3 else {
@@ -52,25 +68,29 @@ let needsAction = getAlbumWith(name: "Needs Action")
 let photo = getPhotoWith(uuid: arguments[1])
 
 try PHPhotoLibrary.shared().performChangesAndWait {
+  let changeAsset = PHAssetChangeRequest(for: photo)
 
+  let changeFlagged =
+    PHAssetCollectionChangeRequest(for: flagged)!
+  let changeRejected =
+    PHAssetCollectionChangeRequest(for: rejected)!
+  let changeNeedsAction =
+    PHAssetCollectionChangeRequest(for: needsAction)!
+
+  let assets = [photo] as NSFastEnumeration
 
   if action == "toggle-favorite" {
-    let request = PHAssetChangeRequest(for: photo)
-    request.isFavorite = !photo.isFavorite
+    changeAsset.isFavorite = !photo.isFavorite
+  }
+
+  if action == "toggle-flagged" {
+    changeRejected.removeAssets(assets)
+    changeNeedsAction.removeAssets(assets)
+
+    if (isPhotoInAlbum(photo: photo, collection: flagged)) {
+      changeFlagged.addAssets(assets)
+    } else {
+      changeFlagged.removeAssets(assets)
+    }
   }
 }
-
-// try PHPhotoLibrary.shared().performChangesAndWait {
-//   let changeFlagged =
-//     PHAssetCollectionChangeRequest(for: flagged)!
-//   let changeRejected =
-//     PHAssetCollectionChangeRequest(for: rejected)!
-//   let changeNeedsAction =
-//     PHAssetCollectionChangeRequest(for: needsAction)!
-//
-//   let assets = [photo] as NSFastEnumeration
-//
-//   changeFlagged.addAssets(assets)
-//   changeRejected.removeAssets(assets)
-//   changeNeedsAction.removeAssets(assets)
-// }

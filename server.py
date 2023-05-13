@@ -64,25 +64,14 @@ class PhotosData:
 
         if action == 'toggle-favorite':
             this_asset['isFavorite'] = not this_asset['isFavorite']
+        elif action == 'toggle-flagged':
+            this_asset['albums'].discard('Rejected')
+            this_asset['albums'].discard('Needs Action')
 
-        self.get_response.cache_clear()
-
-    def flag(self, local_identifier):
-        subprocess.check_call(['swift', 'scripts/flag.swift', local_identifier])
-
-        this_asset = self.all_assets[self.all_positions[local_identifier]]
-
-        try:
-            this_asset['albums'].remove('Rejected')
-        except KeyError:
-            pass
-
-        try:
-            this_asset['albums'].remove('Needs Action')
-        except KeyError:
-            pass
-
-        this_asset['albums'].add('Flagged')
+            try:
+                this_asset['albums'].remove('Flagged')
+            except KeyError:
+                this_asset['albums'].add('Flagged')
 
         this_asset['state'] = get_asset_state(this_asset)
 
@@ -178,11 +167,6 @@ def _perform_action(request, callback):
     return redirect(url_for('index', localIdentifier=redirect_to))
 
 
-@app.route('/actions/flag')
-def flag():
-    return _perform_action(request, photos_data.flag)
-
-
 @app.route('/actions/reject')
 def reject():
     return _perform_action(request, photos_data.reject)
@@ -202,7 +186,10 @@ def run_action():
 
     if action == 'toggle-favorite':
         return redirect(url_for('index', localIdentifier=local_identifier))
-
+    else:
+        position = photos_data.all_positions[local_identifier]
+        redirect_to = photos_data.all_assets[position - 1]['localIdentifier']
+        return redirect(url_for('index', localIdentifier=redirect_to))
 
 @app.route('/image')
 def image():

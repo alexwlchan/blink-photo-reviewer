@@ -202,14 +202,16 @@ document.onkeydown = function(e) {
     {% if next_five %}
       window.location = "/?localIdentifier={{ next_five[0]['localIdentifier'] }}";
     {% endif %}
-  } else if (e.key === "1") {
-    window.location = "/actions/flag?localIdentifier={{ this_asset['localIdentifier'] }}";
+  } else
+  if (e.key === "1") {
+    window.location = "/actions?localIdentifier={{ this_asset['localIdentifier'] }}&action=toggle-flagged";
   } else if (e.key === "2") {
     window.location = "/actions/reject?localIdentifier={{ this_asset['localIdentifier'] }}";
   } else if (e.key === "3") {
     window.location = "/actions/needs_action?localIdentifier={{ this_asset['localIdentifier'] }}";
   }
-  else if (e.key === "f") {
+  else
+  if (e.key === "f") {
      window.location = "/actions?localIdentifier={{ this_asset['localIdentifier'] }}&action=toggle-favorite";
    }
 }
