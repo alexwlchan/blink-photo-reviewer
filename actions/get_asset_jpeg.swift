@@ -96,7 +96,7 @@ func jpegDataFrom(image: NSImage) -> Data {
 
 let arguments = CommandLine.arguments
 
-guard arguments.count == 3 {
+guard arguments.count == 3 else {
   fputs("Usage: \(arguments[0]) ASSET_ID SIZE\n", stderr)
   exit(1)
 }
@@ -104,7 +104,7 @@ guard arguments.count == 3 {
 let localIdentifier = arguments[1]
 let size = Int(arguments[2])
 
-if size == nil || size <= 0 {
+if size == nil || size! <= 0 {
   fputs("Unrecognised size: \(arguments[2])\n", stderr)
   exit(1)
 }
