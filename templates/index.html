@@ -81,6 +81,16 @@
     background: red;
   }
 
+  #thumbnails div.thumbnail.state-Needs-Action {
+    border-color: blue;
+    border-width: 2px;
+    margin: 0;
+  }
+
+  #thumbnails div.thumbnail.state-Needs-Action .state {
+    background: blue;
+  }
+
   #thumbnails div.this_asset {
     display: inline-block;
   }
@@ -118,7 +128,31 @@
     /* screen height - 85px (thumbnail bar) - 20px (body padding) -1em (margin below thumbnail bar) - 18px (metadata) - 1em (margin below metadata)*/
     max-height: calc(100vh - 85px - 20px - 1em - 18px - 1em);
   }
+
+  #debug {
+    position: absolute;
+    border: 2px solid darkgrey;
+    text-align: right;
+    opacity: 0.25;
+    padding: 5px 10px;
+    border-radius: 10px;
+    background: white;
+    right: 10px;
+    top: 10px;
+    line-height: 1.25em;
+  }
+
+  #debug:hover {
+    opacity: 1;
+    box-shadow: 0px 0px 3px darkgrey;
+    z-index: 1000;
+  }
 </style>
+
+<details id="debug">
+  <summary>debug</summary>
+  <strong>this asset:</strong> {{ this_asset['localIdentifier'] }}
+</details>
 
 <div id="thumbnails">
   {% set placeholder_prev_five = 5 - prev_five|length %}
@@ -148,10 +182,10 @@
 </div>
 
 <p class="metadata">
+  {{ this_asset['localIdentifier'] }} /
   {% if this_asset['albums'] %}
     <strong>albums:</strong> {{ this_asset['albums'] | join(', ') }} /
   {% endif %}
-  <strong>state:</strong> {{ this_asset['state'] }} /
   <strong>creation date:</strong> {{ this_asset['creationDate'] }}
 </p>
 
@@ -161,3 +195,35 @@
 <!--{% for a in assets %}
   <img src="{{ url_for('thumbnail', localIdentifier=a['localIdentifier']) }}">
 {% endfor %} -->
+
+<script>
+function httpPOST(url)
+{
+  var xmlHttp = null;
+
+  xmlHttp = new XMLHttpRequest();
+  xmlHttp.open("POST", url, false);
+  xmlHttp.send(null);
+  return xmlHttp.responseText;
+}
+
+document.onkeydown = function(e) {
+  console.log(e);
+  console.log(e.key);
+  console.log(e.key === "2");
+  if (e.key === "ArrowLeft") {
+    window.location = "/?localIdentifier={{ prev_five[-1]['localIdentifier'] }}";
+  } else if (e.key === "ArrowRight") {
+    {% if next_five %}
+      window.location = "/?localIdentifier={{ next_five[0]['localIdentifier'] }}";
+    {% endif %}
+  } else if (e.key === "1") {
+    window.location = "/actions/flag?localIdentifier={{ this_asset['localIdentifier'] }}";
+  } else if (e.key === "2") {
+    window.location = "/actions/reject?localIdentifier={{ this_asset['localIdentifier'] }}";
+  } else if (e.key === "3") {
+    window.location = "/actions/needs_action?localIdentifier={{ this_asset['localIdentifier'] }}";
+  }
+}
+</script>
+
