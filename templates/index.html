@@ -1,3 +1,7 @@
+<head>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+
 <style>
   body {
     text-align: center;
@@ -205,6 +209,9 @@ document.onkeydown = function(e) {
   } else if (e.key === "3") {
     window.location = "/actions/needs_action?localIdentifier={{ this_asset['localIdentifier'] }}";
   }
+  else if (e.key === "f") {
+     window.location = "/actions/toggle_favorite?localIdentifier={{ this_asset['localIdentifier'] }}";
+   }
 }
 </script>
 

@@ -7,6 +7,11 @@
     {% elif asset['state'] == 'Needs Action' %}
       <div class="state">ℹ</div>
     {% endif %}
+
+    {% if asset.isFavorite %}
+      <div class="favorite">♥</div>
+    {% endif %}
+
     <img
       src="{{ url_for('thumbnail', localIdentifier=asset['localIdentifier']) }}"
       class="thumbnail state-{{ asset['state'] | replace(' ', '-')  }}">

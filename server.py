@@ -57,6 +57,14 @@ class PhotosData:
 
         return render_template('index.html', assets=all_assets, position=position, prev_five=prev_five, this_asset=this_asset, next_five=next_five)
 
+    def toggle_favorite(self, local_identifier):
+        subprocess.check_call(['swift', 'actions/run_action.swift', local_identifier, 'toggle-favorite'])
+
+        this_asset = self.all_assets[self.all_positions[local_identifier]]
+        this_asset['isFavorite'] = not this_asset['isFavorite']
+
+        self.get_response.cache_clear()
+
     def flag(self, local_identifier):
         subprocess.check_call(['swift', 'scripts/flag.swift', local_identifier])
 
@@ -181,6 +189,15 @@ def reject():
 @app.route('/actions/needs_action')
 def needs_action():
     return _perform_action(request, photos_data.needs_action)
+
+
+@app.route('/actions/toggle_favorite')
+def toggle_favorite():
+    local_identifier = request.args['localIdentifier']
+
+    photos_data.toggle_favorite(local_identifier)
+
+    return redirect(url_for('index', localIdentifier=local_identifier))
 
 
 @app.route('/image')

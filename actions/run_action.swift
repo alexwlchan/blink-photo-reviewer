@@ -1,15 +1,4 @@
 #!/usr/bin/env swift
-// Remove a photo from a photo album.
-//
-// This takes two arguments: the name of the album, and the UUID of
-// the photo in the album.  It assumes the album name is globally unique.
-//
-// == Usage ==
-//
-// Pass the album name as the first argument, and the UUID as the second:
-//
-//    $ remove_image_from_album "Flagged" "9D28ABBE-79F6-402F-8750-8674840EDA3D"
-//
 
 import Photos
 
@@ -49,18 +38,39 @@ func getPhotoWith(uuid: String) -> PHAsset {
 
 let arguments = CommandLine.arguments
 
-if arguments.count != 2 {
-  fputs("Usage: \(arguments[0]) ALBUM_NAME PHOTO_ID\n", stderr)
+guard arguments.count == 3 else {
+  fputs("Usage: \(arguments[0]) PHOTO_ID ACTION\n", stderr)
   exit(1)
 }
 
-let album = getAlbumWith(name: arguments[1])
-let photo = getPhotoWith(uuid: arguments[2])
+let action = arguments[2]
+
+let flagged = getAlbumWith(name: "Flagged")
+let rejected = getAlbumWith(name: "Rejected")
+let needsAction = getAlbumWith(name: "Needs Action")
+
+let photo = getPhotoWith(uuid: arguments[1])
 
 try PHPhotoLibrary.shared().performChangesAndWait {
-  let request =
-    PHAssetCollectionChangeRequest(for: album)
 
-  request!.removeAssets([photo] as NSFastEnumeration)
+
+  if action == "toggle-favorite" {
+    let request = PHAssetChangeRequest(for: photo)
+    request.isFavorite = !photo.isFavorite
+  }
 }
-[]
+
+// try PHPhotoLibrary.shared().performChangesAndWait {
+//   let changeFlagged =
+//     PHAssetCollectionChangeRequest(for: flagged)!
+//   let changeRejected =
+//     PHAssetCollectionChangeRequest(for: rejected)!
+//   let changeNeedsAction =
+//     PHAssetCollectionChangeRequest(for: needsAction)!
+//
+//   let assets = [photo] as NSFastEnumeration
+//
+//   changeFlagged.addAssets(assets)
+//   changeRejected.removeAssets(assets)
+//   changeNeedsAction.removeAssets(assets)
+// }

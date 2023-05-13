@@ -31,6 +31,7 @@ PHAssetCollection
 struct AssetData: Codable {
   var localIdentifier: String
   var creationDate: String?
+  var isFavorite: Bool
 }
 
 var allAssets: [AssetData] = []
@@ -38,11 +39,11 @@ var allAssets: [AssetData] = []
 PHAsset
   .fetchAssets(with: PHAssetMediaType.image, options: nil)
   .enumerateObjects({ (asset, _, _) in
-    print(asset)
     allAssets.append(
       AssetData(
         localIdentifier: asset.localIdentifier,
-        creationDate: asset.creationDate?.ISO8601Format()
+        creationDate: asset.creationDate?.ISO8601Format(),
+        isFavorite: asset.isFavorite
       )
     )
   })
