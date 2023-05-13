@@ -11,11 +11,41 @@ app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 24 * 60 * 60
 
 
+class PhotosData:
+    def __init__(self):
+        data = json.loads(subprocess.check_output(['swift', 'get_structural_metadata.swift']))
+
+        all_assets = sorted(data['assets'], key=lambda a: a['creationDate'])
+
+        all_albums = data['albums']
+
+        for alb in all_albums:
+            alb['assetIdentifiers'] = set(alb['assetIdentifiers'])
+
+        for asset in all_assets:
+            asset['albums'] = [alb['localizedTitle'] for alb in all_albums if asset['localIdentifier'] in alb['assetIdentifiers']]
+
+            if 'Flagged' in asset['albums']:
+                asset['state'] = 'Flagged'
+                asset['albums'].remove('Flagged')
+            elif 'Rejected' in asset['albums']:
+                asset['state'] = 'Rejected'
+                asset['albums'].remove('Rejected')
+            else:
+                asset['state'] = 'Unknown'
+
+            assert 'Flagged' not in asset['albums']
+            assert 'Rejected' not in asset['albums']
+
+        self.all_assets = all_assets
+
+
+photos_data = PhotosData()
+
+
 @app.route("/")
 def index():
-    data = json.load(open('out.json'))
-
-    all_assets = sorted(data['assets'], key=lambda a: a['creationDate'])
+    all_assets = photos_data.all_assets
 
     try:
         local_identifier = request.args['localIdentifier']
@@ -33,7 +63,8 @@ def index():
 
 @functools.cache
 def get_thumbnail_path(local_identifier):
-    return subprocess.check_output(['swift', 'get_asset_jpeg.swift', local_identifier, '65']).decode('utf8')
+    # 85 * 2x
+    return subprocess.check_output(['swift', 'get_asset_jpeg.swift', local_identifier, '170']).decode('utf8')
 
 
 @app.route('/thumbnail')

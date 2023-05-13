@@ -1,0 +1,12 @@
+<a href="{{ url_for('index', localIdentifier=asset['localIdentifier'])}}">
+  <div class="thumbnail state-{{ asset['state'] }}">
+    {% if asset['state'] == 'Flagged' %}
+      <div class="state">✓</div>
+    {% elif asset['state'] == 'Rejected' %}
+      <div class="state">✘</div>
+    {% endif %}
+    <img
+      src="{{ url_for('thumbnail', localIdentifier=asset['localIdentifier']) }}"
+      class="thumbnail state-{{ asset['state'] }}">
+  </div>
+</a>

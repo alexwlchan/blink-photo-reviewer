@@ -30,7 +30,7 @@ PHAssetCollection
 
 struct AssetData: Codable {
   var localIdentifier: String
-  var creationDate: Date?
+  var creationDate: String?
 }
 
 var allAssets: [AssetData] = []
@@ -41,7 +41,7 @@ PHAsset
     allAssets.append(
       AssetData(
         localIdentifier: asset.localIdentifier,
-        creationDate: asset.creationDate
+        creationDate: asset.creationDate?.ISO8601Format()
       )
     )
   })

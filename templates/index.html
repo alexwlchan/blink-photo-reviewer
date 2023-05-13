@@ -1,32 +1,161 @@
 <style>
-  .thumbnail {
-    object-fit: cover;
-    aspect-ratio: 1 / 1;
-    border: 2px solid red;
+  body {
+    text-align: center;
+    padding: 0;
+    margin: 10px;
+    font-family: -apple-system;
+/*    background: black;*/
   }
 
-  .thumbnail_small {
+  a {
+    text-decoration: none;
+  }
+
+  #thumbnails {
+    margin-bottom: 1em;
+    height: 85px;
+  }
+
+  #thumbnails div.thumbnail {
+    display: inline-block;
+    border: 1px solid lightgrey;
+    margin: 1px;
     width: 65px;
     height: 65px;
+    padding: 1px;
+  }
+
+  #thumbnails div.thumbnail img {
+    width: 65px;
+    height: 65px;
+  }
+
+  #thumbnails div.thumbnail .state {
+    position: absolute;
+    width: 15px;
+    height: 17px;
+    color: white;
+    text-align: left;
+    padding-left: 3px;
+    padding-top: 1px;
+    font-size: 13px;
+    line-height: 16px;
+    border-bottom-right-radius: 18px;
+    margin-left: -3px;
+    margin-top: -3px;
+    font-family: serif;
+  }
+
+  #thumbnails div.this_asset div.thumbnail .state {
+    width: 19px;
+    height: 21px;
+    color: white;
+    text-align: left;
+    padding-left: 4px;
+    padding-top: 2px;
+    font-size: 17px;
+    line-height: 16px;
+    border-bottom-right-radius: 18px;
+    margin-left: -3px;
+    margin-top: -3px;
+    font-family: serif;
+  }
+
+  #thumbnails div.thumbnail.state-Flagged {
+    border-color: green;
+    border-width: 2px;
+    margin: 0;
+  }
+
+  #thumbnails div.thumbnail.state-Flagged .state {
+    background: green;
+  }
+
+  #thumbnails div.thumbnail.state-Rejected {
+    border-color: red;
+    border-width: 2px;
+    margin: 0;
+  }
+
+  #thumbnails div.thumbnail.state-Rejected .state {
+    background: red;
+  }
+
+  #thumbnails div.this_asset {
+    display: inline-block;
+  }
+
+  #thumbnails div.this_asset div.thumbnail {
+    width: 85px;
+    height: 85px;
+  }
+
+  #thumbnails div.this_asset div.thumbnail img {
+    width: 85px;
+    height: 85px;
+  }
+
+  #thumbnails img {
+    object-fit: cover;
+    aspect-ratio: 1 / 1;
+  }
+
+  #thumbnails .placeholder {
+    width: 65px;
+    height: 65px;
+    display: inline-block;
+    border: 2px solid lightgrey;
+    opacity: 0.5;
   }
 
   .thumbnail_big {
     width: 85px;
     height: 85px;
   }
+
+  img#big {
+    max-width: calc(100vw - 20px);
+    /* screen height - 85px (thumbnail bar) - 20px (body padding) -1em (margin below thumbnail bar) - 18px (metadata) - 1em (margin below metadata)*/
+    max-height: calc(100vh - 85px - 20px - 1em - 18px - 1em);
+  }
 </style>
 
-{% for a in prev_five %}
-  <img src="{{ url_for('thumbnail', localIdentifier=a['localIdentifier']) }}" class="thumbnail thumbnail_small">
-{% endfor %}
+<div id="thumbnails">
+  {% set placeholder_prev_five = 5 - prev_five|length %}
+  {% for _ in range(placeholder_prev_five) %}
+    <!-- from subtle patterns -->
+    <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5OjcBCgoKDQwNGg8PGjclHyU3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3N//AABEIAFwAXAMBIgACEQEDEQH/xAAXAAEBAQEAAAAAAAAAAAAAAAAAAQcC/8QAMxAAAQMDAwIEBAUEAwAAAAAAAQARIQIxQSIyURJhQnGBoVJicrEDEzPR8EORssEjc4L/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A2gdt3s6fTu9u7J5RXbqw6Z0sKjnB5QB8m727sn/XfvYjsgnZFXODyyfQ1JPOQgfQ3/rjsn0QM9XCfQwzOQn0aRcvkIH0wPF1cJ5W8XVdT6dNImoHhXygDcKpKBjinxdV0/x8T3dMcUjcDdPVqRuBu6B/jkZdP+T+kwGXu6Y+XIy6NWf06mHDoA48VurlL7TqMdXPKdvFbq5KSYpLEx1csgX2lqjnnnyS+zSbvyg1FqS1R8Qyybtp6SZflAd9mnPmEvsPRkvkJfbpz5oC+09Lai2QgPD06QJIMwnlpA3C6CZp0gSQJdB20imSAgY+GkXpu6ewEGnkpYPtFN6eUHNgINIQMcU26e6dNdX6dXSBDJ38Ig0906Kq5oqNIEMEBn0vJjqym4mmxt1ZjlRnej0fPr2V3E02w+Y5QBqPSIJzn1TfAek3cX9U3aZHcX9U3xIzH+0DdbTmMoNVtLSWTfyM6f5dN2CGnT/LoAmRpaSKZdBIcQKS5FNigmbdMtTlBMzplqbFAx1WFNwLFPmsKYIFig+L4cU2KC3V8MMLFAZg+Bp6cJ+Wa5pq6QIZMdXENhPy/wAyerpaGFvRAZ9HZu6M+hm75jlIOg7bd/NLvQYFvJA3vTI+481N8GMxf1V36TAHskV6TA7Y7IG+CGzCDXgxOn7eafqbhaY54TffExE8IA1T8M6cpfU234bFN0mTTIaH7ID1ajJBhodAuOr4bNYoMVZpgNYpfXc02aAU+e5Fmse6Bjra0dvNOgfiajU2B3T58iBw3KdAr1VVdP8AtA+Q7fsOXSDpqinztwkbTs9m5dL6aop+3CBu01RSPb903OK4H9m7JfTXFP24ZN0V2HoyBvivHox4TfulrYnhN29vWJ4Tdv8AR4nhA3TVJFsOeE3ajJG3DpumoORZ4nhLzVJG14coF2qvUNuHS7VXqFsOOWS83qG18oPivVg8hA+fxY8uWTpor1fiFj90+bxY5byRqDP4hY/dAix2ezful4qGj27Ml6hSdpqIZSnUQCIJIbhkFvFcU/xmS8fiW729EGogVTSXjhlKdRAqkEEscILf9THMSl9/MdXP7KUnq3AHT1ThAX3S1PUHwUFvumoberlL7pq8PVdR4JMmkOCUJiomTTIJQXgmavD1XKDnx4e7IYFRuaWYnuhjqNzSQATdA7+PHLfuh/L/AKparzn1T7irpfLLqiimsE1ByCzoP//Z" class="placeholder">
+  {% endfor %}
 
-<img src="{{ url_for('thumbnail', localIdentifier=this_asset['localIdentifier']) }}" class="thumbnail thumbnail_big">
+  {% for asset in prev_five %}
+    {% include "thumbnail.html" %}
+  {% endfor %}
 
-{% for a in next_five %}
-  <img src="{{ url_for('thumbnail', localIdentifier=a['localIdentifier']) }}" class="thumbnail thumbnail_small">
-{% endfor %}
 
-<img src="{{ url_for('image', localIdentifier=this_asset['localIdentifier']) }}">
+  <div class="this_asset">
+    {% set asset = this_asset %}
+    {% include "thumbnail.html" %}
+  </div>
+
+  {% for asset in next_five %}
+    {% include "thumbnail.html" %}
+  {% endfor %}
+
+  {% set placeholder_next_five = 5 - next_five|length %}
+  {% for _ in range(placeholder_next_five) %}
+    <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5OjcBCgoKDQwNGg8PGjclHyU3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3N//AABEIAFwAXAMBIgACEQEDEQH/xAAXAAEBAQEAAAAAAAAAAAAAAAAAAQcC/8QAMxAAAQMDAwIEBAUEAwAAAAAAAQARIQIxQSIyURJhQnGBoVJicrEDEzPR8EORssEjc4L/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A2gdt3s6fTu9u7J5RXbqw6Z0sKjnB5QB8m727sn/XfvYjsgnZFXODyyfQ1JPOQgfQ3/rjsn0QM9XCfQwzOQn0aRcvkIH0wPF1cJ5W8XVdT6dNImoHhXygDcKpKBjinxdV0/x8T3dMcUjcDdPVqRuBu6B/jkZdP+T+kwGXu6Y+XIy6NWf06mHDoA48VurlL7TqMdXPKdvFbq5KSYpLEx1csgX2lqjnnnyS+zSbvyg1FqS1R8Qyybtp6SZflAd9mnPmEvsPRkvkJfbpz5oC+09Lai2QgPD06QJIMwnlpA3C6CZp0gSQJdB20imSAgY+GkXpu6ewEGnkpYPtFN6eUHNgINIQMcU26e6dNdX6dXSBDJ38Ig0906Kq5oqNIEMEBn0vJjqym4mmxt1ZjlRnej0fPr2V3E02w+Y5QBqPSIJzn1TfAek3cX9U3aZHcX9U3xIzH+0DdbTmMoNVtLSWTfyM6f5dN2CGnT/LoAmRpaSKZdBIcQKS5FNigmbdMtTlBMzplqbFAx1WFNwLFPmsKYIFig+L4cU2KC3V8MMLFAZg+Bp6cJ+Wa5pq6QIZMdXENhPy/wAyerpaGFvRAZ9HZu6M+hm75jlIOg7bd/NLvQYFvJA3vTI+481N8GMxf1V36TAHskV6TA7Y7IG+CGzCDXgxOn7eafqbhaY54TffExE8IA1T8M6cpfU234bFN0mTTIaH7ID1ajJBhodAuOr4bNYoMVZpgNYpfXc02aAU+e5Fmse6Bjra0dvNOgfiajU2B3T58iBw3KdAr1VVdP8AtA+Q7fsOXSDpqinztwkbTs9m5dL6aop+3CBu01RSPb903OK4H9m7JfTXFP24ZN0V2HoyBvivHox4TfulrYnhN29vWJ4Tdv8AR4nhA3TVJFsOeE3ajJG3DpumoORZ4nhLzVJG14coF2qvUNuHS7VXqFsOOWS83qG18oPivVg8hA+fxY8uWTpor1fiFj90+bxY5byRqDP4hY/dAix2ezful4qGj27Ml6hSdpqIZSnUQCIJIbhkFvFcU/xmS8fiW729EGogVTSXjhlKdRAqkEEscILf9THMSl9/MdXP7KUnq3AHT1ThAX3S1PUHwUFvumoberlL7pq8PVdR4JMmkOCUJiomTTIJQXgmavD1XKDnx4e7IYFRuaWYnuhjqNzSQATdA7+PHLfuh/L/AKparzn1T7irpfLLqiimsE1ByCzoP//Z" class="placeholder">
+  {% endfor %}
+</div>
+
+<p class="metadata">
+  {% if this_asset['albums'] %}
+    <strong>albums:</strong> {{ this_asset['albums'] | join(', ') }} /
+  {% endif %}
+  <strong>state:</strong> {{ this_asset['state'] }} /
+  <strong>creation date:</strong> {{ this_asset['creationDate'] }}
+</p>
+
+<img id="big" src="{{ url_for('image', localIdentifier=this_asset['localIdentifier']) }}">
 
 
 <!--{% for a in assets %}
