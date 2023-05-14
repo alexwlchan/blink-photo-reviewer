@@ -14,7 +14,7 @@
       ({{ states.values() | sum | intcomma }} total)
     </li>
     <li>
-      <a href="#" onclick="httpPOST('/refresh')">refresh photos metadata</a>
+      <a href="#" onclick="httpPOST('/refresh'); window.location.reload();">refresh photos metadata</a>
     </li>
     {% if next_asset_id_to_review %}
     <li>
