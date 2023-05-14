@@ -1,7 +1,5 @@
 <head>
   <link rel="stylesheet" href="/static/style.css">
-  
-  <title>{{ this_asset['filename'] }}</title>
 </head>
 
 <details id="debug">
@@ -64,7 +62,7 @@
       {% endif %}
     } else
     if (e.key === "1") {
-      window.location = "/actions?localIdentifier={{ this_asset['localIdentifier'] }}&action=toggle-flagged";
+      window.location = "/actions?localIdentifier={{ this_asset['localIdentifier'] }}&action=toggle-approved";
     } else if (e.key === "2") {
       window.location = "/actions?localIdentifier={{ this_asset['localIdentifier'] }}&action=toggle-rejected";
     } else if (e.key === "3") {

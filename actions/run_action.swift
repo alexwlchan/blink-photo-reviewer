@@ -12,11 +12,11 @@
 ///       If an image is already a favorite, unmark it as such.
 ///       If an image isn't a favorite, mark it as a favorite.
 ///
-///     toggle-flagged
+///     toggle-approved
 ///     toggle-rejected
 ///     toggle-needs-action
 ///       When I review an image, it gets sorted into one of three buckets,
-///       which have corresponding albums in Photos: Flagged, Rejected,
+///       which have corresponding albums in Photos: Approved, Rejected,
 ///       Needs Action.
 ///
 ///       These actions add an asset to the appropriate album, and remove it
@@ -125,7 +125,7 @@ guard arguments.count == 3 else {
 
 let action = arguments[2]
 
-let flagged = getAlbum(withName: "Flagged")
+let approved = getAlbum(withName: "Approved")
 let rejected = getAlbum(withName: "Rejected")
 let needsAction = getAlbum(withName: "Needs Action")
 let crossStitch = getAlbum(withName: "Cross stitch")
@@ -137,16 +137,16 @@ try PHPhotoLibrary.shared().performChangesAndWait {
 
   if action == "toggle-favorite" {
     changeAsset.isFavorite = !photo.isFavorite
-  } else if action == "toggle-flagged" {
-    photo.toggle(inAlbum: flagged)
+  } else if action == "toggle-approved" {
+    photo.toggle(inAlbum: approved)
     photo.remove(fromAlbum: rejected)
     photo.remove(fromAlbum: needsAction)
   } else if action == "toggle-rejected" {
-    photo.remove(fromAlbum: flagged)
+    photo.remove(fromAlbum: approved)
     photo.toggle(inAlbum: rejected)
     photo.remove(fromAlbum: needsAction)
   } else if action == "toggle-needs-action" {
-    photo.remove(fromAlbum: flagged)
+    photo.remove(fromAlbum: approved)
     photo.remove(fromAlbum: rejected)
     photo.toggle(inAlbum: needsAction)
   } else if action == "toggle-cross-stitch" {

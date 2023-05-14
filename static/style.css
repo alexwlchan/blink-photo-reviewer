@@ -63,13 +63,13 @@ a {
   font-family: serif;
 }
 
-#thumbnails div.thumbnail.state-Flagged {
+#thumbnails div.thumbnail.state-Approved {
   border-color: green;
   border-width: 2px;
   margin: 0;
 }
 
-#thumbnails div.thumbnail.state-Flagged .state {
+#thumbnails div.thumbnail.state-Approved .state {
   background: green;
 }
 

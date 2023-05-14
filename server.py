@@ -15,7 +15,7 @@ app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 24 * 60 * 60
 
 def get_asset_state(asset):
     state_albums = [
-        alb for alb in asset["albums"] if alb in {"Flagged", "Rejected", "Needs Action"}
+        alb for alb in asset["albums"] if alb in {"Approved", "Rejected", "Needs Action"}
     ]
 
     assert len(state_albums) <= 1
@@ -36,6 +36,10 @@ def get_asset_state(asset):
 
 class PhotosData:
     def __init__(self):
+        self.fetch_metadata()
+
+    def fetch_metadata(self):
+        print("Fetching metadata from Photos.app...")
         data = json.loads(
             subprocess.check_output(["swift", "actions/get_structural_metadata.swift"])
         )
@@ -88,16 +92,16 @@ class PhotosData:
 
         if action == "toggle-favorite":
             this_asset["isFavorite"] = not this_asset["isFavorite"]
-        elif action == "toggle-flagged":
+        elif action == "toggle-approved":
             this_asset["albums"].discard("Rejected")
             this_asset["albums"].discard("Needs Action")
 
             try:
-                this_asset["albums"].remove("Flagged")
+                this_asset["albums"].remove("Approved")
             except KeyError:
-                this_asset["albums"].add("Flagged")
+                this_asset["albums"].add("Approved")
         elif action == "toggle-rejected":
-            this_asset["albums"].discard("Flagged")
+            this_asset["albums"].discard("Approved")
             this_asset["albums"].discard("Needs Action")
 
             try:
@@ -105,7 +109,7 @@ class PhotosData:
             except KeyError:
                 this_asset["albums"].add("Rejected")
         elif action == "toggle-needs-action":
-            this_asset["albums"].discard("Flagged")
+            this_asset["albums"].discard("Approved")
             this_asset["albums"].discard("Rejected")
 
             try:
@@ -177,7 +181,7 @@ def run_action():
 
     if action in {"toggle-favorite", "toggle-cross-stitch"}:
         return redirect(url_for("index", localIdentifier=local_identifier))
-    elif action in {"toggle-flagged", "toggle-rejected", "toggle-needs-action"}:
+    elif action in {"toggle-approved", "toggle-rejected", "toggle-needs-action"}:
         position = photos_data.all_positions[local_identifier]
         redirect_to = photos_data.all_assets[position - 1]["localIdentifier"]
         return redirect(url_for("index", localIdentifier=redirect_to))
