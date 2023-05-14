@@ -87,40 +87,58 @@ extension NSImage {
   }
 }
 
-func jpegDataFrom(image: NSImage) -> Data {
-  let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil)!
-  let bitmapRep = NSBitmapImageRep(cgImage: cgImage)
-  let jpegData = bitmapRep.representation(using: NSBitmapImageRep.FileType.jpeg, properties: [:])!
-  return jpegData
+/// Create the parent directory for a given file path.
+///
+/// This ensures that when you go to write a file to this path, you don't
+/// get a "file not found" error because the directory doesn't exist.
+func makeParentDirectory(forPath filePath: String) -> Void {
+  try! FileManager.default.createDirectory(
+    atPath: NSString(string: filePath).deletingLastPathComponent,
+    withIntermediateDirectories: true, attributes: nil)
 }
 
-let arguments = CommandLine.arguments
-
-guard arguments.count == 3 else {
-  fputs("Usage: \(arguments[0]) ASSET_ID SIZE\n", stderr)
-  exit(1)
+struct Arguments {
+  var localIdentifier: String
+  var size: Int
 }
 
-let localIdentifier = arguments[1]
-let size = Int(arguments[2])
+func parseArgs() -> Arguments {
+  let arguments = CommandLine.arguments
 
-if size == nil || size! <= 0 {
-  fputs("Unrecognised size: \(arguments[2])\n", stderr)
-  exit(1)
+  guard arguments.count == 3 else {
+    fputs("Usage: \(arguments[0]) ASSET_ID SIZE\n", stderr)
+    exit(1)
+  }
+
+  let size = Int(arguments[2])
+
+  guard size != nil else {
+    fputs("Unrecognised size: \(arguments[2])\n", stderr)
+    exit(1)
+  }
+
+  guard size! > 0 else {
+    fputs("Size must be greater than 0, got \(arguments[2])\n", stderr)
+    exit(1)
+  }
+
+  return Arguments(localIdentifier: localIdentifier, size: size!)
 }
+
+let args = parseArgs()
+let localIdentifier = args.localIdentifier
+let size = args.size
 
 let asset = getPhoto(withLocalIdentifier: localIdentifier)
 
 let thumbnailPath =
-  "/tmp/photos-reviewer/\(localIdentifier.prefix(1))/\(localIdentifier)_\(size!).jpg"
+  "/tmp/photos-reviewer/\(localIdentifier.prefix(1))/\(localIdentifier)_\(size).jpg"
 
 if !FileManager.default.fileExists(atPath: thumbnailPath) {
-  try! FileManager.default.createDirectory(
-    atPath: NSString(string: thumbnailPath).deletingLastPathComponent,
-    withIntermediateDirectories: true, attributes: nil)
+  makeParentDirectory(forPath: thumbnailPath)
 
   try! asset
-    .getImage(atSize: Double(size!))
+    .getImage(atSize: Double(size))
     .jpegData()
     .write(to: URL(fileURLWithPath: thumbnailPath), options: [])
 }
