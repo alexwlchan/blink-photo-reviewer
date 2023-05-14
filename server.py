@@ -221,5 +221,12 @@ def open_photo():
     return b"", 204
 
 
+@app.route("/refresh", methods=["POST"])
+def refresh():
+    photos_data.fetch_metadata()
+
+    return b"", 204
+
+
 if __name__ == "__main__":
     app.run(debug="--debug" in sys.argv)
