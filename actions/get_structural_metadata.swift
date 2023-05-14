@@ -19,6 +19,7 @@ struct AssetData: Codable {
   var localIdentifier: String
   var creationDate: String?
   var isFavorite: Bool
+  var filename: String
 }
 
 struct Response: Codable {
@@ -60,11 +61,14 @@ func getAllAssets() -> [AssetData] {
   PHAsset
     .fetchAssets(with: PHAssetMediaType.image, options: nil)
     .enumerateObjects({ (asset, _, _) in
+      let resource = PHAssetResource.assetResources(for: asset)[0]
+
       allPhotos.append(
         AssetData(
           localIdentifier: asset.localIdentifier,
           creationDate: asset.creationDate?.ISO8601Format(),
-          isFavorite: asset.isFavorite
+          isFavorite: asset.isFavorite,
+          filename: resource.originalFilename
         )
       )
     })

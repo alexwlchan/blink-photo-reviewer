@@ -1,6 +1,13 @@
+#!/usr/bin/env osascript
+-- This script brings Photos.app to the front, and opens the selected photo.
+
 on run argv
+  if (count of argv) ≠ 1 then
+    tell me to error "Usage: open_photos_app.applescript [PHOTO_ID]"
+  end if
+
   tell application "Photos"
-  	spotlight media item id "3EF7B3B2-E7F9-4775-A568-3F21F278B833/L0/001"
-  	activate
+    spotlight media item id (item 1 of argv)
+    activate
   end tell
 end run
