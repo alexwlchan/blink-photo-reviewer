@@ -131,13 +131,13 @@ let args = parseArgs()
 let localIdentifier = args.localIdentifier
 let size = args.size
 
-let asset = getPhoto(withLocalIdentifier: localIdentifier)
-
 let thumbnailPath =
   "/tmp/photos-reviewer/\(localIdentifier.prefix(1))/\(localIdentifier)_\(size).jpg"
 
 if !FileManager.default.fileExists(atPath: thumbnailPath) {
   makeParentDirectory(forPath: thumbnailPath)
+
+  let asset = getPhoto(withLocalIdentifier: localIdentifier)
 
   try! asset
     .getImage(atSize: Double(size))
