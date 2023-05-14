@@ -47,8 +47,8 @@ func getAlbum(withName name: String) -> PHAssetCollection {
     }
   })
 
-  if thisAssetCollection != nil {
-    return thisAssetCollection!
+  if let assetCollection = thisAssetCollection {
+    return assetCollection
   } else {
     fputs("Unable to find album with name: \(name).\n", stderr)
     exit(1)
@@ -60,8 +60,8 @@ func getAlbum(withName name: String) -> PHAssetCollection {
 func getPhoto(withLocalIdentifier localIdentifier: String) -> PHAsset {
   let fetchResult = PHAsset.fetchAssets(withLocalIdentifiers: [localIdentifier], options: nil)
 
-  if fetchResult.count == 1 {
-    return fetchResult.firstObject!
+  if let firstObject = fetchResult.firstObject {
+    return firstObject
   } else {
     fputs("Unable to find photo with ID: \(localIdentifier).\n", stderr)
     exit(1)
@@ -125,34 +125,43 @@ guard arguments.count == 3 else {
 
 let action = arguments[2]
 
-let approved = getAlbum(withName: "Approved")
-let rejected = getAlbum(withName: "Rejected")
-let needsAction = getAlbum(withName: "Needs Action")
-let crossStitch = getAlbum(withName: "Cross stitch")
-
 let photo = getPhoto(withLocalIdentifier: arguments[1])
 
 try PHPhotoLibrary.shared().performChangesAndWait {
-  let changeAsset = PHAssetChangeRequest(for: photo)
+  switch action {
+    case "toggle-favorite":
+      let changeAsset = PHAssetChangeRequest(for: photo)
+      changeAsset.isFavorite = !photo.isFavorite
 
-  if action == "toggle-favorite" {
-    changeAsset.isFavorite = !photo.isFavorite
-  } else if action == "toggle-approved" {
-    photo.toggle(inAlbum: approved)
-    photo.remove(fromAlbum: rejected)
-    photo.remove(fromAlbum: needsAction)
-  } else if action == "toggle-rejected" {
-    photo.remove(fromAlbum: approved)
-    photo.toggle(inAlbum: rejected)
-    photo.remove(fromAlbum: needsAction)
-  } else if action == "toggle-needs-action" {
-    photo.remove(fromAlbum: approved)
-    photo.remove(fromAlbum: rejected)
-    photo.toggle(inAlbum: needsAction)
-  } else if action == "toggle-cross-stitch" {
-    photo.toggle(inAlbum: crossStitch)
-  } else {
-    fputs("Unrecognised action: \(action)\n", stderr)
-    exit(1)
+    case "toggle-approved", "toggle-rejected", "toggle-needs-action":
+      let approved = getAlbum(withName: "Approved")
+      let rejected = getAlbum(withName: "Rejected")
+      let needsAction = getAlbum(withName: "Needs Action")
+
+      if action == "toggle-approved" {
+        photo.toggle(inAlbum: approved)
+      } else {
+        photo.remove(fromAlbum: approved)
+      }
+
+      if action == "toggle-rejected" {
+        photo.toggle(inAlbum: rejected)
+      } else {
+        photo.remove(fromAlbum: rejected)
+      }
+
+      if action == "toggle-needs-action" {
+        photo.toggle(inAlbum: needsAction)
+      } else {
+        photo.remove(fromAlbum: needsAction)
+      }
+
+    case "toggle-cross-stitch":
+      let crossStitch = getAlbum(withName: "Cross stitch")
+      photo.toggle(inAlbum: crossStitch)
+
+    default:
+      fputs("Unrecognised action: \(action)\n", stderr)
+      exit(1)
   }
 }
