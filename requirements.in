@@ -1,1 +1,2 @@
 Flask==2.0.1
+humanize==4.4.0

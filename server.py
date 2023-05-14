@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import collections
 import functools
 import json
 import os
@@ -7,10 +8,13 @@ import subprocess
 import sys
 
 from flask import Flask, redirect, render_template, request, send_file, url_for
+import humanize
 
 
 app = Flask(__name__)
 app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 24 * 60 * 60
+
+app.add_template_filter(humanize.intcomma)
 
 
 def get_asset_state(asset):
@@ -74,6 +78,17 @@ class PhotosData:
         this_asset = all_assets[position]
         next_five = all_assets[position + 1 : position + 6]
 
+        if this_asset['state'] != 'Unknown':
+            unreviewed_assets = [asset for i, asset in enumerate(self.all_assets) if i < position]
+            try:
+                next_asset_id_to_review = unreviewed_assets[-1]['localIdentifier']
+            except IndexError:
+                pass
+        else:
+            next_asset_id_to_review = None
+
+        states = collections.Counter(asset['state'] for asset in self.all_assets)
+
         return render_template(
             "index.html",
             assets=all_assets,
@@ -81,6 +96,8 @@ class PhotosData:
             prev_five=prev_five,
             this_asset=this_asset,
             next_five=next_five,
+            next_asset_id_to_review=next_asset_id_to_review,
+            states=states,
         )
 
     def run_action(self, local_identifier, action):

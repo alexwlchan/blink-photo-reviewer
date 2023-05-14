@@ -156,6 +156,10 @@ img#big {
   z-index: 1000;
 }
 
+#debug ul {
+  text-align: left;
+}
+
 .favorite {
   text-align: right;
   position: absolute;

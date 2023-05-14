@@ -4,7 +4,21 @@
 
 <details id="debug">
   <summary>debug</summary>
-  <strong>this asset:</strong> {{ this_asset['localIdentifier'] }}
+  <ul>
+    <li><strong>this asset:</strong> {{ this_asset['localIdentifier'] }}</li>
+    {% if next_asset_id_to_review %}
+    <li>
+      <a href="/?localIdentifier={{ next_asset_id_to_review }}">jump to next unreiewed photo</a>
+    </li>
+    {% endif %}
+    <li><strong>stats:</strong>
+      {{ states["Approved"] | intcomma}} approved,
+      {{ states["Rejected"] | intcomma }} rejected,
+      {{ states["Needs Action"] | intcomma }} need action,
+      {{ states["Unknown"] | intcomma }} remaining
+      ({{ states.values() | sum | intcomma }} total)
+    </li>
+  </ul>
 </details>
 
 <div id="thumbnails">
