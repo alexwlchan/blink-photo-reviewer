@@ -19,7 +19,9 @@ app.add_template_filter(humanize.intcomma)
 
 def get_asset_state(asset):
     state_albums = [
-        alb for alb in asset["albums"] if alb in {"Approved", "Rejected", "Needs Action"}
+        alb
+        for alb in asset["albums"]
+        if alb in {"Approved", "Rejected", "Needs Action"}
     ]
 
     assert len(state_albums) <= 1
@@ -78,16 +80,20 @@ class PhotosData:
         this_asset = all_assets[position]
         next_five = all_assets[position + 1 : position + 6]
 
-        if this_asset['state'] != 'Unknown':
-            unreviewed_assets = [asset for i, asset in enumerate(self.all_assets) if i < position]
+        if this_asset["state"] != "Unknown":
+            unreviewed_assets = [
+                asset
+                for i, asset in enumerate(self.all_assets)
+                if i < position and asset["state"] == "Unknown"
+            ]
             try:
-                next_asset_id_to_review = unreviewed_assets[-1]['localIdentifier']
+                next_asset_id_to_review = unreviewed_assets[-1]["localIdentifier"]
             except IndexError:
                 pass
         else:
             next_asset_id_to_review = None
 
-        states = collections.Counter(asset['state'] for asset in self.all_assets)
+        states = collections.Counter(asset["state"] for asset in self.all_assets)
 
         return render_template(
             "index.html",
