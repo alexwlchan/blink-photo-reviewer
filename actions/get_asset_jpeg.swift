@@ -110,6 +110,7 @@ func parseArgs() -> Arguments {
     exit(1)
   }
 
+  let localIdentifier = arguments[1]
   let size = Int(arguments[2])
 
   guard size != nil else {
