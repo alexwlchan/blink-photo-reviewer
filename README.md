@@ -7,6 +7,16 @@ This video shows you how I use it:
 
 https://github.com/alexwlchan/photo-reviewer/assets/301220/dffbe69d-0717-40ef-a091-d06f40cc948e
 
+Here's what's happening:
+
+*   I use the arrow keys to switch between two similar photos, and compare them.
+    Then I use `1`/`2` to approve one photo, and reject the other.
+    Notice how the photos get a green/red border in the thumbnail viewer.
+*   The next photo is a screenshot, which I need to take action on it.
+    I press `3` to mark the photo as Needs Action; notice how it gets a blue border.
+*   The final photo is one I've already approved; I press `f` to mark it as a favourite.
+    Notice it gets a heart icon in the thumbnail.
+
 I can use the following commands:
 
 *   ⬅️ / ➡️ – navigate back and forth
