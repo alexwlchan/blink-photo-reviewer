@@ -29,3 +29,20 @@ This app is my replacement for the reviewing portion of Darkroom – I can switc
 
 [Darkroom]: https://darkroom.co/
 [Flag & Reject workflow]: https://medium.com/@jasperhauser/manage-your-growing-darkroom-photo-library-with-flag-reject-77c9e1816ef2
+
+## How it works
+
+<img src="architecture.png">
+
+The UI is rendered by a Python web server.
+On the rendered page, I capture keyboard input with the [`document.keydown` event][event], and this sends appropriate messages to the web server.
+
+The web server runs scripts in a mixture of Swift/AppleScript, which update my photos in Photos.app as appropriate.
+Most of the heavy lifting is done with the [PhotoKit framework].
+
+If you're interested in the details of how I'm talking to Photos.app, you might want to look in the [actions folder](./actions).
+
+[event]: https://developer.mozilla.org/en-US/docs/Web/API/Element/keydown_event
+[PhotoKit framework]: https://developer.apple.com/documentation/photokit
+
+
