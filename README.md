@@ -17,6 +17,8 @@ I can use the following commands:
 *   `c` – add the photo to my "Cross stitch" album
 *   `o` – open the photo in Photos.app
 
+
+
 ## Motivation
 
 When I take photos, I often take a lot of similar shots so that I'm more likely to get a good picture.
@@ -29,6 +31,8 @@ This app is my replacement for the reviewing portion of Darkroom – I can switc
 
 [Darkroom]: https://darkroom.co/
 [Flag & Reject workflow]: https://medium.com/@jasperhauser/manage-your-growing-darkroom-photo-library-with-flag-reject-77c9e1816ef2
+
+
 
 ## How it works
 
@@ -45,3 +49,16 @@ If you're interested in the details of how I'm talking to Photos.app, you might 
 
 [event]: https://developer.mozilla.org/en-US/docs/Web/API/Element/keydown_event
 [PhotoKit framework]: https://developer.apple.com/documentation/photokit
+
+
+
+## Usage
+
+This is only designed for use on my Mac, so it might not work elsewhere.
+
+If you want to try, you can start the app with:
+
+```console
+$ pip3 install --user requirements.txt
+$ python3 server.py
+```
