@@ -80,6 +80,7 @@ extension PHAsset {
 }
 
 extension NSImage {
+  // Based on https://gist.github.com/zappycode/3b5e151d4d98407901af5748745f5845
   func jpegData() -> Data {
     let cgImage = self.cgImage(forProposedRect: nil, context: nil, hints: nil)!
     let bitmapRep = NSBitmapImageRep(cgImage: cgImage)

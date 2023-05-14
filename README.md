@@ -39,10 +39,9 @@ On the rendered page, I capture keyboard input with the [`document.keydown` even
 
 The web server runs scripts in a mixture of Swift/AppleScript, which update my photos in Photos.app as appropriate.
 Most of the heavy lifting is done with the [PhotoKit framework].
+I'm not touching the Photos SQLite database directly, or trying to analyse the structure of the Photos Library package.
 
 If you're interested in the details of how I'm talking to Photos.app, you might want to look in the [actions folder](./actions).
 
 [event]: https://developer.mozilla.org/en-US/docs/Web/API/Element/keydown_event
 [PhotoKit framework]: https://developer.apple.com/documentation/photokit
-
-
