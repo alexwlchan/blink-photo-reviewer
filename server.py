@@ -24,7 +24,19 @@ def get_asset_state(asset):
         if alb in {"Approved", "Rejected", "Needs Action"}
     ]
 
-    assert len(state_albums) <= 1
+    if len(state_albums) > 1:
+        print(
+            f"Photo {asset['localIdentifier']} has multiple states! {', '.join(state_albums)}",
+            file=sys.stderr,
+        )
+        subprocess.check_call(
+            [
+                "osascript",
+                "actions/open_photos_app.applescript",
+                asset["localIdentifier"],
+            ]
+        )
+        sys.exit(1)
 
     asset["display_albums"] = [
         alb for alb in asset["albums"] if alb not in state_albums
@@ -209,7 +221,7 @@ def open_photo():
 
 @app.route("/next-unreviewed")
 def next_unreviewed():
-    local_identifier = request.args['before']
+    local_identifier = request.args["before"]
 
     all_assets = photos_data.all_assets
 
@@ -224,7 +236,7 @@ def next_unreviewed():
     ]
     try:
         next_asset_id_to_review = unreviewed_assets[-1]["localIdentifier"]
-        return redirect(url_for('index', localIdentifier=next_asset_id_to_review))
+        return redirect(url_for("index", localIdentifier=next_asset_id_to_review))
     except IndexError:
         return b"", 404
 
