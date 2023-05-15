@@ -26,6 +26,7 @@ I can use the following commands:
 *   `f` – mark the photo as a favourite
 *   `c` – add the photo to my "Cross stitch" album
 *   `o` – open the photo in Photos.app
+*   `u` – jump to the next photo which is unreviewed
 
 
 

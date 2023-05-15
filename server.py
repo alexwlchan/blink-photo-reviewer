@@ -80,19 +80,6 @@ class PhotosData:
         this_asset = all_assets[position]
         next_five = all_assets[position + 1 : position + 6]
 
-        if this_asset["state"] != "Unknown":
-            unreviewed_assets = [
-                asset
-                for i, asset in enumerate(self.all_assets)
-                if i < position and asset["state"] == "Unknown"
-            ]
-            try:
-                next_asset_id_to_review = unreviewed_assets[-1]["localIdentifier"]
-            except IndexError:
-                pass
-        else:
-            next_asset_id_to_review = None
-
         states = collections.Counter(asset["state"] for asset in self.all_assets)
 
         return render_template(
@@ -102,7 +89,6 @@ class PhotosData:
             prev_five=prev_five,
             this_asset=this_asset,
             next_five=next_five,
-            next_asset_id_to_review=next_asset_id_to_review,
             states=states,
         )
 
@@ -219,6 +205,28 @@ def open_photo():
     )
 
     return b"", 204
+
+
+@app.route("/next-unreviewed")
+def next_unreviewed():
+    local_identifier = request.args['before']
+
+    all_assets = photos_data.all_assets
+
+    position = photos_data.all_positions[local_identifier]
+
+    this_asset = photos_data.all_assets[position]
+
+    unreviewed_assets = [
+        asset
+        for i, asset in enumerate(photos_data.all_assets)
+        if i <= position and asset["state"] == "Unknown"
+    ]
+    try:
+        next_asset_id_to_review = unreviewed_assets[-1]["localIdentifier"]
+        return redirect(url_for('index', localIdentifier=next_asset_id_to_review))
+    except IndexError:
+        return b"", 404
 
 
 @app.route("/refresh", methods=["POST"])

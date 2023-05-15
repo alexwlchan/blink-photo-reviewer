@@ -40,4 +40,8 @@ function handleKeyDown(event, thisIdentifier, nextIdentifier, prevIdentifier) {
     case "o":
       httpPOST(`/open?localIdentifier=${thisIdentifier}`);
       break;
+
+    case "u":
+      window.location = `/next-unreviewed?before=${thisIdentifier}`;
+      break;
   }}

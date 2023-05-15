@@ -16,11 +16,6 @@
     <li>
       <a href="#" onclick="httpPOST('/refresh'); window.location.reload();">refresh photos metadata</a>
     </li>
-    {% if next_asset_id_to_review %}
-    <li>
-      <a href="/?localIdentifier={{ next_asset_id_to_review }}">jump to next unreviewed photo</a>
-    </li>
-    {% endif %}
   </ul>
 </details>
 
