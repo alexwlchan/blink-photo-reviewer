@@ -60,52 +60,16 @@
 
 <img id="big" src="{{ url_for('image', localIdentifier=this_asset['localIdentifier']) }}">
 
+<script src="/static/reviewer.js"></script>
+
 <script>
-  function httpPOST(url) {
-    var xmlHttp = null;
-
-    xmlHttp = new XMLHttpRequest();
-    xmlHttp.open("POST", url, false);
-    xmlHttp.send(null);
-    return xmlHttp.responseText;
-  }
-
-  function httpDELETE(url) {
-    var xmlHttp = null;
-
-    xmlHttp = new XMLHttpRequest();
-    xmlHttp.open("DELETE", url, false);
-    xmlHttp.send(null);
-    return xmlHttp.responseText;
-  }
-
-  document.onkeydown = function(e) {
-    if (e.key === "ArrowLeft") {
-      window.location = "/?localIdentifier={{ prev_five[-1]['localIdentifier'] }}";
-    } else if (e.key === "ArrowRight") {
-      {% if next_five %}
-        window.location = "/?localIdentifier={{ next_five[0]['localIdentifier'] }}";
-      {% endif %}
-    } else
-    if (e.key === "1") {
-      window.location = "/actions?localIdentifier={{ this_asset['localIdentifier'] }}&action=toggle-approved";
-    } else if (e.key === "2") {
-      window.location = "/actions?localIdentifier={{ this_asset['localIdentifier'] }}&action=toggle-rejected";
-    } else if (e.key === "3") {
-      window.location = "/actions?localIdentifier={{ this_asset['localIdentifier'] }}&action=toggle-needs-action";
-    }
-    else
-    if (e.key === "f") {
-      window.location = "/actions?localIdentifier={{ this_asset['localIdentifier'] }}&action=toggle-favorite";
-    }
-    else
-    if (e.key === "c") {
-      window.location = "/actions?localIdentifier={{ this_asset['localIdentifier'] }}&action=toggle-cross-stitch";
-    }
-    else
-    if (e.key === "o") {
-      httpPOST("/open?localIdentifier={{ this_asset['localIdentifier'] }}")
-    }
+  document.onkeydown = function(event) {
+    return handleKeyDown(
+      event,
+      "{{ this_asset['localIdentifier'] }}",
+      {% if next_five %}"{{ next_five[0]['localIdentifier'] }}"{% else %}""{% endif %},
+      "{{ prev_five[-1]['localIdentifier'] }}",
+    )
   }
 </script>
 
