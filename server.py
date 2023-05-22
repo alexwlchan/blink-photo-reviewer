@@ -4,6 +4,7 @@ import collections
 import functools
 import json
 import os
+import random
 import subprocess
 import sys
 
@@ -237,6 +238,20 @@ def next_unreviewed():
     try:
         next_asset_id_to_review = unreviewed_assets[-1]["localIdentifier"]
         return redirect(url_for("index", localIdentifier=next_asset_id_to_review))
+    except IndexError:
+        return b"", 404
+
+
+@app.route("/random-unreviewed")
+def random_unreviewed():
+    unreviewed_assets = [
+        asset["localIdentifier"]
+        for i, asset in enumerate(photos_data.all_assets)
+        if asset["state"] == "Unknown"
+    ]
+
+    try:
+        return redirect(url_for("index", localIdentifier=random.choice(unreviewed_assets)))
     except IndexError:
         return b"", 404
 

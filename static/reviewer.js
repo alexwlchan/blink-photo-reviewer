@@ -44,4 +44,8 @@ function handleKeyDown(event, thisIdentifier, nextIdentifier, prevIdentifier) {
     case "u":
       window.location = `/next-unreviewed?before=${thisIdentifier}`;
       break;
+
+    case "?":
+      window.location = '/random-unreviewed';
+      break;
   }}

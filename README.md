@@ -27,6 +27,7 @@ I can use the following commands:
 *   `c` – add the photo to my "Cross stitch" album
 *   `o` – open the photo in Photos.app
 *   `u` – jump to the next photo which is unreviewed
+*   `?` – jump to a random photo which is unreviewed
 
 
 
