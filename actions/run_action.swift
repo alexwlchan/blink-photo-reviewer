@@ -69,6 +69,18 @@ func getPhoto(withLocalIdentifier localIdentifier: String) -> PHAsset {
 }
 
 extension PHAsset {
+  func albums() -> [PHAssetCollection] {
+    var result: [PHAssetCollection] = []
+
+    PHAssetCollection
+      .fetchAssetCollectionsContaining(self, with: .album, options: nil)
+      .enumerateObjects({ (collection, index, stop) in
+        result.append(collection)
+      })
+
+    return result
+  }
+
   /// Returns true if an asset is in the given album, false otherwise.
   func isInAlbum(_ album: PHAssetCollection) -> Bool {
     var result = false
@@ -93,6 +105,17 @@ extension PHAsset {
       PHAssetCollectionChangeRequest(for: album)!
 
     changeAlbum.removeAssets([self] as NSFastEnumeration)
+  }
+
+  /// Add a photo to an album.
+  ///
+  /// This expects to be run inside a performChangesAndWait change block;
+  /// see https://developer.apple.com/documentation/photokit/phphotolibrary/1620747-performchangesandwait.
+  func add(toAlbum album: PHAssetCollection) -> Void {
+    let changeAlbum =
+      PHAssetCollectionChangeRequest(for: album)!
+
+    changeAlbum.addAssets([self] as NSFastEnumeration)
   }
 
   /// Toggle a photo's inclusion in an album.
@@ -138,22 +161,36 @@ try PHPhotoLibrary.shared().performChangesAndWait {
       let rejected = getAlbum(withName: "Rejected")
       let needsAction = getAlbum(withName: "Needs Action")
 
-      if action == "toggle-approved" {
-        photo.toggle(inAlbum: approved)
-      } else {
+      let albums = photo.albums()
+
+      let isApproved = albums.contains(approved)
+      let isRejected = albums.contains(rejected)
+      let isNeedsAction = albums.contains(needsAction)
+
+      // Strictly speaking, the first condition is a combination of two:
+      //
+      //   1. The action is `toggle-approved` and the photo is approved,
+      //      in which case toggling means un-approving it.
+      //   2. The action is anything else and the photo is approved, in
+      //      which case setting the new status means removing approved.
+      //
+      // Similar logic applies for all three conditions.
+      if isApproved {
         photo.remove(fromAlbum: approved)
+      } else if action == "toggle-approved" {
+        photo.add(toAlbum: approved)
       }
 
-      if action == "toggle-rejected" {
-        photo.toggle(inAlbum: rejected)
-      } else {
+      if isRejected {
         photo.remove(fromAlbum: rejected)
+      } else if action == "toggle-rejected" {
+        photo.add(toAlbum: rejected)
       }
 
-      if action == "toggle-needs-action" {
-        photo.toggle(inAlbum: needsAction)
-      } else {
+      if isNeedsAction {
         photo.remove(fromAlbum: needsAction)
+      } else if action == "toggle-needs-action" {
+        photo.add(toAlbum: needsAction)
       }
 
     case "toggle-cross-stitch":
