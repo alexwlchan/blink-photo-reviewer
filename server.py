@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import collections
+import concurrent.futures
 import functools
 import json
 import os
@@ -56,6 +57,7 @@ def get_asset_state(asset):
 class PhotosData:
     def __init__(self):
         self.fetch_metadata()
+        self.executor = concurrent.futures.ThreadPoolExecutor()
 
     def fetch_metadata(self):
         print("Fetching metadata from Photos.app...")
@@ -95,6 +97,14 @@ class PhotosData:
 
         states = collections.Counter(asset["state"] for asset in self.all_assets)
 
+        for asset in [this_asset] + prev_five + next_five:
+            self.executor.submit(
+                lambda: get_image(asset['localIdentifier'])
+            )
+            self.executor.submit(
+                lambda: get_thumbnail(asset['localIdentifier'])
+            )
+
         return render_template(
             "index.html",
             assets=all_assets,
@@ -106,9 +116,13 @@ class PhotosData:
         )
 
     def run_action(self, local_identifier, action):
+        import time
+
+        t0 = time.time()
         subprocess.check_call(
             ["swift", "actions/run_action.swift", local_identifier, action]
         )
+        print(time.time() - t0)
 
         this_asset = self.all_assets[self.all_positions[local_identifier]]
 
@@ -179,19 +193,28 @@ def get_jpeg(local_identifier, *, size):
     ).decode("utf8")
 
 
+@functools.cache
+def get_thumbnail(local_identifier):
+    return get_jpeg(local_identifier, size=85 * 2)
+
+
+@functools.cache
+def get_image(local_identifier):
+    return get_jpeg(local_identifier, size=2048)
+
+
 @app.route("/thumbnail")
 def thumbnail():
     local_identifier = request.args["localIdentifier"]
 
-    thumbnail_path = get_jpeg(local_identifier, size=85 * 2)
-    return send_file(thumbnail_path)
+    return send_file(get_thumbnail(local_identifier))
 
 
 @app.route("/image")
 def image():
     local_identifier = request.args["localIdentifier"]
-    image_path = get_jpeg(local_identifier, size=2048)
-    return send_file(image_path)
+
+    return send_file(get_image(local_identifier))
 
 
 @app.route("/actions")
