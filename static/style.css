@@ -41,7 +41,7 @@ a {
   font-size: 13px;
   line-height: 16px;
   border-top-left-radius: 4px;
-  border-bottom-right-radius: 18px;
+  border-bottom-right-radius: 16px;
   margin-left: -3px;
   margin-top: -3px;
   font-family: serif;
@@ -57,16 +57,53 @@ a {
   padding-top: 2px;
   font-size: 17px;
   line-height: 16px;
-  border-bottom-right-radius: 18px;
+  border-bottom-right-radius: 19px;
+  border-width: 10px;
   margin-left: -2px;
-  margin-top: -1px;
+  margin-top: -2px;
   font-family: serif;
+}
+
+#thumbnails div.thumbnail:not(.state-Unknown) img {
+  mask-image:
+      radial-gradient(circle at top left, transparent 0, transparent 16px, black 16px),
+      radial-gradient(circle at top right, transparent 0, transparent 0px, black 0px),
+      radial-gradient(circle at bottom left, transparent 0, transparent 0px, black 0px),
+      radial-gradient(circle at bottom right, transparent 0, transparent 0px, black 0px);
+  mask-position: top left, top right, bottom left, bottom right;
+  mask-repeat: no-repeat;
+  mask-size: 50% 50%;
+}
+
+#thumbnails div.this_asset div:not(.state-Unknown) img {
+  mask-image:
+      radial-gradient(circle at top left, transparent 0, transparent 22px, black 22px),
+      radial-gradient(circle at top right, transparent 0, transparent 0px, black 0px),
+      radial-gradient(circle at bottom left, transparent 0, transparent 0px, black 0px),
+      radial-gradient(circle at bottom right, transparent 0, transparent 0px, black 0px);
+  mask-position: top left, top right, bottom left, bottom right;
+  mask-repeat: no-repeat;
+  mask-size: 50% 50%;
+}
+
+#thumbnails div.thumbnail:not(.state-Unknown) {
+  border-width: 2px;
+  margin: 0;
+}
+
+.this_asset {
+  margin-left: 3px;
+  margin-right: 3px;
+}
+
+#thumbnails .this_asset div.thumbnail:not(.state-Unknown) {
+  border-width: 3px;
+  margin: -1px;
+  border-radius: 8px;
 }
 
 #thumbnails div.thumbnail.state-Approved {
   border-color: green;
-  border-width: 2px;
-  margin: 0;
 }
 
 #thumbnails div.thumbnail.state-Approved .state {
@@ -75,8 +112,6 @@ a {
 
 #thumbnails div.thumbnail.state-Rejected {
   border-color: red;
-  border-width: 2px;
-  margin: 0;
 }
 
 #thumbnails div.thumbnail.state-Rejected .state {
@@ -91,8 +126,6 @@ a {
 
 #thumbnails div.thumbnail.state-Needs-Action {
   border-color: blue;
-  border-width: 2px;
-  margin: 0;
 }
 
 #thumbnails div.thumbnail.state-Needs-Action .state {
@@ -106,6 +139,12 @@ a {
 #thumbnails div.this_asset div.thumbnail {
   width: 85px;
   height: 85px;
+}
+
+#thumbnails div.this_asset div.thumbnail:not(.state-Unknown) img {
+  width: 83px;
+  height: 83px;
+  margin-top: 1px;
 }
 
 #thumbnails div.this_asset div.thumbnail img {
