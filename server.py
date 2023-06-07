@@ -8,6 +8,7 @@ import os
 import random
 import subprocess
 import sys
+import tempfile
 
 from flask import Flask, redirect, render_template, request, send_file, url_for
 import humanize
@@ -56,20 +57,35 @@ def get_asset_state(asset):
 
 class PhotosData:
     def __init__(self):
+        _, self.metadata_path = tempfile.mkstemp(suffix='.json')
         self.fetch_metadata()
         self.executor = concurrent.futures.ThreadPoolExecutor()
 
     def fetch_metadata(self):
         print("Fetching metadata from Photos.app...")
-        data = json.loads(
-            subprocess.check_output(["swift", "actions/get_structural_metadata.swift"])
-        )
+        proc = subprocess.Popen(["swift", "actions/get_structural_metadata.swift", self.metadata_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        while not os.path.exists(self.metadata_path):
+            pass
+
+        print(self.metadata_path)
+
+        print("Got initial metadata!")
+
+    @property
+    def all_positions(self):
+        data = json.load(open(self.metadata_path))
 
         all_assets = sorted(data["assets"], key=lambda a: a["creationDate"])
-        self.all_positions = {
+        return {
             asset["localIdentifier"]: i for i, asset in enumerate(all_assets)
         }
 
+    @property
+    def all_assets(self):
+        data = json.load(open(self.metadata_path))
+
+        all_assets = sorted(data["assets"], key=lambda a: a["creationDate"])
         all_albums = data["albums"]
 
         for alb in all_albums:
@@ -83,7 +99,7 @@ class PhotosData:
             }
             asset["state"] = get_asset_state(asset)
 
-        self.all_assets = all_assets
+        return all_assets
 
     @functools.lru_cache(maxsize=0 if "--debug" in sys.argv else None)
     def get_response(self, local_identifier):

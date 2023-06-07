@@ -73,9 +73,42 @@ func getAllAssets() -> [AssetData] {
   return allPhotos
 }
 
-let jsonEncoder = JSONEncoder()
-let jsonData = try jsonEncoder.encode(
-  Response(albums: getAllAlbums(), assets: getAllAssets())
-)
-let json = String(data: jsonData, encoding: String.Encoding.utf8)
-print(json!)
+class ChangeListener : NSObject, PHPhotoLibraryChangeObserver {
+  public override init() {
+    super.init()
+    PHPhotoLibrary.shared().register(self)
+  }
+
+  public func photoLibraryDidChange(_ changeInstance: PHChange) {
+    print(changeInstance)
+    getAllStructuralMetadata()
+  }
+}
+
+/// Gets all the structural metadata, and returns a JSON-formatted string.
+func getAllStructuralMetadata() -> Void {
+  let arguments = CommandLine.arguments
+
+  guard arguments.count == 2 else {
+    fputs("Usage: \(arguments[0]) METADATA_PATH\n", stderr)
+    exit(1)
+  }
+
+  let metadataPath = arguments[1]
+
+  let jsonEncoder = JSONEncoder()
+  let jsonData = try! jsonEncoder.encode(
+    Response(albums: getAllAlbums(), assets: getAllAssets())
+  )
+
+  let jsonString = String(data: jsonData, encoding: String.Encoding.utf8)!
+
+  try! jsonString.write(to: URL(fileURLWithPath: metadataPath), atomically: true, encoding: String.Encoding.utf8)
+}
+
+
+let listener = ChangeListener()
+
+getAllStructuralMetadata()
+
+sleep(100)
