@@ -57,36 +57,56 @@ def get_asset_state(asset):
 
 class PhotosData:
     def __init__(self):
-        _, self.metadata_path = tempfile.mkstemp(suffix='.json')
-        self.fetch_metadata()
+        _, self.metadata_path = tempfile.mkstemp(suffix=".json")
+        self.start_metadata_process()
         self.executor = concurrent.futures.ThreadPoolExecutor()
 
-    def fetch_metadata(self):
+    def start_metadata_process(self):
         print("Fetching metadata from Photos.app...")
-        proc = subprocess.Popen(["swift", "actions/get_structural_metadata.swift", self.metadata_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = subprocess.Popen(
+            ["swift", "actions/get_structural_metadata.swift", self.metadata_path],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
 
-        while not os.path.exists(self.metadata_path):
+        # Note: because of the way Swift does the atomic write, this file
+        # pops into existence several seconds before it contains any data;
+        # you can get a JSONDecodeError if you try to read the file
+        # immediately.
+        while (
+            not os.path.exists(self.metadata_path)
+            or os.path.getsize(self.metadata_path) == 0
+        ):
             pass
-
-        print(self.metadata_path)
 
         print("Got initial metadata!")
 
     @property
-    def all_positions(self):
-        data = json.load(open(self.metadata_path))
+    def structural_metadata(self):
+        if (
+            not hasattr(self, "_cached_metadata")
+            or os.path.getmtime(self.metadata_path) != self._cached_metadata["mtime"]
+        ):
+            self._cached_metadata = {
+                "mtime": os.path.getmtime(self.metadata_path),
+                "data": json.load(open(self.metadata_path)),
+            }
 
-        all_assets = sorted(data["assets"], key=lambda a: a["creationDate"])
-        return {
-            asset["localIdentifier"]: i for i, asset in enumerate(all_assets)
-        }
+        return self._cached_metadata["data"]
+
+    @property
+    def all_positions(self):
+        all_assets = sorted(
+            self.structural_metadata["assets"], key=lambda a: a["creationDate"]
+        )
+        return {asset["localIdentifier"]: i for i, asset in enumerate(all_assets)}
 
     @property
     def all_assets(self):
-        data = json.load(open(self.metadata_path))
-
-        all_assets = sorted(data["assets"], key=lambda a: a["creationDate"])
-        all_albums = data["albums"]
+        all_assets = sorted(
+            self.structural_metadata["assets"], key=lambda a: a["creationDate"]
+        )
+        all_albums = self.structural_metadata["albums"]
 
         for alb in all_albums:
             alb["assetIdentifiers"] = set(alb["assetIdentifiers"])
@@ -114,12 +134,8 @@ class PhotosData:
         states = collections.Counter(asset["state"] for asset in self.all_assets)
 
         for asset in [this_asset] + prev_five + next_five:
-            self.executor.submit(
-                lambda: get_image(asset['localIdentifier'])
-            )
-            self.executor.submit(
-                lambda: get_thumbnail(asset['localIdentifier'])
-            )
+            self.executor.submit(lambda: get_image(asset["localIdentifier"]))
+            self.executor.submit(lambda: get_thumbnail(asset["localIdentifier"]))
 
         return render_template(
             "index.html",
@@ -290,7 +306,9 @@ def random_unreviewed():
     ]
 
     try:
-        return redirect(url_for("index", localIdentifier=random.choice(unreviewed_assets)))
+        return redirect(
+            url_for("index", localIdentifier=random.choice(unreviewed_assets))
+        )
     except IndexError:
         return b"", 404
 

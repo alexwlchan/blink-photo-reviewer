@@ -79,8 +79,7 @@ class ChangeListener : NSObject, PHPhotoLibraryChangeObserver {
     PHPhotoLibrary.shared().register(self)
   }
 
-  public func photoLibraryDidChange(_ changeInstance: PHChange) {
-    print(changeInstance)
+  public func photoLibraryDidChange(_: PHChange) {
     getAllStructuralMetadata()
   }
 }
@@ -111,4 +110,4 @@ let listener = ChangeListener()
 
 getAllStructuralMetadata()
 
-sleep(100)
+sleep(1000 * 1000 * 1000)
