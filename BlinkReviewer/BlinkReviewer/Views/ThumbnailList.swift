@@ -17,7 +17,6 @@ struct ThumbnailList: View {
             ScrollView(.horizontal) {
                 LazyHStack(spacing: 5) {
                     // TODO: placeholder images for start/end
-                    // TODO: Allow tapping thumbnails to jump to that
                     
                     // Implementation note: we use the localIdentifier rather than the
                     // array index as the id here, because the app gets way slower if
