@@ -13,7 +13,10 @@ import SwiftUI
 func getAllPhotos() -> [PHAsset] {
     var photos: [PHAsset] = []
     
-    PHAsset.fetchAssets(with: PHAssetMediaType.image, options: nil)
+    let options = PHFetchOptions()
+    options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
+    
+    PHAsset.fetchAssets(with: PHAssetMediaType.image, options: options)
         .enumerateObjects({ (asset, _, _) in
             photos.append(asset)
         })
