@@ -10,7 +10,7 @@ import Photos
 
 struct PhotoReviewer: View {
     var assets: [PHAsset]
-    @State private var selectedAssetIndex: Int = 0
+    @State var selectedAssetIndex: Int
     
     var body: some View {
         VStack {

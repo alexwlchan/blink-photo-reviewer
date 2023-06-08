@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct ContentView: View {
+    var assets = getAllPhotos()
+    
     var body: some View {
-        PhotoReviewer(assets: getAllPhotos())
+        PhotoReviewer(assets: assets, selectedAssetIndex: assets.count - 1)
     }
 }
