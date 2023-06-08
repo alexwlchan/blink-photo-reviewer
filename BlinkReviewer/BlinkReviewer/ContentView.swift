@@ -19,22 +19,18 @@ struct AssetData: Codable, Identifiable {
 }
 
 struct ContentView: View {
-    var allPhotos: [AssetData] {
-        var photos: [AssetData] = []
+    var allPhotos: [PHAsset] {
+        var photos: [PHAsset] = []
         
         PHAsset.fetchAssets(with: PHAssetMediaType.image, options: nil)
             .enumerateObjects({ (asset, _, _) in
-                photos.append(
-                AssetData(
-                    localIdentifier: asset.localIdentifier,
-                    creationDate: asset.creationDate?.ISO8601Format(),
-                    isFavorite: asset.isFavorite
-                )
-            )
-        })
+                photos.append(asset)
+            })
         
         return photos
     }
+    
+    @State private var selectedAsset: PHAsset? = nil
     
     var body: some View {
         VStack {
@@ -47,16 +43,20 @@ struct ContentView: View {
                     .padding()
                     
                     LazyHStack(spacing: 10) {
-                        ForEach(allPhotos) { photo in
+                        ForEach(allPhotos, id: \.localIdentifier) { photo in
                             ThumbnailItem(label: "\(photo.localIdentifier)")
                         }
                     }.padding()
                 }.frame(height: 100)
             }
+            Divider()
             
+            if let thisSelectedAsset = selectedAsset {
+                PreviewImage(asset: thisSelectedAsset)
+            }
+        }.onAppear {
+            selectedAsset = allPhotos[0]
         }
-        Divider()
-        Spacer()
     }
 }
 

@@ -15,6 +15,7 @@
 		94D7510C2A31A798005859E7 /* BlinkReviewerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D7510B2A31A798005859E7 /* BlinkReviewerUITests.swift */; };
 		94D7510E2A31A798005859E7 /* BlinkReviewerUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D7510D2A31A798005859E7 /* BlinkReviewerUITestsLaunchTests.swift */; };
 		94D7511C2A31A7B1005859E7 /* ThumbnailItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D7511B2A31A7B1005859E7 /* ThumbnailItem.swift */; };
+		94D7511E2A31B243005859E7 /* PreviewImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D7511D2A31B243005859E7 /* PreviewImage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +48,7 @@
 		94D7510B2A31A798005859E7 /* BlinkReviewerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlinkReviewerUITests.swift; sourceTree = "<group>"; };
 		94D7510D2A31A798005859E7 /* BlinkReviewerUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlinkReviewerUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		94D7511B2A31A7B1005859E7 /* ThumbnailItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailItem.swift; sourceTree = "<group>"; };
+		94D7511D2A31B243005859E7 /* PreviewImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewImage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,6 +138,7 @@
 			isa = PBXGroup;
 			children = (
 				94D7511B2A31A7B1005859E7 /* ThumbnailItem.swift */,
+				94D7511D2A31B243005859E7 /* PreviewImage.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -272,6 +275,7 @@
 			files = (
 				94D7511C2A31A7B1005859E7 /* ThumbnailItem.swift in Sources */,
 				94D750F22A31A796005859E7 /* ContentView.swift in Sources */,
+				94D7511E2A31B243005859E7 /* PreviewImage.swift in Sources */,
 				94D750F02A31A796005859E7 /* BlinkReviewerApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
