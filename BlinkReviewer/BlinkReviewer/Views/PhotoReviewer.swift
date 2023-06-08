@@ -15,16 +15,17 @@ struct PhotoReviewer: View {
     var body: some View {
         VStack {
             Divider()
-            ScrollViewReader { value in
+            ScrollViewReader { proxy in
                 ScrollView(.horizontal) {
                     LazyHStack(spacing: 10) {
                         ForEach(assets, id: \.localIdentifier) { photo in
                             ThumbnailItem(label: "\(photo.localIdentifier)")
                         }
                     }.padding()
-                }.frame(height: 100).onAppear {
-                    value.scrollTo(assets[selectedAssetIndex].localIdentifier, anchor: .center)
-                }
+                }.frame(height: 100)
+                    .onChange(of: selectedAssetIndex, perform: { newIndex in
+                        proxy.scrollTo(assets[newIndex].localIdentifier, anchor: .center)
+                    })
             }
             Divider()
             
