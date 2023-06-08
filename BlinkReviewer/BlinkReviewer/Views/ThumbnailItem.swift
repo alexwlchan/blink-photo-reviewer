@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct ThumbnailItem: View {
-    @State var thumbnail: NSImage
-    @State var isSelected: Bool
+    var thumbnail: NSImage
+    var isSelected: Bool
     
     var size: CGFloat {
         isSelected ? 70.0 : 50.0
