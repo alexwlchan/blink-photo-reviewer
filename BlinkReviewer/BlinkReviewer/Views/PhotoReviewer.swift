@@ -20,8 +20,16 @@ struct PhotoReviewer: View {
                     LazyHStack(spacing: 5) {
                         // TODO: placeholder images for start/end
                         // TODO: Allow tapping thumbnails to jump to that
-                        ForEach(assets, id: \.localIdentifier) { asset in
-                            ThumbnailImage(thumbnail: asset.getThumbnail(), isSelected: assets[selectedAssetIndex].localIdentifier == asset.localIdentifier)
+                        
+                        // Implementation note: we use the localIdentifier rather than the
+                        // array index as the id here, because the app gets way slower if
+                        // you use the array index -- it tries to regenerate a bunch of
+                        // the thumbnails every time you change position.
+                        ForEach(Array(assets.enumerated()), id: \.element.localIdentifier) { index, asset in
+                            ThumbnailImage(
+                                thumbnail: asset.getThumbnail(),
+                                isSelected: assets[selectedAssetIndex].localIdentifier == asset.localIdentifier
+                            )
                         }
                     }.padding()
                 }.frame(height: 70)
