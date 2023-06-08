@@ -21,10 +21,10 @@ struct PhotoReviewer: View {
                         // TODO: placeholder images for start/end
                         // TODO: Allow tapping thumbnails to jump to that
                         ForEach(assets, id: \.localIdentifier) { asset in
-                            ThumbnailItem(thumbnail: asset.getThumbnail(), isSelected: assets[selectedAssetIndex].localIdentifier == asset.localIdentifier)
+                            ThumbnailImage(thumbnail: asset.getThumbnail(), isSelected: assets[selectedAssetIndex].localIdentifier == asset.localIdentifier)
                         }
                     }.padding()
-                }.frame(height: 100)
+                }.frame(height: 70)
                     .onChange(of: selectedAssetIndex, perform: { newIndex in
                         withAnimation {
                             proxy.scrollTo(assets[newIndex].localIdentifier, anchor: .center)
