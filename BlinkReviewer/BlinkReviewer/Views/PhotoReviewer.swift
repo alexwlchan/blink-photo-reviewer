@@ -18,8 +18,8 @@ struct PhotoReviewer: View {
             ScrollViewReader { proxy in
                 ScrollView(.horizontal) {
                     LazyHStack(spacing: 10) {
-                        ForEach(assets, id: \.localIdentifier) { photo in
-                            ThumbnailItem(label: "\(photo.localIdentifier)")
+                        ForEach(assets, id: \.localIdentifier) { asset in
+                            ThumbnailItem(asset: asset)
                         }
                     }.padding()
                 }.frame(height: 100)
