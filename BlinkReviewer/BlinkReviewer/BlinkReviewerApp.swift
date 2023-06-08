@@ -11,7 +11,8 @@ import SwiftUI
 struct BlinkReviewerApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            PhotoReviewer(selectedAssetIndex: PhotosLibrary().assets.count - 1)
+                .environmentObject(PhotosLibrary())
         }
     }
 }

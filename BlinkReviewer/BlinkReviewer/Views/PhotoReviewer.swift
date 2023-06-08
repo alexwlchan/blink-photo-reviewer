@@ -9,25 +9,31 @@ import SwiftUI
 import Photos
 
 struct PhotoReviewer: View {
-    var assets: [PHAsset]
+    @EnvironmentObject var photosLibrary: PhotosLibrary
+    
     @State var selectedAssetIndex: Int
     
     var body: some View {
-        VStack {
-            ThumbnailList(assets: assets, selectedAssetIndex: $selectedAssetIndex)
-            
-            PreviewImage(asset: assets[selectedAssetIndex])
-                .background(.black)
-        }.onAppear {
-            NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
-                handleKeyEvent(event)
-                return event
+        if photosLibrary.isPhotoLibraryAuthorized {
+            VStack {
+                ThumbnailList(selectedAssetIndex: $selectedAssetIndex)
+                    .environmentObject(photosLibrary)
+                
+                PreviewImage(asset: photosLibrary.assets[selectedAssetIndex])
+                    .background(.black)
+            }.onAppear {
+                NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+                    handleKeyEvent(event)
+                    return event
+                }
             }
+        } else {
+            Text("Waiting for Photos Library authorization…")
         }
     }
     
     private func handleKeyEvent(_ event: NSEvent) {
-        let asset = assets[selectedAssetIndex]
+        let asset = photosLibrary.assets[selectedAssetIndex]
         
         switch event.keyCode {
             case 123: // Left arrow key
@@ -36,7 +42,7 @@ struct PhotoReviewer: View {
                 }
             
             case 124: // Right arrow key
-                if selectedAssetIndex < assets.count - 1 {
+                if selectedAssetIndex < photosLibrary.assets.count - 1 {
                     selectedAssetIndex += 1
                 }
             
@@ -87,6 +93,8 @@ struct PhotoReviewer: View {
                 try! PHPhotoLibrary.shared().performChangesAndWait {
                     PHAssetChangeRequest(for: asset).isFavorite = !asset.isFavorite
                 }
+            
+                photosLibrary.updateAsset(atIndex: selectedAssetIndex)
             
             default:
                 print(event)

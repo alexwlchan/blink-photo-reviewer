@@ -9,15 +9,16 @@ import SwiftUI
 import Photos
 
 struct ThumbnailList: View {
-    var assets: [PHAsset]
+    @EnvironmentObject var photosLibrary: PhotosLibrary
+
     @Binding var selectedAssetIndex: Int
     
     func displaySelectedAssetIndex() -> Int {
-        assets.count - 1 - selectedAssetIndex
+        photosLibrary.assets.count - 1 - selectedAssetIndex
     }
     
     func displayAssets() -> [PHAsset] {
-        assets.reversed()
+        photosLibrary.assets.reversed()
     }
     
     var body: some View {
@@ -37,7 +38,7 @@ struct ThumbnailList: View {
                             isFavorite: asset.isFavorite,
                             isSelected: displayAssets()[displaySelectedAssetIndex()].localIdentifier == asset.localIdentifier
                         ).onTapGesture {
-                            selectedAssetIndex = assets.count - 1 - index
+                            selectedAssetIndex = photosLibrary.assets.count - 1 - index
                         }
                     }
                     // Note: these two uses of RTL direction are a way to get the LazyHStack
