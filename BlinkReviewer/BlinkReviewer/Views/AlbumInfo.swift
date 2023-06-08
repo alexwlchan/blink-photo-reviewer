@@ -17,19 +17,17 @@ import Photos
 struct AlbumInfo: View {
     var asset: PHAsset
     
-    // This was chosen to match the icon used for albums in the sidebar
-    // in Photos.
-    private var albumImage = Image(systemName: "rectangle.stack")
-    
     var body: some View {
         HStack {
             ForEach(asset.albums(), id: \.localIdentifier) { album in
                 if let title = album.localizedTitle {
-                    Text("\(albumImage) \(title)")
+                    // The icon was chosen to match the one used for albums
+                    // in the sidebar in Photos.
+                    Text("\(Image(systemName: "rectangle.stack")) \(title)")
                         .fontWeight(.bold)
                         .font(.title2)
                         .padding(5)
-                        .background(Color(red: 1.0, green: 1.0, blue: 1.0, opacity: 0.9))
+                        .background(.white.opacity(0.9))
                         .cornerRadius(7.0)
                 }
             }
