@@ -32,7 +32,7 @@ struct ThumbnailList: View {
                     // the thumbnails every time you change position.
                     ForEach(Array(displayAssets().enumerated()), id: \.element.localIdentifier) { index, asset in
                         ThumbnailImage(
-                            thumbnail: asset.getThumbnail(),
+                            asset: asset,
                             isSelected: displayAssets()[displaySelectedAssetIndex()].localIdentifier == asset.localIdentifier
                         ).onTapGesture {
                             selectedAssetIndex = assets.count - 1 - index

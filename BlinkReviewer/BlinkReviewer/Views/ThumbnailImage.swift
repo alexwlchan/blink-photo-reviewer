@@ -6,13 +6,14 @@
 //
 
 import SwiftUI
+import Photos
 
 /// Renders a square thumbnail for an image.
 ///
 /// The image will be expanded to fill the square, and may be clipped
 /// if the original aspect ratio isn't square.
 struct ThumbnailImage: View {
-    var thumbnail: NSImage
+    var asset: PHAsset
     var isSelected: Bool
     
     var size: CGFloat {
@@ -20,7 +21,7 @@ struct ThumbnailImage: View {
     }
     
     var body: some View {
-        Image(nsImage: thumbnail)
+        Image(nsImage: asset.getThumbnail())
             .resizable()
             // Note: it's taken several attempts to get this working correctly;
             // it behaves differently in the running app to the SwiftUI preview.
@@ -34,14 +35,13 @@ struct ThumbnailImage: View {
             .scaledToFill()
             .frame(width: size, height: size, alignment: .center)
             .clipped()
-    }
-}
-
-struct ThumbnailItem_Previews: PreviewProvider {
-    static var previews: some View {
-        ThumbnailImage(
-            thumbnail: NSImage(named: "IMG_5934")!,
-            isSelected: true
-        )
+            .overlay(alignment: Alignment(horizontal: .leading, vertical: .bottom)) {
+                if (asset.isFavorite) {
+                    Image(systemName: "heart.fill")
+                        .foregroundColor(.white)
+                        .padding(2)
+                        .shadow(radius: 2.0)
+                }
+            }
     }
 }
