@@ -29,6 +29,7 @@ struct ThumbnailImage: View {
     var body: some View {
         Image(nsImage: thumbnail)
             .resizable()
+            .saturation(state == .Rejected ? 0.0 : 1.0)
             // Note: it's taken several attempts to get this working correctly;
             // it behaves differently in the running app to the SwiftUI preview.
             //
