@@ -95,6 +95,16 @@ struct PhotoReviewer: View {
                 }
             
                 photosLibrary.updateAsset(atIndex: selectedAssetIndex)
+
+            case 8: // "c"
+                let crossStitch = getAlbum(withName: "Cross stitch")
+            
+                try! PHPhotoLibrary.shared().performChangesAndWait {
+                    asset.toggle(inAlbum: crossStitch)
+                }
+            
+                photosLibrary.updateAsset(atIndex: selectedAssetIndex)
+
             
             default:
                 print(event)
