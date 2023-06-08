@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		94D2C8B92A320E6F00BEE15B /* ReviewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D2C8B82A320E6F00BEE15B /* ReviewState.swift */; };
-		94D2C8BB2A320EFD00BEE15B /* SwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D2C8BA2A320EFD00BEE15B /* SwiftUIView.swift */; };
 		94D750F02A31A796005859E7 /* BlinkReviewerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D750EF2A31A796005859E7 /* BlinkReviewerApp.swift */; };
 		94D750F22A31A796005859E7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D750F12A31A796005859E7 /* ContentView.swift */; };
 		94D750F42A31A797005859E7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 94D750F32A31A797005859E7 /* Assets.xcassets */; };
@@ -43,7 +42,6 @@
 
 /* Begin PBXFileReference section */
 		94D2C8B82A320E6F00BEE15B /* ReviewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewState.swift; sourceTree = "<group>"; };
-		94D2C8BA2A320EFD00BEE15B /* SwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIView.swift; sourceTree = "<group>"; };
 		94D750EC2A31A796005859E7 /* BlinkReviewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BlinkReviewer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		94D750EF2A31A796005859E7 /* BlinkReviewerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlinkReviewerApp.swift; sourceTree = "<group>"; };
 		94D750F12A31A796005859E7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -160,7 +158,6 @@
 			isa = PBXGroup;
 			children = (
 				94D7511B2A31A7B1005859E7 /* ThumbnailImage.swift */,
-				94D2C8BA2A320EFD00BEE15B /* SwiftUIView.swift */,
 				94D7511D2A31B243005859E7 /* PreviewImage.swift */,
 				94D7511F2A31B53E005859E7 /* AlbumInfo.swift */,
 				94D751212A31BD8E005859E7 /* PhotoReviewer.swift */,
@@ -311,7 +308,6 @@
 				94D750F22A31A796005859E7 /* ContentView.swift in Sources */,
 				94D7512B2A31D6AC005859E7 /* AssetHelpers.swift in Sources */,
 				94D7511E2A31B243005859E7 /* PreviewImage.swift in Sources */,
-				94D2C8BB2A320EFD00BEE15B /* SwiftUIView.swift in Sources */,
 				94D750F02A31A796005859E7 /* BlinkReviewerApp.swift in Sources */,
 				94D751202A31B53E005859E7 /* AlbumInfo.swift in Sources */,
 				94D751302A31DC4A005859E7 /* ThumbnailList.swift in Sources */,
