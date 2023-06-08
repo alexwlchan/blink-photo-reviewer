@@ -14,15 +14,10 @@ struct PhotoReviewer: View {
     
     var body: some View {
         VStack {
-            Divider()
-            
             ThumbnailList(assets: assets, selectedAssetIndex: $selectedAssetIndex)
             
-            Divider()
-            
             PreviewImage(asset: assets[selectedAssetIndex])
-            
-            Spacer()
+                .background(.black)
         }.onAppear {
             NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
                 handleKeyEvent(event)
