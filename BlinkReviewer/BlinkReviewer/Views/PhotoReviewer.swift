@@ -29,7 +29,9 @@ struct PhotoReviewer: View {
                             ThumbnailImage(
                                 thumbnail: asset.getThumbnail(),
                                 isSelected: assets[selectedAssetIndex].localIdentifier == asset.localIdentifier
-                            )
+                            ).onTapGesture {
+                                selectedAssetIndex = index
+                            }
                         }
                     }.padding()
                 }.frame(height: 70)
