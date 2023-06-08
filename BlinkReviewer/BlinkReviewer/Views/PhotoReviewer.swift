@@ -83,6 +83,11 @@ struct PhotoReviewer: View {
                     selectedAssetIndex -= 1
                 }
             
+            case 3: // "f"
+                try! PHPhotoLibrary.shared().performChangesAndWait {
+                    PHAssetChangeRequest(for: asset).isFavorite = !asset.isFavorite
+                }
+            
             default:
                 print(event)
                 break
