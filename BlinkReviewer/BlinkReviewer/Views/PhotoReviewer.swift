@@ -25,7 +25,10 @@ struct PhotoReviewer: View {
                     }.padding()
                 }.frame(height: 100)
                     .onChange(of: selectedAssetIndex, perform: { newIndex in
-                        proxy.scrollTo(assets[newIndex].localIdentifier, anchor: .center)
+                        withAnimation {
+                            proxy.scrollTo(assets[newIndex].localIdentifier, anchor: .center)
+                        }
+                        
                     })
             }
             Divider()
@@ -35,11 +38,7 @@ struct PhotoReviewer: View {
             Spacer()
         }.onAppear {
             NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
-                
-                print("about to handle event \(event)")
                 handleKeyEvent(event)
-                print("finished handling event \(event)")
-                
                 return event
             }
         }

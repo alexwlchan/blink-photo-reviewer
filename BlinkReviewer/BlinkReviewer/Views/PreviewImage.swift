@@ -14,6 +14,8 @@ extension PHAsset {
         // by Francois Nadeau: https://stackoverflow.com/a/48755517/1558022
 
         let options = PHImageRequestOptions()
+        
+        // do I still need this?
         options.isSynchronous = true
 
         // If i don't set this value, then sometimes I get an error like
@@ -33,7 +35,7 @@ extension PHAsset {
         PHCachingImageManager()
             .requestImage(
                 for: self,
-                targetSize: CGSize(width: 140, height: 140),
+                targetSize: CGSize(width: 70, height: 70),
                 contentMode: .aspectFill,
                 options: options,
                 resultHandler: { (result, info) -> Void in

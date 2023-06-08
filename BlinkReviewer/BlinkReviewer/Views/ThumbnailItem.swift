@@ -20,8 +20,10 @@ struct ThumbnailItem: View {
             .resizable()
             // Note: order of properties is important, frame before aspectRatio otherwise breaks!
             // only in running app, not SwiftUI preview \_/
+            .scaledToFill()
             .frame(width: size, height: size, alignment: .center)
-            .aspectRatio(contentMode: .fill)
+            .clipped()
+            .border(.green)
     }
 }
 
