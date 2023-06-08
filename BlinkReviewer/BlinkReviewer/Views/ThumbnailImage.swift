@@ -8,54 +8,18 @@
 import SwiftUI
 import Photos
 
-enum ReviewState {
-    case Approved
-    case Rejected
-    case NeedsAction
-}
-
 /// Renders a square thumbnail for an image.
 ///
 /// The image will be expanded to fill the square, and may be clipped
 /// if the original aspect ratio isn't square.
 struct ThumbnailImage: View {
-    var asset: PHAsset
+    var thumbnail: NSImage
+    var state: ReviewState?
+    var isFavorite: Bool
     var isSelected: Bool
     
     var size: CGFloat {
         isSelected ? 70.0 : 50.0
-    }
-    
-    var state: ReviewState? {
-        var result: ReviewState? = nil
-        
-        asset.albums().forEach { album in
-            switch (album.localizedTitle) {
-                case "Approved":
-                    result = .Approved
-                case "Rejected":
-                    result = .Rejected
-                case "Needs Action":
-                    result = .NeedsAction
-                default:
-                    break
-            }
-        }
-        
-        return result
-    }
-    
-    var stateColor: Color {
-        switch (state) {
-            case .Approved:
-                return .green
-            case .Rejected:
-                return .red
-            case .NeedsAction:
-                return .blue
-            default:
-                return .gray.opacity(0.5)
-        }
     }
     
     var cornerRadius: CGFloat {
@@ -63,7 +27,7 @@ struct ThumbnailImage: View {
     }
     
     var body: some View {
-        Image(nsImage: asset.getThumbnail())
+        Image(nsImage: thumbnail)
             .resizable()
             // Note: it's taken several attempts to get this working correctly;
             // it behaves differently in the running app to the SwiftUI preview.
@@ -77,14 +41,17 @@ struct ThumbnailImage: View {
             .scaledToFill()
             .frame(width: size, height: size, alignment: .center)
             .clipped()
-            .cornerRadius(cornerRadius)
             .overlay(
                 // https://www.appcoda.com/swiftui-border/
                 RoundedRectangle(cornerRadius: cornerRadius)
-                    .stroke(stateColor, lineWidth: state != nil ? 3.0 : 1.0)
+                    .stroke(
+                        state?.color() ?? .gray.opacity(0.7),
+                        lineWidth: state != nil ? 3.0 : 1.0
+                    )
             )
+            .cornerRadius(cornerRadius)
             .overlay(alignment: Alignment(horizontal: .leading, vertical: .bottom)) {
-                if (asset.isFavorite) {
+                if (isFavorite) {
                     Image(systemName: "heart.fill")
                         .foregroundColor(.white)
                         .padding(2)
@@ -92,11 +59,46 @@ struct ThumbnailImage: View {
                 }
             }
             .overlay(alignment: Alignment(horizontal: .leading, vertical: .top)) {
-                if (state != nil) {
-                    Image(systemName: "checkmark.circle.fill").foregroundColor(stateColor).accentColor(.white).padding(2).font(.title2)
-//                    "info.circle.fill"
-//                    "trash.circle.fill
+                if let thisState = state {
+                    thisState.icon()
+                        .foregroundStyle(.white, thisState.color())
+                        .symbolRenderingMode(.palette)
+                        .padding(2)
+                        .font(.title2)
+                        .shadow(radius: 2.0)
                 }
             }
+    }
+}
+
+struct ThumbnailImage_Previews: PreviewProvider {
+    static var previews: some View {
+        ThumbnailImage(
+            thumbnail: NSImage(named: "IMG_5934")!,
+            state: .Approved,
+            isFavorite: true,
+            isSelected: true
+        ).previewDisplayName("approved, favorite")
+        
+        ThumbnailImage(
+            thumbnail: NSImage(named: "IMG_5934")!,
+            state: .Rejected,
+            isFavorite: false,
+            isSelected: false
+        ).previewDisplayName("rejected")
+        
+        ThumbnailImage(
+            thumbnail: NSImage(named: "IMG_5934")!,
+            state: .NeedsAction,
+            isFavorite: false,
+            isSelected: false
+        ).previewDisplayName("needs action")
+        
+        ThumbnailImage(
+            thumbnail: NSImage(named: "IMG_5934")!,
+            state: nil,
+            isFavorite: false,
+            isSelected: false
+        ).previewDisplayName("no state")
     }
 }
