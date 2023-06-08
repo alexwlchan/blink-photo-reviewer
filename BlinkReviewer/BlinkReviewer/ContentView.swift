@@ -6,21 +6,9 @@
 //
 
 import SwiftUI
-import Photos
 
 struct ContentView: View {
-    var allPhotos: [PHAsset] {
-        var photos: [PHAsset] = []
-        
-        PHAsset.fetchAssets(with: PHAssetMediaType.image, options: nil)
-            .enumerateObjects({ (asset, _, _) in
-                photos.append(asset)
-            })
-        
-        return photos
-    }
-    
     var body: some View {
-        PhotoReviewer(assets: allPhotos)
+        PhotoReviewer(assets: getAllPhotos())
     }
 }

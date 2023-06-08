@@ -18,6 +18,7 @@
 		94D7511E2A31B243005859E7 /* PreviewImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D7511D2A31B243005859E7 /* PreviewImage.swift */; };
 		94D751202A31B53E005859E7 /* AlbumInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D7511F2A31B53E005859E7 /* AlbumInfo.swift */; };
 		94D751222A31BD8E005859E7 /* PhotoReviewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D751212A31BD8E005859E7 /* PhotoReviewer.swift */; };
+		94D751292A31D629005859E7 /* Assets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D751282A31D629005859E7 /* Assets.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +54,7 @@
 		94D7511D2A31B243005859E7 /* PreviewImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewImage.swift; sourceTree = "<group>"; };
 		94D7511F2A31B53E005859E7 /* AlbumInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumInfo.swift; sourceTree = "<group>"; };
 		94D751212A31BD8E005859E7 /* PhotoReviewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoReviewer.swift; sourceTree = "<group>"; };
+		94D751282A31D629005859E7 /* Assets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assets.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +105,7 @@
 		94D750EE2A31A796005859E7 /* BlinkReviewer */ = {
 			isa = PBXGroup;
 			children = (
+				94D751272A31D61D005859E7 /* Photos */,
 				94D7511A2A31A7A6005859E7 /* Views */,
 				94D750EF2A31A796005859E7 /* BlinkReviewerApp.swift */,
 				94D750F12A31A796005859E7 /* ContentView.swift */,
@@ -147,6 +150,14 @@
 				94D751212A31BD8E005859E7 /* PhotoReviewer.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		94D751272A31D61D005859E7 /* Photos */ = {
+			isa = PBXGroup;
+			children = (
+				94D751282A31D629005859E7 /* Assets.swift */,
+			);
+			path = Photos;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -280,6 +291,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				94D7511C2A31A7B1005859E7 /* ThumbnailItem.swift in Sources */,
+				94D751292A31D629005859E7 /* Assets.swift in Sources */,
 				94D750F22A31A796005859E7 /* ContentView.swift in Sources */,
 				94D7511E2A31B243005859E7 /* PreviewImage.swift in Sources */,
 				94D750F02A31A796005859E7 /* BlinkReviewerApp.swift in Sources */,
