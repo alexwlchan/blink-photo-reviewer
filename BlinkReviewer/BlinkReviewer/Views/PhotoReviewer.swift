@@ -19,6 +19,7 @@ struct PhotoReviewer: View {
                 ScrollView(.horizontal) {
                     LazyHStack(spacing: 5) {
                         // TODO: placeholder images for start/end
+                        // TODO: Allow tapping thumbnails to jump to that
                         ForEach(assets, id: \.localIdentifier) { asset in
                             ThumbnailItem(thumbnail: asset.getThumbnail(), isSelected: assets[selectedAssetIndex].localIdentifier == asset.localIdentifier)
                         }
