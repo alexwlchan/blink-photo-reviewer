@@ -23,7 +23,6 @@ struct ThumbnailItem: View {
             .scaledToFill()
             .frame(width: size, height: size, alignment: .center)
             .clipped()
-            .border(.green)
     }
 }
 
