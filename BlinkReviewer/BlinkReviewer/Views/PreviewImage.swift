@@ -9,6 +9,43 @@ import Photos
 import SwiftUI
 
 extension PHAsset {
+    func getThumbnail() -> NSImage {
+        // This implementation is based on code in a Stack Overflow answer
+        // by Francois Nadeau: https://stackoverflow.com/a/48755517/1558022
+
+        let options = PHImageRequestOptions()
+        options.isSynchronous = true
+
+        // If i don't set this value, then sometimes I get an error like
+        // this in the `info` variable:
+        //
+        //      Error Domain=PHPhotosErrorDomain Code=3164 "(null)"
+        //
+        // This means that the asset is in the cloud, and by default Photos
+        // isn't allowed to download assets here.  Apple's documentation
+        // suggests adding this option as the fix.
+        //
+        // See https://developer.apple.com/documentation/photokit/phphotoserror/phphotoserrornetworkaccessrequired
+        options.isNetworkAccessAllowed = true
+
+        var image = NSImage()
+        
+        PHCachingImageManager()
+            .requestImage(
+                for: self,
+                targetSize: CGSize(width: 140, height: 140),
+                contentMode: .aspectFill,
+                options: options,
+                resultHandler: { (result, info) -> Void in
+                    image = result!
+                }
+            )
+    
+        print(image)
+
+        return image
+    }
+    
     func getImage() -> NSImage {
         // This implementation is based on code in a Stack Overflow answer
         // by Francois Nadeau: https://stackoverflow.com/a/48755517/1558022

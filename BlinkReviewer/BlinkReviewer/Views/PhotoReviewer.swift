@@ -19,7 +19,7 @@ struct PhotoReviewer: View {
                 ScrollView(.horizontal) {
                     LazyHStack(spacing: 10) {
                         ForEach(assets, id: \.localIdentifier) { asset in
-                            ThumbnailItem(asset: asset)
+                            ThumbnailItem(thumbnail: asset.getThumbnail(), isSelected: assets[selectedAssetIndex].localIdentifier == asset.localIdentifier)
                         }
                     }.padding()
                 }.frame(height: 100)
