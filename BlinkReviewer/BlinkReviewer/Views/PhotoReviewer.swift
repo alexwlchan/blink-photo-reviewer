@@ -17,7 +17,8 @@ struct PhotoReviewer: View {
             Divider()
             ScrollViewReader { proxy in
                 ScrollView(.horizontal) {
-                    LazyHStack(spacing: 10) {
+                    LazyHStack(spacing: 5) {
+                        // TODO: placeholder images for start/end
                         ForEach(assets, id: \.localIdentifier) { asset in
                             ThumbnailItem(thumbnail: asset.getThumbnail(), isSelected: assets[selectedAssetIndex].localIdentifier == asset.localIdentifier)
                         }

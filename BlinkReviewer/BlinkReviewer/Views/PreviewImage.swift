@@ -40,8 +40,6 @@ extension PHAsset {
                     image = result!
                 }
             )
-    
-        print(image)
 
         return image
     }

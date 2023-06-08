@@ -22,7 +22,6 @@ struct ThumbnailItem: View {
             // only in running app, not SwiftUI preview \_/
             .frame(width: size, height: size, alignment: .center)
             .aspectRatio(contentMode: .fill)
-            .border(isSelected ? .red : .green)
     }
 }
 
