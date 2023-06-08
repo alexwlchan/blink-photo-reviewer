@@ -21,15 +21,20 @@ struct AlbumInfo: View {
         HStack {
             ForEach(asset.albums(), id: \.localIdentifier) { album in
                 if let title = album.localizedTitle {
-                    // The icon was chosen to match the one used for albums
-                    // in the sidebar in Photos.
-                    Text("\(Image(systemName: "rectangle.stack")) \(title)")
-                        .fontWeight(.bold)
-                        .font(.title2)
-                        .padding(5)
-                        .background(.white.opacity(0.9))
-                        .cornerRadius(7.0)
-                        .shadow(radius: 2.0)
+                    // Don't show the names of the meta-albums used to manage
+                    // review state.
+                    if (title != "Approved" && title != "Rejected" && title != "Needs Action") {
+                        
+                        // The icon was chosen to match the one used for albums
+                        // in the sidebar in Photos.
+                        Text("\(Image(systemName: "rectangle.stack")) \(title)")
+                            .fontWeight(.bold)
+                            .font(.title2)
+                            .padding(5)
+                            .background(.white.opacity(0.9))
+                            .cornerRadius(7.0)
+                            .shadow(radius: 2.0)
+                    }
                 }
             }
         }.padding()
