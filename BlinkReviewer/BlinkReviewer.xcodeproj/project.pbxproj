@@ -16,6 +16,7 @@
 		94D7510E2A31A798005859E7 /* BlinkReviewerUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D7510D2A31A798005859E7 /* BlinkReviewerUITestsLaunchTests.swift */; };
 		94D7511C2A31A7B1005859E7 /* ThumbnailItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D7511B2A31A7B1005859E7 /* ThumbnailItem.swift */; };
 		94D7511E2A31B243005859E7 /* PreviewImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D7511D2A31B243005859E7 /* PreviewImage.swift */; };
+		94D751202A31B53E005859E7 /* AlbumInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D7511F2A31B53E005859E7 /* AlbumInfo.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +50,7 @@
 		94D7510D2A31A798005859E7 /* BlinkReviewerUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlinkReviewerUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		94D7511B2A31A7B1005859E7 /* ThumbnailItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailItem.swift; sourceTree = "<group>"; };
 		94D7511D2A31B243005859E7 /* PreviewImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewImage.swift; sourceTree = "<group>"; };
+		94D7511F2A31B53E005859E7 /* AlbumInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumInfo.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +141,7 @@
 			children = (
 				94D7511B2A31A7B1005859E7 /* ThumbnailItem.swift */,
 				94D7511D2A31B243005859E7 /* PreviewImage.swift */,
+				94D7511F2A31B53E005859E7 /* AlbumInfo.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -277,6 +280,7 @@
 				94D750F22A31A796005859E7 /* ContentView.swift in Sources */,
 				94D7511E2A31B243005859E7 /* PreviewImage.swift in Sources */,
 				94D750F02A31A796005859E7 /* BlinkReviewerApp.swift in Sources */,
+				94D751202A31B53E005859E7 /* AlbumInfo.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

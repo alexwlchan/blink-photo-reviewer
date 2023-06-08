@@ -30,6 +30,7 @@ struct ContentView: View {
         return photos
     }
     
+    @State private var selectedAssetIndex: Int = 0
     @State private var selectedAsset: PHAsset? = nil
     
     var body: some View {
@@ -51,17 +52,9 @@ struct ContentView: View {
             }
             Divider()
             
-            if let thisSelectedAsset = selectedAsset {
-                PreviewImage(asset: thisSelectedAsset)
-            }
-        }.onAppear {
-            selectedAsset = allPhotos[0]
+            PreviewImage(asset: allPhotos[selectedAssetIndex])
+            
+            Spacer()
         }
     }
 }
-
-//struct ContentView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ContentView()
-//    }
-//}
