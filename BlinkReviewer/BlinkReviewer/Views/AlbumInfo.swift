@@ -34,7 +34,7 @@ struct AlbumInfo: View {
                         .font(.title2)
                         .padding(5)
                         .background(Color(red: 1.0, green: 1.0, blue: 1.0, opacity: 0.9))
-                        .cornerRadius(10.0)
+                        .cornerRadius(7.0)
                 }
             }
         }.padding()

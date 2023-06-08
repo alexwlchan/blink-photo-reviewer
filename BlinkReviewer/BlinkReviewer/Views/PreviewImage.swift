@@ -29,8 +29,22 @@ extension PHAsset {
         options.isNetworkAccessAllowed = true
 
         var image = NSImage()
+        
+        let start = DispatchTime.now()
+        var elapsed = start
 
-        PHImageManager.default()
+        func printElapsed(_ label: String) -> Void {
+          let now = DispatchTime.now()
+
+          let totalInterval = Double(now.uptimeNanoseconds - start.uptimeNanoseconds) / 1_000_000_000
+          let elapsedInterval = Double(now.uptimeNanoseconds - elapsed.uptimeNanoseconds) / 1_000_000_000
+
+          elapsed = DispatchTime.now()
+
+          print("Time to \(label):\n  \(elapsedInterval) seconds (\(totalInterval) total)")
+        }
+        
+        PHCachingImageManager()
             .requestImage(
                 for: self,
                 targetSize: PHImageManagerMaximumSize,
@@ -40,6 +54,8 @@ extension PHAsset {
                     image = result!
                 }
             )
+        
+        printElapsed("getting image \(self.localIdentifier)")
 
         return image
     }
@@ -64,14 +80,6 @@ struct PreviewImage: View {
                     Spacer()
                 }
             }.padding()
-            
-//            VStack {
-//                Text(asset.localIdentifier)
-//                    .background(.white)
-//                
-//                Spacer()
-//            }
         }
-        
     }
 }
