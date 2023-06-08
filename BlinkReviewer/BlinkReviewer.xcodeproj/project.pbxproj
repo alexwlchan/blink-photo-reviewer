@@ -18,7 +18,7 @@
 		94D7511E2A31B243005859E7 /* PreviewImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D7511D2A31B243005859E7 /* PreviewImage.swift */; };
 		94D751202A31B53E005859E7 /* AlbumInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D7511F2A31B53E005859E7 /* AlbumInfo.swift */; };
 		94D751222A31BD8E005859E7 /* PhotoReviewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D751212A31BD8E005859E7 /* PhotoReviewer.swift */; };
-		94D751292A31D629005859E7 /* Assets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D751282A31D629005859E7 /* Assets.swift */; };
+		94D7512B2A31D6AC005859E7 /* AssetHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D7512A2A31D6AC005859E7 /* AssetHelpers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,7 +54,7 @@
 		94D7511D2A31B243005859E7 /* PreviewImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewImage.swift; sourceTree = "<group>"; };
 		94D7511F2A31B53E005859E7 /* AlbumInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumInfo.swift; sourceTree = "<group>"; };
 		94D751212A31BD8E005859E7 /* PhotoReviewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoReviewer.swift; sourceTree = "<group>"; };
-		94D751282A31D629005859E7 /* Assets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assets.swift; sourceTree = "<group>"; };
+		94D7512A2A31D6AC005859E7 /* AssetHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetHelpers.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -155,7 +155,7 @@
 		94D751272A31D61D005859E7 /* Photos */ = {
 			isa = PBXGroup;
 			children = (
-				94D751282A31D629005859E7 /* Assets.swift */,
+				94D7512A2A31D6AC005859E7 /* AssetHelpers.swift */,
 			);
 			path = Photos;
 			sourceTree = "<group>";
@@ -291,8 +291,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				94D7511C2A31A7B1005859E7 /* ThumbnailItem.swift in Sources */,
-				94D751292A31D629005859E7 /* Assets.swift in Sources */,
 				94D750F22A31A796005859E7 /* ContentView.swift in Sources */,
+				94D7512B2A31D6AC005859E7 /* AssetHelpers.swift in Sources */,
 				94D7511E2A31B243005859E7 /* PreviewImage.swift in Sources */,
 				94D750F02A31A796005859E7 /* BlinkReviewerApp.swift in Sources */,
 				94D751202A31B53E005859E7 /* AlbumInfo.swift in Sources */,
