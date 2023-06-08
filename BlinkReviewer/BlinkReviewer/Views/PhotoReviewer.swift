@@ -14,29 +14,10 @@ struct PhotoReviewer: View {
     
     var body: some View {
         VStack {
-            Divider()
-            ScrollViewReader { proxy in
-                ScrollView(.horizontal) {
-                    LazyHStack(spacing: 5) {
-                        // TODO: placeholder images for start/end
-                        // TODO: Allow tapping thumbnails to jump to that
-                        ForEach(assets, id: \.localIdentifier) { asset in
-                            ThumbnailImage(thumbnail: asset.getThumbnail(), isSelected: assets[selectedAssetIndex].localIdentifier == asset.localIdentifier)
-                        }
-                    }.padding()
-                }.frame(height: 70)
-                    .onChange(of: selectedAssetIndex, perform: { newIndex in
-                        withAnimation {
-                            proxy.scrollTo(assets[newIndex].localIdentifier, anchor: .center)
-                        }
-                        
-                    })
-            }
-            Divider()
+            ThumbnailList(assets: assets, selectedAssetIndex: $selectedAssetIndex)
             
             PreviewImage(asset: assets[selectedAssetIndex])
-            
-            Spacer()
+                .background(.black)
         }.onAppear {
             NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
                 handleKeyEvent(event)
