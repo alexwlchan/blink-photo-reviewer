@@ -50,7 +50,7 @@ struct ThumbnailList: View {
                         .environment(\.layoutDirection, .rightToLeft)
                     }.padding()
             }
-                .frame(height: 70)
+                .frame(height: 90)
                 .flipsForRightToLeftLayoutDirection(true)
                 .environment(\.layoutDirection, .rightToLeft)
                 .onChange(of: selectedAssetIndex, perform: { newIndex in
