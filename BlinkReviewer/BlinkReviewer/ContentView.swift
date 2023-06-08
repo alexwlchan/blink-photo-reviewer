@@ -6,8 +6,36 @@
 //
 
 import SwiftUI
+import Photos
+
+struct AssetData: Codable, Identifiable {
+    var localIdentifier: String
+    var creationDate: String?
+    var isFavorite: Bool
+    
+    var id: String {
+        localIdentifier
+    }
+}
 
 struct ContentView: View {
+    var allPhotos: [AssetData] {
+        var photos: [AssetData] = []
+        
+        PHAsset.fetchAssets(with: PHAssetMediaType.image, options: nil)
+            .enumerateObjects({ (asset, _, _) in
+                photos.append(
+                AssetData(
+                    localIdentifier: asset.localIdentifier,
+                    creationDate: asset.creationDate?.ISO8601Format(),
+                    isFavorite: asset.isFavorite
+                )
+            )
+        })
+        
+        return photos
+    }
+    
     var body: some View {
         VStack {
             Divider()
@@ -19,8 +47,8 @@ struct ContentView: View {
                     .padding()
                     
                     LazyHStack(spacing: 10) {
-                        ForEach(0..<100, id: \.self) { index in
-                            ThumbnailItem(label: "\(index)")
+                        ForEach(allPhotos) { photo in
+                            ThumbnailItem(label: "\(photo.localIdentifier)")
                         }
                     }.padding()
                 }.frame(height: 100)
@@ -32,8 +60,8 @@ struct ContentView: View {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
+//struct ContentView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ContentView()
+//    }
+//}
