@@ -26,6 +26,8 @@ struct PreviewImage: View {
                         
                     Spacer()
                 }
+                
+                Spacer()
             }.padding()
         }
     }
