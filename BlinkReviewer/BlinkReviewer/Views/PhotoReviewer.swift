@@ -5,6 +5,7 @@
 //  Created by Alex Chan on 08/06/2023.
 //
 
+import OSLog
 import SwiftUI
 import Photos
 
@@ -37,7 +38,19 @@ struct PhotoReviewer: View {
                         NewThumbnailImage(asset, isFocused: index == focusedAssetIndex)
                             .environmentObject(photosLibrary)
                     }
+                    .frame(height: 90)
+                    
+                    BigImage(focusedAsset)
+                    
+                    Spacer()
                 }
+            }
+            .onAppear {
+                NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+                    handleKeyEventNew(event)
+                    return event
+                }
+            }
 //                
 //                VStack {
 //                    let binding = Binding {
@@ -89,9 +102,31 @@ struct PhotoReviewer: View {
 //                    }
 //                    .padding()
 //                }.padding()
-            }
+//            }
         } else {
             Text("Waiting for Photos Library authorization…")
+        }
+    }
+
+    private func handleKeyEventNew(_ event: NSEvent) {
+        let logger = Logger()
+        
+        switch event {
+            case let e where e.specialKey == NSEvent.SpecialKey.leftArrow:
+                print("to the left!")
+                if focusedAssetIndex < photosLibrary.assets2.count - 1 {
+                    focusedAssetIndex += 1
+                }
+            
+            case let e where e.specialKey == NSEvent.SpecialKey.rightArrow:
+                print("to the right!")
+                if focusedAssetIndex > 0 {
+                    focusedAssetIndex -= 1
+                }
+            
+            default:
+                logger.info("Received unhandled keyboard event: \(event, privacy: .public)")
+                break
         }
     }
     
