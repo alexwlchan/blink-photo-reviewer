@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		940331732A336B5100200C5D /* DeferredRendering.swift in Sources */ = {isa = PBXBuildFile; fileRef = 940331722A336B5100200C5D /* DeferredRendering.swift */; };
 		94D2C8B92A320E6F00BEE15B /* ReviewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D2C8B82A320E6F00BEE15B /* ReviewState.swift */; };
 		94D2C8BD2A32796500BEE15B /* AlbumHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D2C8BC2A32796500BEE15B /* AlbumHelpers.swift */; };
 		94D2C8BF2A3299BD00BEE15B /* PhotosLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D2C8BE2A3299BD00BEE15B /* PhotosLibrary.swift */; };
@@ -44,6 +45,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		940331722A336B5100200C5D /* DeferredRendering.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeferredRendering.swift; sourceTree = "<group>"; };
 		94D2C8B82A320E6F00BEE15B /* ReviewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewState.swift; sourceTree = "<group>"; };
 		94D2C8BC2A32796500BEE15B /* AlbumHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumHelpers.swift; sourceTree = "<group>"; };
 		94D2C8BE2A3299BD00BEE15B /* PhotosLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosLibrary.swift; sourceTree = "<group>"; };
@@ -92,6 +94,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		940331742A336BEB00200C5D /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				940331722A336B5100200C5D /* DeferredRendering.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
 		94D2C8B72A320E6600BEE15B /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -162,6 +172,7 @@
 		94D7511A2A31A7A6005859E7 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				940331742A336BEB00200C5D /* Helpers */,
 				94D7511B2A31A7B1005859E7 /* ThumbnailImage.swift */,
 				94D7511D2A31B243005859E7 /* FullSizeImage.swift */,
 				94D7511F2A31B53E005859E7 /* AlbumInfo.swift */,
@@ -319,6 +330,7 @@
 				94D2C8BF2A3299BD00BEE15B /* PhotosLibrary.swift in Sources */,
 				94D7511E2A31B243005859E7 /* FullSizeImage.swift in Sources */,
 				94D750F02A31A796005859E7 /* BlinkReviewerApp.swift in Sources */,
+				940331732A336B5100200C5D /* DeferredRendering.swift in Sources */,
 				94D751202A31B53E005859E7 /* AlbumInfo.swift in Sources */,
 				94D751302A31DC4A005859E7 /* ThumbnailList.swift in Sources */,
 				94D751222A31BD8E005859E7 /* PhotoReviewer.swift in Sources */,

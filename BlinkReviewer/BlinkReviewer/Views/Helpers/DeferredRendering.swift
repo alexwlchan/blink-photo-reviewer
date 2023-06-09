@@ -1,21 +1,28 @@
-//
-//  DeferredRendering.swift
-//  BlinkReviewer
-//
-//  Created by Alex Chan on 09/06/2023.
-//
-
 import SwiftUI
 
-/// A ViewModifier that defers its rendering until after the provided threshold surpasses
+/// Defers the rendering of a view for the given period.
+///
+/// For example:
+///
+/// ```swift
+/// Text("Hello, world!")
+///     .deferredRendering(for: .seconds(5))
+/// ```
+///
+/// will not display the text "Hello, world!" until five seconds after the
+/// view is initially rendered.
+///
+/// This is based on code xwritten by Yonat and Charlton Provatas on
+/// Stack Overflow, see https://stackoverflow.com/a/74765430/1558022
+///
 private struct DeferredViewModifier: ViewModifier {
 
-    let threshold: Double
+    let delay: DispatchTimeInterval
 
     func body(content: Content) -> some View {
         _content(content)
             .onAppear {
-               DispatchQueue.main.asyncAfter(deadline: .now() + threshold) {
+               DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                    self.shouldRender = true
                }
             }
@@ -34,7 +41,7 @@ private struct DeferredViewModifier: ViewModifier {
 }
 
 extension View {
-    func deferredRendering(for seconds: Double) -> some View {
-        modifier(DeferredViewModifier(threshold: seconds))
+    func deferredRendering(for delay: DispatchTimeInterval) -> some View {
+        modifier(DeferredViewModifier(delay: delay))
     }
 }

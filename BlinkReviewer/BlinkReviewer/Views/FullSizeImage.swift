@@ -38,6 +38,16 @@ struct FullSizeImage: View {
                                     .colorInvert()
                                     .brightness(1)
                                     .padding()
+                                    .deferredRendering(
+                                        // Note: even if the image is already cached locally, the
+                                        // image caching manager typically sends two images: a low-res
+                                        // version comes immediately, then a higher-res version within
+                                        // a second or two.  This causes the progress indicator to
+                                        // "flash" -- it appears then almost instantly disappears.
+                                        //
+                                        // Deferring the rendering by a second avoids this "flash".
+                                        for: .seconds(1)
+                                    )
                             }
                             
                         }
