@@ -34,25 +34,8 @@ struct PhotoReviewer: View {
             ZStack {
                 VStack {
                     PHAssetHStack(photosLibrary.assets2) { asset, index in
-                        VStack {
-                            
-                            NewThumbnailImage(asset)
-//                                .resizable()
-                                .saturation(photosLibrary.state(for: asset) == .Rejected ? 0.0 : 1.0)
-                                // Note: it's taken several attempts to get this working correctly;
-                                // it behaves differently in the running app to the SwiftUI preview.
-                                //
-                                // Expected properties:
-                                //
-                                //    - Thumbnails are square
-                                //    - Thumbnails are expanded to fill the square, but they prefer
-                                //      to crop rather than stretch the image
-                                //
-                                .scaledToFill()
-                                .frame(width: 70.0, height: 70.0, alignment: .center)
-                                .border(.green)
-//                            Text("\(index) / \(asset.localIdentifier)")
-                        }
+                        NewThumbnailImage(asset, isFocused: index == focusedAssetIndex)
+                            .environmentObject(photosLibrary)
                     }
                 }
 //                

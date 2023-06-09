@@ -35,7 +35,7 @@ struct PHAssetHStack<Content: View>: View {
     
     var body: some View {
         ScrollView(.horizontal) {
-            LazyHStack(spacing: 5) {
+            LazyHStack(spacing: 7) {
                 // Implementation note: we use the localIdentifier rather than the
                 // array index as the id here, because the app gets way slower if
                 // you use the PHFetchResult index -- it tries to regenerate a bunch of
