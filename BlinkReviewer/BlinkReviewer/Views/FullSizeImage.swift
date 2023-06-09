@@ -9,13 +9,10 @@ import Photos
 import SwiftUI
 
 struct FullSizeImage: View {
-    var asset: PHAsset
-    
     @ObservedObject var image: PHAssetImage = PHAssetImage(nil, size: PHImageManagerMaximumSize)
     
     init(asset: PHAsset) {
         print("Calling FullSizeImage.init() for \(asset.localIdentifier)")
-        self.asset = asset
         self.image = PHAssetImage(asset, size: PHImageManagerMaximumSize)
     }
     
@@ -29,7 +26,9 @@ struct FullSizeImage: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .overlay(alignment: Alignment(horizontal: .center, vertical: .top)) {
-                            AlbumInfo(asset: asset)
+                            if let asset = image.asset {
+                                AlbumInfo(asset)
+                            }
                         }
                         
                     Spacer()

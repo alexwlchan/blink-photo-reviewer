@@ -17,6 +17,10 @@ import Photos
 struct AlbumInfo: View {
     var asset: PHAsset
     
+    init(_ asset: PHAsset) {
+        self.asset = asset
+    }
+    
     var body: some View {
         HStack {
             ForEach(asset.albums(), id: \.localIdentifier) { album in
