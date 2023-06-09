@@ -9,12 +9,7 @@ import Photos
 import SwiftUI
 
 struct FullSizeImage: View {
-    @ObservedObject var image: PHAssetImage = PHAssetImage(nil, size: PHImageManagerMaximumSize)
-    
-    init(asset: PHAsset) {
-        print("Calling FullSizeImage.init() for \(asset.localIdentifier)")
-        self.image = PHAssetImage(asset, size: PHImageManagerMaximumSize)
-    }
+    @ObservedObject var image: PHAssetImage
     
     var body: some View {
         ZStack {

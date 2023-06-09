@@ -10,25 +10,38 @@ import Photos
 
 class PHAssetImage: NSObject, ObservableObject {
 
-    var asset: PHAsset?
-    var size: CGSize
-    
     @Published var image = NSImage()
     @Published var isPhotoLibraryAuthorized = false
 
     init(_ asset: PHAsset?, size: CGSize) {
-        self.asset = asset
         self.size = size
         
         super.init()
         
+        self.asset = asset
+    }
+    
+    var _asset: PHAsset?
+    var size: CGSize
+    
+    var asset: PHAsset? {
+        get {
+            self._asset
+        }
+        
+        set {
+            self._asset = newValue
+            regenerateImage()
+        }
+    }
+        
+    private func regenerateImage() {
         if let thisAsset = asset {
             // This implementation is based on code in a Stack Overflow answer
             // by Francois Nadeau: https://stackoverflow.com/a/48755517/1558022
             
             let options = PHImageRequestOptions()
             
-            // do I still need this?
             options.isSynchronous = false
             
             // If i don't set this value, then sometimes I get an error like
@@ -43,14 +56,14 @@ class PHAssetImage: NSObject, ObservableObject {
             // See https://developer.apple.com/documentation/photokit/phphotoserror/phphotoserrornetworkaccessrequired
             options.isNetworkAccessAllowed = true
             
-            PHCachingImageManager()
+            PHCachingImageManager.default()
                 .requestImage(
                     for: thisAsset,
                     targetSize: size,
                     contentMode: .aspectFill,
                     options: options,
                     resultHandler: { (result, info) -> Void in
-                        print("Calling resultHandler for \(thisAsset.localIdentifier)")
+                        print("Calling resultHandler for \(thisAsset.localIdentifier) / \(info)")
                         self.image = result!
                     }
                 )

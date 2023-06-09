@@ -10,8 +10,13 @@ import Photos
 
 struct PhotoReviewer: View {
     @EnvironmentObject var photosLibrary: PhotosLibrary
+    @ObservedObject var fullSizeImage: PHAssetImage = PHAssetImage(nil, size: PHImageManagerMaximumSize)
     
     @State var selectedAssetIndex: Int
+    
+    init(selectedAssetIndex: Int) {
+        self.selectedAssetIndex = selectedAssetIndex
+    }
     
     var body: some View {
         if photosLibrary.isPhotoLibraryAuthorized {
@@ -19,14 +24,18 @@ struct PhotoReviewer: View {
                 ThumbnailList(selectedAssetIndex: $selectedAssetIndex)
                     .environmentObject(photosLibrary)
                 
-                FullSizeImage(asset: photosLibrary.assets[selectedAssetIndex])
+                FullSizeImage(image: fullSizeImage)
                     .background(.black)
             }.onAppear {
+                fullSizeImage.asset = photosLibrary.assets[selectedAssetIndex]
+                
                 NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
                     handleKeyEvent(event)
                     return event
                 }
-            }
+            }.onChange(of: selectedAssetIndex, perform: { newIndex in
+                fullSizeImage.asset = photosLibrary.assets[newIndex]
+            })
         } else {
             Text("Waiting for Photos Library authorization…")
         }
