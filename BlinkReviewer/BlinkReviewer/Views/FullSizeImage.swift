@@ -25,6 +25,22 @@ struct FullSizeImage: View {
                                 AlbumInfo(asset)
                             }
                         }
+                        .overlay(alignment: Alignment(horizontal: .trailing, vertical: .bottom)) {
+                            
+                            // Render a progress indicator if we're waiting for a higher-resolution
+                            // image to load; see the comment on `PHAssetImage`.
+                            //
+                            // `ProgressView` does have a `tint` modifier, but that doesn't seem to
+                            // work on macOS 13 -- this uses some code from a Stack Overflow answer
+                            // by aheze: https://stackoverflow.com/a/66568704/1558022
+                            if (self.image.isDegraded) {
+                                ProgressView()
+                                    .colorInvert()
+                                    .brightness(1)
+                                    .padding()
+                            }
+                            
+                        }
                         
                     Spacer()
                 }

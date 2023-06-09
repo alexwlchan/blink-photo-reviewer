@@ -1,17 +1,28 @@
-//
-//  PHAssetImage.swift
-//  BlinkReviewer
-//
-//  Created by Alex Chan on 09/06/2023.
-//
-
 import SwiftUI
 import Photos
 
+/// This view gets an NSImage for a PHAsset.
+///
+/// When you get a photo from the Photos library, it may not be available
+/// immediately -- for example, if the image has to be downloaded from
+/// iCloud first.  Downstream views can create an instance of this object,
+/// and then watch the `image` property -- this will be populated with the
+/// appropriate image as it loads.
+///
+/// You can use this class in two ways:
+///
+///   1. Create a new instance for every PHAsset you want to render
+///   2. Create a single instance and update the `asset` property; the `image`
+///      property will be updated shortly after
+///
+/// Note: PhotoKit may return multiple versions of an image, e.g. a low-res
+/// version immediately and a high-res version later.  You can inspect the
+/// `isDegraded` property -- this will tell you if Photos has returned a
+/// low quality image now and expects to return a higher quality image later.
 class PHAssetImage: NSObject, ObservableObject {
 
     @Published var image = NSImage()
-    @Published var isPhotoLibraryAuthorized = false
+    @Published var isDegraded = false
 
     init(_ asset: PHAsset?, size: CGSize) {
         self.size = size
@@ -63,6 +74,10 @@ class PHAssetImage: NSObject, ObservableObject {
                     contentMode: .aspectFill,
                     options: options,
                     resultHandler: { (result, info) -> Void in
+                        if let isDegraded = info?[PHImageResultIsDegradedKey] as? Bool {
+                            self.isDegraded = isDegraded
+                        }
+                        
                         if let imageResult = result {
                             self.image = imageResult
                         } else {
