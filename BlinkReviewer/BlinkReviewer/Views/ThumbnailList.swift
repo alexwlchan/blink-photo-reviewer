@@ -8,20 +8,6 @@
 import SwiftUI
 import Photos
 
-// https://stackoverflow.com/q/62745595/1558022
-struct PHFetchResultCollection: RandomAccessCollection, Equatable {
-    typealias Element = PHAsset
-    typealias Index = Int
-
-    let fetchResult: PHFetchResult<PHAsset>
-
-    var startIndex: Int { 0 }
-    var endIndex: Int { fetchResult.count }
-
-    subscript(position: Int) -> PHAsset {
-        fetchResult.object(at: position)
-    }
-}
 
 struct ThumbnailList: View {
     @EnvironmentObject var photosLibrary: PhotosLibrary
