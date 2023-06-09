@@ -1,13 +1,13 @@
 import SwiftUI
 import Photos
 
-/// Creates an HStack of PHAssets that scrolls right-to-left.
+/// Creates an HStack of PHAssets that fills in right-to-left.
 ///
 /// This provides lazy loading to the left-hand side, and assumes you're
 /// going to start scrolled to the far right, e.g. if the last three items
 /// are visible:
 ///
-///         [0] [1] [2] [3] [4] [5] [6] [7] [8] [9]
+///         [9] [8] [7] [6] [5] [4] [3] [2] [1] [0]
 ///                                     ^^^^^^^^^^^
 ///
 /// Then the lower-numbered items won't be rendered by SwiftUI until the
@@ -17,8 +17,9 @@ import Photos
 /// LazyHStack to the far right, it loads every element immediately.
 ///
 /// This takes a subview which is used to render the individual entries;
-/// these subviews receive the original PHAsset and the index (counting
-/// from the left, 0-indexed).
+/// these subviews receive the original PHAsset and the index from the
+/// original PHFetchResult -- you can use this index to retrieve adjacent
+/// items in the FetchResult, if necessary.
 ///
 struct PHAssetHStack<Content: View>: View {
     var subview: (PHAsset, Int) -> Content
@@ -35,24 +36,17 @@ struct PHAssetHStack<Content: View>: View {
     var body: some View {
         ScrollView(.horizontal) {
             LazyHStack(spacing: 5) {
-                // TODO: placeholder images for start/end
-                
                 // Implementation note: we use the localIdentifier rather than the
                 // array index as the id here, because the app gets way slower if
-                // you use the array index -- it tries to regenerate a bunch of
+                // you use the PHFetchResult index -- it tries to regenerate a bunch of
                 // the thumbnails every time you change position.
-                //
-                // However, we do want to expose the index to the callers -- I think?
-                //
-                // TODO: Investigate whether we can do this entirely using the
-                // localIdentiifer, and skip the index entirely.
                 ForEach(
                     Array(
                         zip(PHFetchResultCollection(fetchResult).indices, PHFetchResultCollection(fetchResult))
                     ),
                     id: \.1.localIdentifier
                 ) { index, asset in
-                    subview(asset, fetchResult.count - index - 1)
+                    subview(asset, index)
                 }
                 
                 // Note: these two uses of RTL direction are a way to get the LazyHStack
@@ -86,7 +80,11 @@ struct PHAssetHStack_Previews: PreviewProvider {
     
     static var previews: some View {
         PHAssetHStack(fetchResult) { asset, index in
-            Text("Asset \(index):\n\(asset.creationDate?.ISO8601Format() ?? "(unknown)")")
+            VStack {
+                Text("view index = \(index)")
+                Text("asset ID =\n\(asset.localIdentifier)")
+                Text("fetchResult.object(at: \(index)) =\n\(fetchResult.object(at: index).localIdentifier)")
+            }
         }
     }
 }
