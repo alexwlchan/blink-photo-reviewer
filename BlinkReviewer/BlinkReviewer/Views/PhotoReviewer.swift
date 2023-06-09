@@ -14,28 +14,48 @@ struct PhotoReviewer: View {
     
     @State var selectedAssetIndex: Int
     
+    @State var showStatistics: Bool = false
+    
     init(selectedAssetIndex: Int) {
         self.selectedAssetIndex = selectedAssetIndex
     }
     
     var body: some View {
         if photosLibrary.isPhotoLibraryAuthorized {
-            VStack {
-                ThumbnailList(selectedAssetIndex: $selectedAssetIndex)
-                    .environmentObject(photosLibrary)
-                
-                FullSizeImage(image: fullSizeImage)
-                    .background(.black)
-            }.onAppear {
-                fullSizeImage.asset = photosLibrary.assets[selectedAssetIndex]
-                
-                NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
-                    handleKeyEvent(event)
-                    return event
+            ZStack {
+                VStack {
+                    ThumbnailList(selectedAssetIndex: $selectedAssetIndex)
+                        .environmentObject(photosLibrary)
+                        .background(.gray.opacity(0.3))
+                    
+                    FullSizeImage(image: fullSizeImage)
+                        .background(.black)
                 }
-            }.onChange(of: selectedAssetIndex, perform: { newIndex in
-                fullSizeImage.asset = photosLibrary.assets[newIndex]
-            })
+                .background(.black)
+                .onAppear {
+                    fullSizeImage.asset = photosLibrary.assets[selectedAssetIndex]
+                    
+                    NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+                        handleKeyEvent(event)
+                        return event
+                    }
+                }.onChange(of: selectedAssetIndex, perform: { newIndex in
+                    fullSizeImage.asset = photosLibrary.assets[newIndex]
+                })
+                
+                if showStatistics {
+                    HStack {
+                        Spacer()
+                        
+                        VStack {
+                            Spacer()
+                            
+                            Statistics().environmentObject(photosLibrary)
+                        }
+                        .padding()
+                    }.padding()
+                }
+            }
         } else {
             Text("Waiting for Photos Library authorization…")
         }
@@ -125,6 +145,8 @@ struct PhotoReviewer: View {
                     }
                 }
             
+            case 1: // "s"
+                showStatistics.toggle()
             
             default:
                 print(event)

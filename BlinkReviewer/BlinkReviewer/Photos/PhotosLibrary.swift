@@ -33,4 +33,22 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
             self.isPhotoLibraryAuthorized = PHPhotoLibrary.authorizationStatus() == .authorized
         }
     }
+    
+    func countApproved() -> Int {
+        let album = getAlbum(withName: "Approved")
+        
+        return PHAsset.fetchAssets(in: album, options: nil).count
+    }
+    
+    func countRejected() -> Int {
+        let album = getAlbum(withName: "Rejected")
+        
+        return PHAsset.fetchAssets(in: album, options: nil).count
+    }
+    
+    func countNeedsAction() -> Int {
+        let album = getAlbum(withName: "Needs Action")
+        
+        return PHAsset.fetchAssets(in: album, options: nil).count
+    }
 }
