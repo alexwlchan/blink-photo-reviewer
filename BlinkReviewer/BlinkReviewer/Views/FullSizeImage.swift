@@ -8,12 +8,13 @@
 import Photos
 import SwiftUI
 
-struct PreviewImage: View {
+struct FullSizeImage: View {
     var asset: PHAsset
     
     @ObservedObject var image: PHAssetImage = PHAssetImage(nil, size: PHImageManagerMaximumSize)
     
     init(asset: PHAsset) {
+        print("Calling FullSizeImage.init() for \(asset.localIdentifier)")
         self.asset = asset
         self.image = PHAssetImage(asset, size: PHImageManagerMaximumSize)
     }

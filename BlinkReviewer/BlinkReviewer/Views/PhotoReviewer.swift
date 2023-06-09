@@ -19,7 +19,7 @@ struct PhotoReviewer: View {
                 ThumbnailList(selectedAssetIndex: $selectedAssetIndex)
                     .environmentObject(photosLibrary)
                 
-                PreviewImage(asset: photosLibrary.assets[selectedAssetIndex])
+                FullSizeImage(asset: photosLibrary.assets[selectedAssetIndex])
                     .background(.black)
             }.onAppear {
                 NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in

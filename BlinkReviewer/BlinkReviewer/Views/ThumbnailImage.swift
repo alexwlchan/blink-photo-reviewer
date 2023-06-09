@@ -13,7 +13,7 @@ import Photos
 /// The image will be expanded to fill the square, and may be clipped
 /// if the original aspect ratio isn't square.
 struct ThumbnailImage: View {
-    @State var thumbnail: NSImage
+    @ObservedObject var thumbnail: PHAssetImage
     var state: ReviewState?
     var isFavorite: Bool
     var isSelected: Bool
@@ -27,7 +27,7 @@ struct ThumbnailImage: View {
     }
     
     var body: some View {
-        Image(nsImage: thumbnail)
+        Image(nsImage: thumbnail.image)
             .resizable()
             .saturation(state == .Rejected ? 0.0 : 1.0)
             // Note: it's taken several attempts to get this working correctly;
@@ -69,37 +69,5 @@ struct ThumbnailImage: View {
                         .shadow(radius: 2.0)
                 }
             }
-    }
-}
-
-struct ThumbnailImage_Previews: PreviewProvider {
-    static var previews: some View {
-        ThumbnailImage(
-            thumbnail: NSImage(named: "IMG_5934")!,
-            state: .Approved,
-            isFavorite: true,
-            isSelected: true
-        ).previewDisplayName("approved, favorite")
-        
-        ThumbnailImage(
-            thumbnail: NSImage(named: "IMG_5934")!,
-            state: .Rejected,
-            isFavorite: false,
-            isSelected: false
-        ).previewDisplayName("rejected")
-        
-        ThumbnailImage(
-            thumbnail: NSImage(named: "IMG_5934")!,
-            state: .NeedsAction,
-            isFavorite: false,
-            isSelected: false
-        ).previewDisplayName("needs action")
-        
-        ThumbnailImage(
-            thumbnail: NSImage(named: "IMG_5934")!,
-            state: nil,
-            isFavorite: false,
-            isSelected: false
-        ).previewDisplayName("no state")
     }
 }
