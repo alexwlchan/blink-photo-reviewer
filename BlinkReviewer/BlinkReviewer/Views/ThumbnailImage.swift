@@ -13,7 +13,7 @@ import Photos
 /// The image will be expanded to fill the square, and may be clipped
 /// if the original aspect ratio isn't square.
 struct ThumbnailImage: View {
-    var thumbnail: NSImage
+    @State var thumbnail: NSImage
     var state: ReviewState?
     var isFavorite: Bool
     var isSelected: Bool

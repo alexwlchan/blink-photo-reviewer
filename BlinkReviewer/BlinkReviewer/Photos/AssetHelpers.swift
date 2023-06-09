@@ -64,7 +64,7 @@ extension PHAsset {
         let options = PHImageRequestOptions()
         
         // do I still need this?
-        options.isSynchronous = true
+        options.isSynchronous = false
 
         // If i don't set this value, then sometimes I get an error like
         // this in the `info` variable:
@@ -87,6 +87,7 @@ extension PHAsset {
                 contentMode: .aspectFill,
                 options: options,
                 resultHandler: { (result, info) -> Void in
+                    print("Calling resultHandler for \(self.localIdentifier)")
                     image = result!
                 }
             )
