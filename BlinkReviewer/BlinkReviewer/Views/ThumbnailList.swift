@@ -33,7 +33,7 @@ struct ThumbnailList: View {
                     // the thumbnails every time you change position.
                     ForEach(Array(displayAssets().enumerated()), id: \.element.localIdentifier) { index, asset in
                         ThumbnailImage(
-                            thumbnail: PHAssetImage(asset, size: CGSize(width: 70, height: 70)),
+                            thumbnail: PHAssetImage(asset, size: CGSize(width: 70, height: 70), deliveryMode: .opportunistic),
                             state: asset.state(),
                             isFavorite: asset.isFavorite,
                             isSelected: displayAssets()[displaySelectedAssetIndex()].localIdentifier == asset.localIdentifier

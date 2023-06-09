@@ -24,16 +24,18 @@ class PHAssetImage: NSObject, ObservableObject {
     @Published var image = NSImage()
     @Published var isDegraded = false
 
-    init(_ asset: PHAsset?, size: CGSize) {
+    init(_ asset: PHAsset?, size: CGSize, deliveryMode: PHImageRequestOptionsDeliveryMode) {
         self.size = size
+        self.deliveryMode = deliveryMode
         
         super.init()
         
         self.asset = asset
     }
     
-    var _asset: PHAsset?
-    var size: CGSize
+    private var _asset: PHAsset?
+    private var size: CGSize
+    private var deliveryMode: PHImageRequestOptionsDeliveryMode
     
     var asset: PHAsset? {
         get {
@@ -54,6 +56,7 @@ class PHAssetImage: NSObject, ObservableObject {
             let options = PHImageRequestOptions()
             
             options.isSynchronous = false
+            options.deliveryMode = deliveryMode
             
             // If i don't set this value, then sometimes I get an error like
             // this in the `info` variable:

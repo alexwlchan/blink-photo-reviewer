@@ -10,7 +10,7 @@ import Photos
 
 struct PhotoReviewer: View {
     @EnvironmentObject var photosLibrary: PhotosLibrary
-    @ObservedObject var fullSizeImage: PHAssetImage = PHAssetImage(nil, size: PHImageManagerMaximumSize)
+    @ObservedObject var fullSizeImage: PHAssetImage = PHAssetImage(nil, size: PHImageManagerMaximumSize, deliveryMode: .highQualityFormat)
     
     @State var selectedAssetIndex: Int
     
