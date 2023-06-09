@@ -13,9 +13,9 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
     @Published var assets = getAllPhotos()
     @Published var isPhotoLibraryAuthorized = false
     
-    @Published var approvedAssets: Set<PHAsset> = Set()
-    @Published var rejectedAssets: Set<PHAsset> = Set()
-    @Published var needsActionAssets: Set<PHAsset> = Set()
+    @Published var approvedAssets: PHFetchResult<PHAsset> = PHFetchResult()
+    @Published var rejectedAssets: PHFetchResult<PHAsset> = PHFetchResult()
+    @Published var needsActionAssets: PHFetchResult<PHAsset> = PHFetchResult()
     
     private let approved = getAlbum(withName: "Approved")
     private let rejected = getAlbum(withName: "Rejected")
@@ -29,30 +29,6 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
     
     func updateAsset(atIndex index: Int) {
         self.assets[index] = PHAsset.fetchAssets(withLocalIdentifiers: [self.assets[index].localIdentifier], options: nil).firstObject!
-        
-        // This is an optimisation to make the UI feel snappy -- calling photoLibraryDidChange
-        // takes ~1s to finish, which introduces noticeable latency. :(
-        let asset = self.assets[index]
-        
-        let newAlbums = Set(asset.albums())
-        
-        if (newAlbums.contains(approved)) {
-            approvedAssets.insert(asset)
-        } else {
-            approvedAssets.remove(asset)
-        }
-        
-        if (newAlbums.contains(rejected)) {
-            rejectedAssets.insert(asset)
-        } else {
-            rejectedAssets.remove(asset)
-        }
-        
-        if (newAlbums.contains(needsAction)) {
-            needsActionAssets.insert(asset)
-        } else {
-            needsActionAssets.remove(asset)
-        }
     }
 
     func photoLibraryDidChange(_ changeInstance: PHChange) {
@@ -63,25 +39,30 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
 
     private func updateStatus() {
         DispatchQueue.main.async {
+            let start = DispatchTime.now()
+            var elapsed = start
+
+            func printElapsed(_ label: String) -> Void {
+              let now = DispatchTime.now()
+
+              let totalInterval = Double(now.uptimeNanoseconds - start.uptimeNanoseconds) / 1_000_000_000
+              let elapsedInterval = Double(now.uptimeNanoseconds - elapsed.uptimeNanoseconds) / 1_000_000_000
+
+              elapsed = DispatchTime.now()
+
+              print("Time to \(label):\n  \(elapsedInterval) seconds (\(totalInterval) total)")
+            }
+            
             self.assets = getAllPhotos()
             
-            self.approvedAssets = self.getPhotosIn(album: self.approved)
-            self.rejectedAssets = self.getPhotosIn(album: self.rejected)
-            self.needsActionAssets = self.getPhotosIn(album: self.needsAction)
+            self.approvedAssets = PHAsset.fetchAssets(in: self.approved, options: nil)
+            self.rejectedAssets = PHAsset.fetchAssets(in: self.rejected, options: nil)
+            self.needsActionAssets = PHAsset.fetchAssets(in: self.needsAction, options: nil)
             
             self.isPhotoLibraryAuthorized = PHPhotoLibrary.authorizationStatus() == .authorized
+            
+            printElapsed("get photos library data")
         }
-    }
-    
-    private func getPhotosIn(album: PHAssetCollection) -> Set<PHAsset> {
-        var result: Set<PHAsset> = Set()
-        
-        PHAsset.fetchAssets(in: album, options: nil)
-            .enumerateObjects({ (asset, _, _) in
-                result.insert(asset)
-            })
-        
-        return result
     }
     
     func state(for asset: PHAsset) -> ReviewState? {
