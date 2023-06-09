@@ -16,7 +16,7 @@ struct FavoriteHeartIcon: ViewModifier {
             if asset.isFavorite {
                 Image(systemName: "heart.fill")
                     .foregroundColor(.white)
-                    .padding(2)
+                    .padding(3)
                     .shadow(radius: 2.0)
             }
         }
