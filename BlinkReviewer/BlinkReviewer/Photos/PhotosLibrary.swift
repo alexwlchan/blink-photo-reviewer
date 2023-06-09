@@ -59,23 +59,28 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
             
             let options = PHFetchOptions()
             options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-            options.fetchLimit = 150
+            options.fetchLimit = 300
             
             self.assets2 = PHAsset.fetchAssets(with: PHAssetMediaType.image, options: options)
             
+            print("self.approvedAssets = \(self.approvedAssets.count)")
             self.approvedAssets = PHAsset.fetchAssets(in: self.approved, options: nil)
+            print("self.approvedAssets = \(self.approvedAssets.count)")
             self.rejectedAssets = PHAsset.fetchAssets(in: self.rejected, options: nil)
             self.needsActionAssets = PHAsset.fetchAssets(in: self.needsAction, options: nil)
             
             self.isPhotoLibraryAuthorized = PHPhotoLibrary.authorizationStatus() == .authorized
             
             print("self.isPhotoLibraryAuthorized = \(self.isPhotoLibraryAuthorized)")
+            print("self.assets2.count = \(self.assets2.count)")
             
             printElapsed("get photos library data")
         }
     }
     
     func state(for asset: PHAsset) -> ReviewState? {
+        print("evaluating state for \(asset.localIdentifier)")
+        
         if self.rejectedAssets.contains(asset) {
             return .Rejected
         }

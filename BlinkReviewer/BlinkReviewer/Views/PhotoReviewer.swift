@@ -20,27 +20,32 @@ struct PhotoReviewer: View {
         if photosLibrary.isPhotoLibraryAuthorized {
             ZStack {
                 VStack {
-                    ThumbnailList(selectedAssetIndex: $selectedAssetIndex)
+                    let binding = Binding {
+                        selectedAssetIndex == -1 ? photosLibrary.assets2.count - 1 : selectedAssetIndex
+                    } set: {
+                        self.selectedAssetIndex = $0
+                    }
+                    
+                    ThumbnailList(selectedAssetIndex: binding)
                         .environmentObject(photosLibrary)
                         .background(.gray.opacity(0.3))
                     
-//                    FullSizeImage(image: fullSizeImage)
-//                        .background(.black)
-                }
-                .onAppear {
-                    selectedAssetIndex = photosLibrary.assets2.count - 1
+                    FullSizeImage(image: fullSizeImage)
+                        .background(.black)
                 }
                 .background(.black)
-//                .onAppear {
-//                    fullSizeImage.asset = photosLibrary.assets2.object(at: selectedAssetIndex)
-//
-//                    NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
-//                        handleKeyEvent(event)
-//                        return event
-//                    }
-//                }.onChange(of: selectedAssetIndex, perform: { newIndex in
-//                    fullSizeImage.asset = photosLibrary.assets2.object(at: newIndex)
-//                })
+                .onAppear {
+                    selectedAssetIndex = photosLibrary.assets2.count - 1
+                    
+                    fullSizeImage.asset = photosLibrary.assets2.object(at: photosLibrary.assets2.count - 1 - selectedAssetIndex)
+
+                    NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+                        handleKeyEvent(event)
+                        return event
+                    }
+                }.onChange(of: selectedAssetIndex, perform: { newIndex in
+                    fullSizeImage.asset = photosLibrary.assets2.object(at: photosLibrary.assets2.count - 1 - newIndex)
+                })
                 
                 if showStatistics {
                     HStack {
