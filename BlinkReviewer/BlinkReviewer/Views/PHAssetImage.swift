@@ -63,7 +63,6 @@ class PHAssetImage: NSObject, ObservableObject {
                     contentMode: .aspectFill,
                     options: options,
                     resultHandler: { (result, info) -> Void in
-                        print("Calling resultHandler for \(thisAsset.localIdentifier) / \(info)")
                         self.image = result!
                     }
                 )
