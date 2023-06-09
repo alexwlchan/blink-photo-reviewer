@@ -58,7 +58,7 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
 //            self.assets = getAllPhotos()
             
             let options = PHFetchOptions()
-            options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
+            options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
             options.fetchLimit = 150
             
             self.assets2 = PHAsset.fetchAssets(with: PHAssetMediaType.image, options: options)
