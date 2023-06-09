@@ -28,20 +28,20 @@ struct PhotoReviewer: View {
                         .environmentObject(photosLibrary)
                         .background(.gray.opacity(0.3))
                     
-                    FullSizeImage(image: fullSizeImage)
-                        .background(.black)
+//                    FullSizeImage(image: fullSizeImage)
+//                        .background(.black)
                 }
                 .background(.black)
-                .onAppear {
-                    fullSizeImage.asset = photosLibrary.assets[selectedAssetIndex]
-                    
-                    NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
-                        handleKeyEvent(event)
-                        return event
-                    }
-                }.onChange(of: selectedAssetIndex, perform: { newIndex in
-                    fullSizeImage.asset = photosLibrary.assets[newIndex]
-                })
+//                .onAppear {
+//                    fullSizeImage.asset = photosLibrary.assets2.object(at: selectedAssetIndex)
+//
+//                    NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+//                        handleKeyEvent(event)
+//                        return event
+//                    }
+//                }.onChange(of: selectedAssetIndex, perform: { newIndex in
+//                    fullSizeImage.asset = photosLibrary.assets2.object(at: newIndex)
+//                })
                 
                 if showStatistics {
                     HStack {
@@ -62,7 +62,7 @@ struct PhotoReviewer: View {
     }
     
     private func handleKeyEvent(_ event: NSEvent) {
-        let asset = photosLibrary.assets[selectedAssetIndex]
+        let asset = photosLibrary.assets2.object(at: selectedAssetIndex)
         
         switch event.keyCode {
             case 123: // Left arrow key
@@ -71,7 +71,7 @@ struct PhotoReviewer: View {
                 }
             
             case 124: // Right arrow key
-                if selectedAssetIndex < photosLibrary.assets.count - 1 {
+                if selectedAssetIndex < photosLibrary.assets2.count - 1 {
                     selectedAssetIndex += 1
                 }
             
@@ -137,15 +137,18 @@ struct PhotoReviewer: View {
                 photosLibrary.updateAsset(atIndex: selectedAssetIndex)
 
             case 32: // "u"
-                if photosLibrary.state(for: asset) != nil {
-                    let lastUnreviewed = photosLibrary.assets[0..<selectedAssetIndex].lastIndex(where: { asset in
-                        photosLibrary.state(for: asset) == nil
-                    })
-                    
-                    if let theIndex = lastUnreviewed {
-                        selectedAssetIndex = theIndex
-                    }
-                }
+                print("not implemented yet!")
+//                if photosLibrary.state(for: asset) != nil {
+//                    let lastUnreviewed = photosLibrary.assets2
+//
+//                    [0..<selectedAssetIndex].lastIndex(where: { asset in
+//                        photosLibrary.state(for: asset) == nil
+//                    })
+//
+//                    if let theIndex = lastUnreviewed {
+//                        selectedAssetIndex = theIndex
+//                    }
+//                }
             
             case 1: // "s"
                 showStatistics.toggle()

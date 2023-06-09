@@ -10,8 +10,10 @@ import Photos
 
 class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
 
-    @Published var assets = getAllPhotos()
+//    @Published var assets = getAllPhotos()
     @Published var isPhotoLibraryAuthorized = false
+    
+    @Published var assets2: PHFetchResult<PHAsset> = PHFetchResult()
     
     @Published var approvedAssets: PHFetchResult<PHAsset> = PHFetchResult()
     @Published var rejectedAssets: PHFetchResult<PHAsset> = PHFetchResult()
@@ -28,7 +30,7 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
     }
     
     func updateAsset(atIndex index: Int) {
-        self.assets[index] = PHAsset.fetchAssets(withLocalIdentifiers: [self.assets[index].localIdentifier], options: nil).firstObject!
+//        self.assets[index] = PHAsset.fetchAssets(withLocalIdentifiers: [self.assets[index].localIdentifier], options: nil).firstObject!
     }
 
     func photoLibraryDidChange(_ changeInstance: PHChange) {
@@ -53,13 +55,21 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
               print("Time to \(label):\n  \(elapsedInterval) seconds (\(totalInterval) total)")
             }
             
-            self.assets = getAllPhotos()
+//            self.assets = getAllPhotos()
+            
+            let options = PHFetchOptions()
+            options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
+//            options.fetchLimit = 50
+            
+            self.assets2 = PHAsset.fetchAssets(with: PHAssetMediaType.image, options: options)
             
             self.approvedAssets = PHAsset.fetchAssets(in: self.approved, options: nil)
             self.rejectedAssets = PHAsset.fetchAssets(in: self.rejected, options: nil)
             self.needsActionAssets = PHAsset.fetchAssets(in: self.needsAction, options: nil)
             
             self.isPhotoLibraryAuthorized = PHPhotoLibrary.authorizationStatus() == .authorized
+            
+            print("self.isPhotoLibraryAuthorized = \(self.isPhotoLibraryAuthorized)")
             
             printElapsed("get photos library data")
         }

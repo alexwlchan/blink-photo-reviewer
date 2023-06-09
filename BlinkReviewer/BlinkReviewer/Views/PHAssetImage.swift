@@ -67,6 +67,9 @@ class PHAssetImage: NSObject, ObservableObject {
                 self.image = nsImage
                 return
             }
+
+            print("regenerating image for \(thisAsset.localIdentifier)")
+
             
             // This implementation is based on code in a Stack Overflow answer
             // by Francois Nadeau: https://stackoverflow.com/a/48755517/1558022
