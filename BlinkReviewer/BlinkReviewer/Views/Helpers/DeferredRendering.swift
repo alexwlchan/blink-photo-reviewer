@@ -17,7 +17,6 @@ import SwiftUI
 /// Stack Overflow, see https://stackoverflow.com/a/74765430/1558022
 ///
 private struct DeferredViewModifier: ViewModifier {
-
     let delay: DispatchTimeInterval
 
     func body(content: Content) -> some View {
@@ -44,5 +43,15 @@ private struct DeferredViewModifier: ViewModifier {
 extension View {
     func deferredRendering(for delay: DispatchTimeInterval) -> some View {
         modifier(DeferredViewModifier(delay: delay))
+    }
+}
+
+struct DeferredRendering_Previews: PreviewProvider {
+    static var previews: some View {
+        VStack {
+            Text("This text renders immediately")
+            Text("This text appears after a delay")
+                .deferredRendering(for: .seconds(1))
+        }
     }
 }
