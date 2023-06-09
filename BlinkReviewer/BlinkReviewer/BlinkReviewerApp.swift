@@ -9,10 +9,12 @@ import SwiftUI
 
 @main
 struct BlinkReviewerApp: App {
+    let photosLibrary = PhotosLibrary()
+    
     var body: some Scene {
         WindowGroup {
-            PhotoReviewer(selectedAssetIndex: PhotosLibrary().assets.count - 1)
-                .environmentObject(PhotosLibrary())
+            PhotoReviewer(selectedAssetIndex: photosLibrary.assets.count - 1)
+                .environmentObject(photosLibrary)
         }
     }
 }
