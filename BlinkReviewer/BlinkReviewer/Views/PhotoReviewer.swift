@@ -43,7 +43,6 @@ struct PhotoReviewer: View {
                     .frame(height: 90)
                     
                     FocusedImage(assetImage: focusedAssetImage)
-                        .albumInfo(for: focusedAssetImage.asset)
                     
                     Spacer()
                 }

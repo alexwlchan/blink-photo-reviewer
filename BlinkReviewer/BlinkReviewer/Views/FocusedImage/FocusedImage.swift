@@ -18,6 +18,7 @@ struct FocusedImage: View {
         Image(nsImage: assetImage.image)
             .resizable()
             .aspectRatio(contentMode: .fit)
+            .albumInfo(for: assetImage.asset)
             .loadingIndicator(isLoading: assetImage.isDegraded)
     }
 }
