@@ -45,13 +45,12 @@ struct PhotoReviewer: View {
                     .frame(height: 90)
                     
                     FocusedImage(assetImage: focusedAssetImage)
+                        .albumInfo(for: focusedAssetImage.asset)
                     
                     Spacer()
                 }
             }
             .onAppear {
-                
-                
                 NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
                     handleKeyEventNew(event)
                     return event
@@ -135,6 +134,46 @@ struct PhotoReviewer: View {
                 print("to the right!")
                 if focusedAssetIndex > 0 {
                     focusedAssetIndex -= 1
+                }
+            
+            case let e where e.characters == "1" || e.characters == "2" || e.characters == "3":
+                print("time to review!")
+                let state = photosLibrary.state(for: focusedAsset)
+            
+                let approved = getAlbum(withName: "Approved")
+                let rejected = getAlbum(withName: "Rejected")
+                let needsAction = getAlbum(withName: "Needs Action")
+            
+                try! PHPhotoLibrary.shared().performChangesAndWait {
+                    // Strictly speaking, the first condition is a combination of two:
+                    //
+                    //   1. The action is `toggle-approved` and the photo is approved,
+                    //      in which case toggling means un-approving it.
+                    //   2. The action is anything else and the photo is approved, in
+                    //      which case setting the new status means removing approved.
+                    //
+                    // Similar logic applies for all three conditions.
+                    if state == .Approved {
+                        focusedAsset.remove(fromAlbum: approved)
+                    } else if e.characters == "1" {
+                        focusedAsset.add(toAlbum: approved)
+                    }
+
+                    if state == .Rejected {
+                        focusedAsset.remove(fromAlbum: rejected)
+                    } else if e.characters == "2" {
+                        focusedAsset.add(toAlbum: rejected)
+                    }
+
+                    if state == .NeedsAction {
+                        focusedAsset.remove(fromAlbum: needsAction)
+                    } else if e.characters == "3" {
+                        focusedAsset.add(toAlbum: needsAction)
+                    }
+                }
+            
+                if selectedAssetIndex < photosLibrary.assets2.count - 1 {
+                    focusedAssetIndex += 1
                 }
             
             default:

@@ -41,21 +41,51 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
     
     private func updateStatus(_ changeInstance: PHChange) {
         DispatchQueue.main.async {
+            let start = DispatchTime.now()
+            var elapsed = start
+
+            func printElapsed(_ label: String) -> Void {
+              let now = DispatchTime.now()
+
+              let totalInterval = Double(now.uptimeNanoseconds - start.uptimeNanoseconds) / 1_000_000_000
+              let elapsedInterval = Double(now.uptimeNanoseconds - elapsed.uptimeNanoseconds) / 1_000_000_000
+
+              elapsed = DispatchTime.now()
+
+              print("Time to \(label):\n  \(elapsedInterval) seconds (\(totalInterval) total)")
+            }
+            
             let options = PHFetchOptions()
             options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
             options.fetchLimit = 500
             
 //            print()
             
-            if let changeDetails = changeInstance.changeDetails(for: self.assets2) {
-                self.assets2 = changeDetails.fetchResultAfterChanges
+            if let assetsChangeDetails = changeInstance.changeDetails(for: self.assets2) {
+                self.assets2 = assetsChangeDetails.fetchResultAfterChanges
             } else {
                 self.assets2 = PHAsset.fetchAssets(with: PHAssetMediaType.image, options: options)
             }
-
-            self.approvedAssets = PHAsset.fetchAssets(in: self.approved, options: nil)
-            self.rejectedAssets = PHAsset.fetchAssets(in: self.rejected, options: nil)
-            self.needsActionAssets = PHAsset.fetchAssets(in: self.needsAction, options: nil)
+            
+            if let approvedChangeDetails = changeInstance.changeDetails(for: self.approvedAssets) {
+                self.approvedAssets = approvedChangeDetails.fetchResultAfterChanges
+            } else {
+                self.approvedAssets = PHAsset.fetchAssets(in: self.approved, options: nil)
+            }
+            
+            if let rejectedChangeDetails = changeInstance.changeDetails(for: self.rejectedAssets) {
+                self.rejectedAssets = rejectedChangeDetails.fetchResultAfterChanges
+            } else {
+                self.rejectedAssets = PHAsset.fetchAssets(in: self.rejected, options: nil)
+            }
+            
+            if let needsActionChangeDetails = changeInstance.changeDetails(for: self.needsActionAssets) {
+                self.needsActionAssets = needsActionChangeDetails.fetchResultAfterChanges
+            } else {
+                self.needsActionAssets = PHAsset.fetchAssets(in: self.needsAction, options: nil)
+            }
+            
+            printElapsed("get all photos data (update)")
             
             self.isPhotoLibraryAuthorized = PHPhotoLibrary.authorizationStatus() == .authorized
         }
@@ -64,6 +94,20 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
 
     private func updateStatus(isChange: Bool) {
         DispatchQueue.main.async {
+            let start = DispatchTime.now()
+            var elapsed = start
+
+            func printElapsed(_ label: String) -> Void {
+              let now = DispatchTime.now()
+
+              let totalInterval = Double(now.uptimeNanoseconds - start.uptimeNanoseconds) / 1_000_000_000
+              let elapsedInterval = Double(now.uptimeNanoseconds - elapsed.uptimeNanoseconds) / 1_000_000_000
+
+              elapsed = DispatchTime.now()
+
+              print("Time to \(label):\n  \(elapsedInterval) seconds (\(totalInterval) total)")
+            }
+            
             let options = PHFetchOptions()
             options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
             options.fetchLimit = 500
@@ -73,6 +117,8 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
             self.approvedAssets = PHAsset.fetchAssets(in: self.approved, options: nil)
             self.rejectedAssets = PHAsset.fetchAssets(in: self.rejected, options: nil)
             self.needsActionAssets = PHAsset.fetchAssets(in: self.needsAction, options: nil)
+            
+            printElapsed("get all photos data (new)")
             
             self.isPhotoLibraryAuthorized = PHPhotoLibrary.authorizationStatus() == .authorized
         }

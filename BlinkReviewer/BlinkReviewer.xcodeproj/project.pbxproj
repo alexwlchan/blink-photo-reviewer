@@ -14,6 +14,7 @@
 		945F17B62A33D7AA004FC479 /* ReviewStateBorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 945F17B52A33D7AA004FC479 /* ReviewStateBorder.swift */; };
 		945F17B82A33DAC7004FC479 /* ReviewStateSaturation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 945F17B72A33DAC7004FC479 /* ReviewStateSaturation.swift */; };
 		94A0835E2A33E49E00238964 /* FocusedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A0835D2A33E49E00238964 /* FocusedImage.swift */; };
+		94A083612A33E98000238964 /* AlbumInfoOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A083602A33E98000238964 /* AlbumInfoOverlay.swift */; };
 		94C5FFF22A33ADD4004ADDF5 /* PHFetchResultCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C5FFF12A33ADD4004ADDF5 /* PHFetchResultCollection.swift */; };
 		94C5FFF62A33B698004ADDF5 /* PHAssetHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C5FFF52A33B698004ADDF5 /* PHAssetHStack.swift */; };
 		94D2C8B92A320E6F00BEE15B /* ReviewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D2C8B82A320E6F00BEE15B /* ReviewState.swift */; };
@@ -60,6 +61,7 @@
 		945F17B52A33D7AA004FC479 /* ReviewStateBorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewStateBorder.swift; sourceTree = "<group>"; };
 		945F17B72A33DAC7004FC479 /* ReviewStateSaturation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewStateSaturation.swift; sourceTree = "<group>"; };
 		94A0835D2A33E49E00238964 /* FocusedImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusedImage.swift; sourceTree = "<group>"; };
+		94A083602A33E98000238964 /* AlbumInfoOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumInfoOverlay.swift; sourceTree = "<group>"; };
 		94C5FFF12A33ADD4004ADDF5 /* PHFetchResultCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PHFetchResultCollection.swift; sourceTree = "<group>"; };
 		94C5FFF52A33B698004ADDF5 /* PHAssetHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PHAssetHStack.swift; sourceTree = "<group>"; };
 		94D2C8B82A320E6F00BEE15B /* ReviewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewState.swift; sourceTree = "<group>"; };
@@ -136,6 +138,7 @@
 			isa = PBXGroup;
 			children = (
 				94A0835D2A33E49E00238964 /* FocusedImage.swift */,
+				94A083602A33E98000238964 /* AlbumInfoOverlay.swift */,
 			);
 			path = FocusedImage;
 			sourceTree = "<group>";
@@ -374,6 +377,7 @@
 				945F17B42A33D726004FC479 /* ReviewStateIcon.swift in Sources */,
 				945F17B62A33D7AA004FC479 /* ReviewStateBorder.swift in Sources */,
 				94D7511E2A31B243005859E7 /* FullSizeImage.swift in Sources */,
+				94A083612A33E98000238964 /* AlbumInfoOverlay.swift in Sources */,
 				94C5FFF22A33ADD4004ADDF5 /* PHFetchResultCollection.swift in Sources */,
 				94D750F02A31A796005859E7 /* BlinkReviewerApp.swift in Sources */,
 				940331732A336B5100200C5D /* DeferredRendering.swift in Sources */,

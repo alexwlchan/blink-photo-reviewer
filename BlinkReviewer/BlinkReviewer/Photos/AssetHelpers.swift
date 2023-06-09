@@ -8,21 +8,6 @@
 import Foundation
 import Photos
 
-/// Returns a list of all the images in the Photos Library.
-func getAllPhotos() -> [PHAsset] {
-    var photos: [PHAsset] = []
-    
-    let options = PHFetchOptions()
-    options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
-    
-    PHAsset.fetchAssets(with: PHAssetMediaType.image, options: options)
-        .enumerateObjects({ (asset, _, _) in
-            photos.append(asset)
-        })
-    
-    return photos
-}
-
 extension PHAsset {
     /// Returns a list of all the albums that contain this asset.
     func albums() -> [PHAssetCollection] {

@@ -103,7 +103,7 @@ class PHAssetImage: NSObject, ObservableObject {
                         }
                         
                         if let imageResult = result {
-                            print("got image!")
+//                            print("got image!")
                             self.image = imageResult
                             
                             if !self.isDegraded {
