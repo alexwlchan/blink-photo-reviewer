@@ -25,6 +25,10 @@ struct PHFetchResultCollection: RandomAccessCollection, Equatable {
 
     let fetchResult: PHFetchResult<PHAsset>
 
+    init(_ fetchResult: PHFetchResult<PHAsset>) {
+        self.fetchResult = fetchResult
+    }
+    
     var startIndex: Int { 0 }
     var endIndex: Int { fetchResult.count }
 
@@ -36,17 +40,20 @@ struct PHFetchResultCollection: RandomAccessCollection, Equatable {
 struct PHFetchResultCollection_Previews: PreviewProvider {
     static var resultCollection: PHFetchResultCollection {
         let options = PHFetchOptions()
+        options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
         options.fetchLimit = 3
         
         let fetchResult: PHFetchResult<PHAsset> = PHAsset.fetchAssets(with: options)
         
-        return PHFetchResultCollection(fetchResult: fetchResult)
+        return PHFetchResultCollection(fetchResult)
     }
     
     static var previews: some View {
         VStack {
+            Text("These dates should be in descending order:")
+            
             ForEach(self.resultCollection, id: \.localIdentifier) { asset in
-                Text("\(asset.localIdentifier)")
+                Text("\(asset.creationDate?.ISO8601Format() ?? "(unknown)")")
             }
         }
     }

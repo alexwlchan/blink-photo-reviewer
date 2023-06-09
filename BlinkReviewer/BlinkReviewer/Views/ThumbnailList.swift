@@ -15,7 +15,7 @@ struct ThumbnailList: View {
     @Binding var selectedAssetIndex: Int
     
     private var assets: PHFetchResultCollection {
-        return PHFetchResultCollection(fetchResult: photosLibrary.assets2)
+        return PHFetchResultCollection(photosLibrary.assets2)
     }
     
     var body: some View {
