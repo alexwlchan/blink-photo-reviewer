@@ -10,7 +10,6 @@ import Photos
 
 class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
 
-//    @Published var assets = getAllPhotos()
     @Published var isPhotoLibraryAuthorized = false
     
     @Published var assets2: PHFetchResult<PHAsset> = PHFetchResult()
@@ -22,7 +21,7 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
     private let approved = getAlbum(withName: "Approved")
     private let rejected = getAlbum(withName: "Rejected")
     private let needsAction = getAlbum(withName: "Needs Action")
-
+    
     override init() {
         super.init()
         PHPhotoLibrary.shared().register(self)
@@ -125,10 +124,6 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
     }
     
     func state(for asset: PHAsset) -> ReviewState? {
-        if asset.localIdentifier == "CBF9AD6F-F885-4538-9012-3DC5EEEBACBE/L0/001" {
-            print("evaluating state for \(asset.localIdentifier)")
-        }
-        
         if self.rejectedAssets.contains(asset) {
             return .Rejected
         }
@@ -138,10 +133,6 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
         }
         
         if self.approvedAssets.contains(asset) {
-            if asset.localIdentifier == "CBF9AD6F-F885-4538-9012-3DC5EEEBACBE/L0/001" {
-                print(" -> state is approved!")
-            }
-            
             return .Approved
         }
         
