@@ -12,6 +12,18 @@ struct PhotoReviewer: View {
     @EnvironmentObject var photosLibrary: PhotosLibrary
     @ObservedObject var fullSizeImage: PHAssetImage = PHAssetImage(nil, size: PHImageManagerMaximumSize, deliveryMode: .highQualityFormat)
     
+    // Which asset is currently in focus?
+    //
+    // i.e. scrolled to in the thumbnail pane, showing a big preview.
+    //
+    // This is 0-indexed and counts from the right -- that is, the rightmost item
+    // is the 0th.
+    @State var focusedAssetIndex: Int = 0
+    
+    var focusedAsset: PHAsset {
+        photosLibrary.assets2.object(at: focusedAssetIndex)
+    }
+    
     @State var selectedAssetIndex: Int = -1
     
     @State var showStatistics: Bool = false
@@ -21,55 +33,79 @@ struct PhotoReviewer: View {
         if photosLibrary.isPhotoLibraryAuthorized {
             ZStack {
                 VStack {
-                    let binding = Binding {
-                        selectedAssetIndex == -1 ? photosLibrary.assets2.count - 1 : selectedAssetIndex
-                    } set: {
-                        self.selectedAssetIndex = $0
+                    PHAssetHStack(photosLibrary.assets2) { asset, index in
+                        VStack {
+                            
+                            NewThumbnailImage(asset)
+//                                .resizable()
+                                .saturation(photosLibrary.state(for: asset) == .Rejected ? 0.0 : 1.0)
+                                // Note: it's taken several attempts to get this working correctly;
+                                // it behaves differently in the running app to the SwiftUI preview.
+                                //
+                                // Expected properties:
+                                //
+                                //    - Thumbnails are square
+                                //    - Thumbnails are expanded to fill the square, but they prefer
+                                //      to crop rather than stretch the image
+                                //
+                                .scaledToFill()
+                                .frame(width: 70.0, height: 70.0, alignment: .center)
+                                .border(.green)
+//                            Text("\(index) / \(asset.localIdentifier)")
+                        }
                     }
-                    
-                    ThumbnailList(selectedAssetIndex: binding)
-                        .environmentObject(photosLibrary)
-                        .background(.gray.opacity(0.3))
-                    
-                    FullSizeImage(image: fullSizeImage)
-                        .background(.black)
                 }
-                .background(.black)
-                .onAppear {
-                    selectedAssetIndex = photosLibrary.assets2.count - 1
-                    
-                    fullSizeImage.asset = photosLibrary.assets2.object(at: photosLibrary.assets2.count - 1 - selectedAssetIndex)
-                    
-                    NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
-                        handleKeyEvent(event)
-                        return event
-                    }
-                }.onChange(of: selectedAssetIndex, perform: { newIndex in
-                    fullSizeImage.asset = photosLibrary.assets2.object(at: photosLibrary.assets2.count - 1 - newIndex)
-                })
-                
-                HStack {
-                    Spacer()
-                    
-                    VStack {
-                        Spacer()
-                        
-                        if showStatistics {
-                            Statistics().environmentObject(photosLibrary)
-                        }
-                        
-                        if showDebug {
-                            Text("\(fullSizeImage.asset?.localIdentifier ?? "(none)")")
-                                .font(.title)
-                                .padding(10)
-                                .foregroundColor(.white)
-                                .background(.black.opacity(0.7))
-                                .cornerRadius(7.0)
-                                .shadow(radius: 2.0)
-                        }
-                    }
-                    .padding()
-                }.padding()
+//                
+//                VStack {
+//                    let binding = Binding {
+//                        selectedAssetIndex == -1 ? photosLibrary.assets2.count - 1 : selectedAssetIndex
+//                    } set: {
+//                        self.selectedAssetIndex = $0
+//                    }
+//                    
+//                    ThumbnailList(selectedAssetIndex: binding)
+//                        .environmentObject(photosLibrary)
+//                        .background(.gray.opacity(0.3))
+//                    
+//                    FullSizeImage(image: fullSizeImage)
+//                        .background(.black)
+//                }
+//                .background(.black)
+//                .onAppear {
+//                    selectedAssetIndex = photosLibrary.assets2.count - 1
+//                    
+//                    fullSizeImage.asset = photosLibrary.assets2.object(at: photosLibrary.assets2.count - 1 - selectedAssetIndex)
+//                    
+//                    NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+//                        handleKeyEvent(event)
+//                        return event
+//                    }
+//                }.onChange(of: selectedAssetIndex, perform: { newIndex in
+//                    fullSizeImage.asset = photosLibrary.assets2.object(at: photosLibrary.assets2.count - 1 - newIndex)
+//                })
+//                
+//                HStack {
+//                    Spacer()
+//                    
+//                    VStack {
+//                        Spacer()
+//                        
+//                        if showStatistics {
+//                            Statistics().environmentObject(photosLibrary)
+//                        }
+//                        
+//                        if showDebug {
+//                            Text("\(fullSizeImage.asset?.localIdentifier ?? "(none)")")
+//                                .font(.title)
+//                                .padding(10)
+//                                .foregroundColor(.white)
+//                                .background(.black.opacity(0.7))
+//                                .cornerRadius(7.0)
+//                                .shadow(radius: 2.0)
+//                        }
+//                    }
+//                    .padding()
+//                }.padding()
             }
         } else {
             Text("Waiting for Photos Library authorization…")
