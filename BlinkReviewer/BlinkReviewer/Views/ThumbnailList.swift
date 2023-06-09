@@ -73,19 +73,19 @@ struct ThumbnailList: View {
                     // See https://developer.apple.com/documentation/swiftui/view/scrollposition(initialanchor:)
                         .flipsForRightToLeftLayoutDirection(true)
                         .environment(\.layoutDirection, .rightToLeft)
-                }.padding()
+                    }.padding()
             }
-            .frame(height: 90)
-            .flipsForRightToLeftLayoutDirection(true)
-            .environment(\.layoutDirection, .rightToLeft)
-            .onChange(of: selectedAssetIndex, perform: { newIndex in
-                withAnimation {
+                .frame(height: 90)
+                .flipsForRightToLeftLayoutDirection(true)
+                .environment(\.layoutDirection, .rightToLeft)
+                .onChange(of: selectedAssetIndex, perform: { newIndex in
+                    withAnimation {
+                        proxy.scrollTo(selectedAssetIndex, anchor: .center)
+                    }
+                })
+                .onAppear {
                     proxy.scrollTo(selectedAssetIndex, anchor: .center)
                 }
-            })
-            .onAppear {
-                proxy.scrollTo(selectedAssetIndex, anchor: .center)
-            }
         }
     }
 }
