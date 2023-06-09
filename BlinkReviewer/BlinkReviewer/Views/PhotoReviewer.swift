@@ -176,6 +176,13 @@ struct PhotoReviewer: View {
                     focusedAssetIndex += 1
                 }
             
+            case let e where e.characters == "c": // "c"
+                let crossStitch = getAlbum(withName: "Cross stitch")
+            
+                try! PHPhotoLibrary.shared().performChangesAndWait {
+                    focusedAsset.toggle(inAlbum: crossStitch)
+                }
+            
             default:
                 logger.info("Received unhandled keyboard event: \(event, privacy: .public)")
                 break
