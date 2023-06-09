@@ -1,4 +1,5 @@
 import Photos
+import SwiftUI
 
 /// Implement a RandomAccessCollection for a PHFetchResult.
 ///
@@ -29,5 +30,24 @@ struct PHFetchResultCollection: RandomAccessCollection, Equatable {
 
     subscript(position: Int) -> PHAsset {
         fetchResult.object(at: position)
+    }
+}
+
+struct PHFetchResultCollection_Previews: PreviewProvider {
+    static var resultCollection: PHFetchResultCollection {
+        let options = PHFetchOptions()
+        options.fetchLimit = 3
+        
+        let fetchResult: PHFetchResult<PHAsset> = PHAsset.fetchAssets(with: options)
+        
+        return PHFetchResultCollection(fetchResult: fetchResult)
+    }
+    
+    static var previews: some View {
+        VStack {
+            ForEach(self.resultCollection, id: \.localIdentifier) { asset in
+                Text("\(asset.localIdentifier)")
+            }
+        }
     }
 }
