@@ -63,7 +63,11 @@ class PHAssetImage: NSObject, ObservableObject {
                     contentMode: .aspectFill,
                     options: options,
                     resultHandler: { (result, info) -> Void in
-                        self.image = result!
+                        if let imageResult = result {
+                            self.image = imageResult
+                        } else {
+                            print("Error getting image: \(info)")
+                        }
                     }
                 )
         }
