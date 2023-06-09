@@ -26,7 +26,7 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
     override init() {
         super.init()
         PHPhotoLibrary.shared().register(self)
-        updateStatus()
+        updateStatus(isChange: false)
     }
     
     func updateAsset(atIndex index: Int) {
@@ -36,50 +36,28 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
     func photoLibraryDidChange(_ changeInstance: PHChange) {
         print("calling photoLibraryDidChange")
         print(changeInstance.description)
-        updateStatus()
+        updateStatus(isChange: true)
     }
 
-    private func updateStatus() {
+    private func updateStatus(isChange: Bool) {
         DispatchQueue.main.async {
-            let start = DispatchTime.now()
-            var elapsed = start
-
-            func printElapsed(_ label: String) -> Void {
-              let now = DispatchTime.now()
-
-              let totalInterval = Double(now.uptimeNanoseconds - start.uptimeNanoseconds) / 1_000_000_000
-              let elapsedInterval = Double(now.uptimeNanoseconds - elapsed.uptimeNanoseconds) / 1_000_000_000
-
-              elapsed = DispatchTime.now()
-
-              print("Time to \(label):\n  \(elapsedInterval) seconds (\(totalInterval) total)")
-            }
-            
-//            self.assets = getAllPhotos()
-            
             let options = PHFetchOptions()
             options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-            options.fetchLimit = 300
             
             self.assets2 = PHAsset.fetchAssets(with: PHAssetMediaType.image, options: options)
-            
-            print("self.approvedAssets = \(self.approvedAssets.count)")
+
             self.approvedAssets = PHAsset.fetchAssets(in: self.approved, options: nil)
-            print("self.approvedAssets = \(self.approvedAssets.count)")
             self.rejectedAssets = PHAsset.fetchAssets(in: self.rejected, options: nil)
             self.needsActionAssets = PHAsset.fetchAssets(in: self.needsAction, options: nil)
             
             self.isPhotoLibraryAuthorized = PHPhotoLibrary.authorizationStatus() == .authorized
-            
-            print("self.isPhotoLibraryAuthorized = \(self.isPhotoLibraryAuthorized)")
-            print("self.assets2.count = \(self.assets2.count)")
-            
-            printElapsed("get photos library data")
         }
     }
     
     func state(for asset: PHAsset) -> ReviewState? {
-        print("evaluating state for \(asset.localIdentifier)")
+        if asset.localIdentifier == "CBF9AD6F-F885-4538-9012-3DC5EEEBACBE/L0/001" {
+            print("evaluating state for \(asset.localIdentifier)")
+        }
         
         if self.rejectedAssets.contains(asset) {
             return .Rejected
@@ -90,6 +68,10 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
         }
         
         if self.approvedAssets.contains(asset) {
+            if asset.localIdentifier == "CBF9AD6F-F885-4538-9012-3DC5EEEBACBE/L0/001" {
+                print(" -> state is approved!")
+            }
+            
             return .Approved
         }
         

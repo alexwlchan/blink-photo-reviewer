@@ -15,6 +15,7 @@ struct PhotoReviewer: View {
     @State var selectedAssetIndex: Int = -1
     
     @State var showStatistics: Bool = false
+    @State var showDebug: Bool = true
     
     var body: some View {
         if photosLibrary.isPhotoLibraryAuthorized {
@@ -38,7 +39,7 @@ struct PhotoReviewer: View {
                     selectedAssetIndex = photosLibrary.assets2.count - 1
                     
                     fullSizeImage.asset = photosLibrary.assets2.object(at: photosLibrary.assets2.count - 1 - selectedAssetIndex)
-
+                    
                     NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
                         handleKeyEvent(event)
                         return event
@@ -47,18 +48,28 @@ struct PhotoReviewer: View {
                     fullSizeImage.asset = photosLibrary.assets2.object(at: photosLibrary.assets2.count - 1 - newIndex)
                 })
                 
-                if showStatistics {
-                    HStack {
+                HStack {
+                    Spacer()
+                    
+                    VStack {
                         Spacer()
                         
-                        VStack {
-                            Spacer()
-                            
+                        if showStatistics {
                             Statistics().environmentObject(photosLibrary)
                         }
-                        .padding()
-                    }.padding()
-                }
+                        
+                        if showDebug {
+                            Text("\(fullSizeImage.asset?.localIdentifier ?? "(none)")")
+                                .font(.title)
+                                .padding(10)
+                                .foregroundColor(.white)
+                                .background(.black.opacity(0.7))
+                                .cornerRadius(7.0)
+                                .shadow(radius: 2.0)
+                        }
+                    }
+                    .padding()
+                }.padding()
             }
         } else {
             Text("Waiting for Photos Library authorization…")
@@ -66,7 +77,7 @@ struct PhotoReviewer: View {
     }
     
     private func handleKeyEvent(_ event: NSEvent) {
-        let asset = photosLibrary.assets2.object(at: selectedAssetIndex)
+        let asset = photosLibrary.assets2.object(at: photosLibrary.assets2.count - 1 - selectedAssetIndex)
         
         switch event.keyCode {
             case 123: // Left arrow key
@@ -80,16 +91,12 @@ struct PhotoReviewer: View {
                 }
             
             case 18, 19, 20: // "1", "2", "3"
+                let state = photosLibrary.state(for: asset)
+            
                 let approved = getAlbum(withName: "Approved")
                 let rejected = getAlbum(withName: "Rejected")
                 let needsAction = getAlbum(withName: "Needs Action")
 
-                let albums = asset.albums()
-
-                let isApproved = albums.contains(approved)
-                let isRejected = albums.contains(rejected)
-                let isNeedsAction = albums.contains(needsAction)
-            
                 try! PHPhotoLibrary.shared().performChangesAndWait {
                     // Strictly speaking, the first condition is a combination of two:
                     //
@@ -99,19 +106,21 @@ struct PhotoReviewer: View {
                     //      which case setting the new status means removing approved.
                     //
                     // Similar logic applies for all three conditions.
-                    if isApproved {
-                      asset.remove(fromAlbum: approved)
+                    if state == .Approved {
+                        print("removing asset \(asset.localIdentifier) from approved")
+                        asset.remove(fromAlbum: approved)
                     } else if event.keyCode == 18 {
+                        print("adding asset \(asset.localIdentifier) to approved")
                         asset.add(toAlbum: approved)
                     }
 
-                    if isRejected {
+                    if state == .Rejected {
                         asset.remove(fromAlbum: rejected)
                     } else if event.keyCode == 19 {
                         asset.add(toAlbum: rejected)
                     }
 
-                    if isNeedsAction {
+                    if state == .NeedsAction {
                         asset.remove(fromAlbum: needsAction)
                     } else if event.keyCode == 20 {
                         asset.add(toAlbum: needsAction)
@@ -156,6 +165,9 @@ struct PhotoReviewer: View {
             
             case 1: // "s"
                 showStatistics.toggle()
+            
+            case 2: // "d"
+                showDebug.toggle()
             
             default:
                 print(event)

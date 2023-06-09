@@ -27,47 +27,50 @@ struct ThumbnailImage: View {
     }
     
     var body: some View {
-        Image(nsImage: thumbnail.image)
-            .resizable()
-            .saturation(state == .Rejected ? 0.0 : 1.0)
-            // Note: it's taken several attempts to get this working correctly;
-            // it behaves differently in the running app to the SwiftUI preview.
-            //
-            // Expected properties:
-            //
-            //    - Thumbnails are square
-            //    - Thumbnails are expanded to fill the square, but they prefer
-            //      to crop rather than stretch the image
-            //
-            .scaledToFill()
-            .frame(width: size, height: size, alignment: .center)
-            .clipped()
-            .overlay(
-                // https://www.appcoda.com/swiftui-border/
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .stroke(
-                        state?.color() ?? .gray.opacity(0.7),
-                        lineWidth: state != nil ? 3.0 : 1.0
-                    )
-            )
-            .cornerRadius(cornerRadius)
-            .overlay(alignment: Alignment(horizontal: .leading, vertical: .bottom)) {
-                if (isFavorite) {
-                    Image(systemName: "heart.fill")
-                        .foregroundColor(.white)
-                        .padding(2)
-                        .shadow(radius: 2.0)
+        VStack {
+            Text("\(Date())").foregroundColor(.white)
+            Image(nsImage: thumbnail.image)
+                .resizable()
+                .saturation(state == .Rejected ? 0.0 : 1.0)
+                // Note: it's taken several attempts to get this working correctly;
+                // it behaves differently in the running app to the SwiftUI preview.
+                //
+                // Expected properties:
+                //
+                //    - Thumbnails are square
+                //    - Thumbnails are expanded to fill the square, but they prefer
+                //      to crop rather than stretch the image
+                //
+                .scaledToFill()
+                .frame(width: size, height: size, alignment: .center)
+                .clipped()
+                .overlay(
+                    // https://www.appcoda.com/swiftui-border/
+                    RoundedRectangle(cornerRadius: cornerRadius)
+                        .stroke(
+                            state?.color() ?? .gray.opacity(0.7),
+                            lineWidth: state != nil ? 3.0 : 1.0
+                        )
+                )
+                .cornerRadius(cornerRadius)
+                .overlay(alignment: Alignment(horizontal: .leading, vertical: .bottom)) {
+                    if (isFavorite) {
+                        Image(systemName: "heart.fill")
+                            .foregroundColor(.white)
+                            .padding(2)
+                            .shadow(radius: 2.0)
+                    }
                 }
+                .overlay(alignment: Alignment(horizontal: .leading, vertical: .top)) {
+                    if let thisState = state {
+                        thisState.icon()
+                            .foregroundStyle(.white, thisState.color())
+                            .symbolRenderingMode(.palette)
+                            .padding(2)
+                            .font(.title2)
+                            .shadow(radius: 2.0)
+                    }
             }
-            .overlay(alignment: Alignment(horizontal: .leading, vertical: .top)) {
-                if let thisState = state {
-                    thisState.icon()
-                        .foregroundStyle(.white, thisState.color())
-                        .symbolRenderingMode(.palette)
-                        .padding(2)
-                        .font(.title2)
-                        .shadow(radius: 2.0)
-                }
-            }
+        }
     }
 }
