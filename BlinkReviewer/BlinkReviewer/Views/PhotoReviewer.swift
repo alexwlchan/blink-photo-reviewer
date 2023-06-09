@@ -114,6 +114,8 @@ struct PhotoReviewer: View {
                     }
                 }
             
+                photosLibrary.updateAsset(atIndex: selectedAssetIndex)
+            
                 if selectedAssetIndex > 0 {
                     selectedAssetIndex -= 1
                 }
