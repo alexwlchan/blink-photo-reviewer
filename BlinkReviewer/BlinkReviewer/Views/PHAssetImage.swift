@@ -27,6 +27,7 @@ class PHAssetImage: NSObject, ObservableObject {
     init(_ asset: PHAsset?, size: CGSize, deliveryMode: PHImageRequestOptionsDeliveryMode) {
         self.size = size
         self.deliveryMode = deliveryMode
+        self.imageCache = Dictionary()
         
         super.init()
         
@@ -36,6 +37,18 @@ class PHAssetImage: NSObject, ObservableObject {
     private var _asset: PHAsset?
     private var size: CGSize
     private var deliveryMode: PHImageRequestOptionsDeliveryMode
+    
+    // Often we'll be retrieving the same image repeatedly, as the user shuttles
+    // back and forth between a few images they're comparing.  In this case, we
+    // don't want to go back to Photos every time -- so we keep a cache of images
+    // we've retrieved previously.
+    //
+    // In theory the `PHCachingImageManager` does this for us; in practice the app
+    // feels snappier to me with this additional cache.
+    //
+    // TODO: Replace this Dictionary with an LRU cache of some sort; this could
+    // allow the app's memory usage to balloon indefinitely.
+    private var imageCache: Dictionary<PHAsset, NSImage>
     
     var asset: PHAsset? {
         get {
@@ -50,6 +63,11 @@ class PHAssetImage: NSObject, ObservableObject {
         
     private func regenerateImage() {
         if let thisAsset = asset {
+            if let nsImage = imageCache[thisAsset] {
+                self.image = nsImage
+                return
+            }
+            
             // This implementation is based on code in a Stack Overflow answer
             // by Francois Nadeau: https://stackoverflow.com/a/48755517/1558022
             
@@ -83,6 +101,10 @@ class PHAssetImage: NSObject, ObservableObject {
                         
                         if let imageResult = result {
                             self.image = imageResult
+                            
+                            if !self.isDegraded {
+                                self.imageCache[thisAsset] = imageResult
+                            }
                         } else {
                             print("Error getting image: \(info)")
                         }
