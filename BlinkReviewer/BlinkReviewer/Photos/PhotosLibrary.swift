@@ -29,7 +29,7 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
 
     private func updateStatus() {
         DispatchQueue.main.async {
-//            self.assets = getAllPhotos()
+            self.assets = getAllPhotos()
             self.isPhotoLibraryAuthorized = PHPhotoLibrary.authorizationStatus() == .authorized
         }
     }
