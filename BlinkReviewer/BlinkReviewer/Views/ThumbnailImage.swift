@@ -28,7 +28,6 @@ struct ThumbnailImage: View {
     
     var body: some View {
         VStack {
-            Text("\(Date())").foregroundColor(.white)
             Image(nsImage: thumbnail.image)
                 .resizable()
                 .saturation(state == .Rejected ? 0.0 : 1.0)
