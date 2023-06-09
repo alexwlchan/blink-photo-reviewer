@@ -30,6 +30,10 @@ struct PhotoReviewer: View {
     @State var showStatistics: Bool = false
     @State var showDebug: Bool = true
     
+    // This contains the big image that is currently in focus.  See the comments
+    // on FocusedImage for why this state is defined outside that view.
+    @ObservedObject var focusedAssetImage = PHAssetImage(nil, size: PHImageManagerMaximumSize, deliveryMode: .highQualityFormat)
+    
     var body: some View {
         if photosLibrary.isPhotoLibraryAuthorized {
             ZStack {
@@ -40,16 +44,25 @@ struct PhotoReviewer: View {
                     }
                     .frame(height: 90)
                     
-                    BigImage(focusedAsset)
+                    FocusedImage(assetImage: focusedAssetImage)
                     
                     Spacer()
                 }
             }
             .onAppear {
+                
+                
                 NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
                     handleKeyEventNew(event)
                     return event
                 }
+            }
+            // These two lines update the big image that fills most of the window.
+            // See the comments on FocusedImage for more explanation of why this is
+            // managed this way.
+            .onAppear { focusedAssetImage.asset = focusedAsset }
+            .onChange(of: focusedAsset) { newFocusedAsset in
+                focusedAssetImage.asset = newFocusedAsset
             }
 //                
 //                VStack {
