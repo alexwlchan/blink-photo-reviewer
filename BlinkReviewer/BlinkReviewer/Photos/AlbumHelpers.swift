@@ -14,7 +14,7 @@ import Photos
 func getAlbum(withName name: String) -> PHAssetCollection {
   let collections =
     PHAssetCollection
-    .fetchAssetCollections(with: .album, subtype: .albumRegular, options: nil)
+        .fetchAssetCollections(with: .album, subtype: .albumRegular, options: nil)
 
   var thisAssetCollection: PHAssetCollection? = nil
 

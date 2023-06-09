@@ -19,7 +19,7 @@ struct PHFetchResultCollection: RandomAccessCollection, Equatable {
     var endIndex: Int { fetchResult.count }
 
     subscript(position: Int) -> PHAsset {
-        fetchResult.object(at: position)
+        fetchResult.object(at: fetchResult.count - position - 1)
     }
 }
 
@@ -41,34 +41,25 @@ struct ThumbnailList: View {
         return PHFetchResultCollection(fetchResult: photosLibrary.assets2)
     }
     
-    
-    private var thumbnails: some View {
-        // Implementation note: we use the localIdentifier rather than the
-        // array index as the id here, because the app gets way slower if
-        // you use the array index -- it tries to regenerate a bunch of
-        // the thumbnails every time you change position.
-        ForEach(
-            Array(zip(assets.indices, assets)), id: \.1.localIdentifier) { index, asset in
-//                Text("asset \(index)")
-                ThumbnailImage(
-                    thumbnail: PHAssetImage(asset, size: CGSize(width: 70, height: 70), deliveryMode: .opportunistic),
-                    state: photosLibrary.state(for: asset),
-                    isFavorite: asset.isFavorite,
-                    isSelected: photosLibrary.assets2.count - 1 - index == selectedAssetIndex
-                ).onTapGesture {
-                    selectedAssetIndex = photosLibrary.assets2.count - 1 - index
-                }
-        }
-    }
-
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView(.horizontal) {
                 LazyHStack(spacing: 5) {
                     // TODO: placeholder images for start/end
                     
-                    thumbnails
-
+                    ForEach(
+                        Array(zip(assets.indices, assets)), id: \.1.localIdentifier) { index, asset in
+                            //                Text("asset \(index)")
+                            ThumbnailImage(
+                                thumbnail: PHAssetImage(asset, size: CGSize(width: 70, height: 70), deliveryMode: .opportunistic),
+                                state: photosLibrary.state(for: asset),
+                                isFavorite: asset.isFavorite,
+                                isSelected: photosLibrary.assets2.count - 1 - index == selectedAssetIndex
+                            ).onTapGesture {
+                                selectedAssetIndex = photosLibrary.assets2.count - 1 - index
+                            }
+                        }
+                    
                     // Note: these two uses of RTL direction are a way to get the LazyHStack
                     // to start on the right-hand side (i.e. the newest image) without loading
                     // everything else in the view.
@@ -79,19 +70,19 @@ struct ThumbnailList: View {
                     // See https://developer.apple.com/documentation/swiftui/view/scrollposition(initialanchor:)
                         .flipsForRightToLeftLayoutDirection(true)
                         .environment(\.layoutDirection, .rightToLeft)
-                    }.padding()
+                }.padding()
             }
-                .frame(height: 90)
-                .flipsForRightToLeftLayoutDirection(true)
-                .environment(\.layoutDirection, .rightToLeft)
-                .onChange(of: selectedAssetIndex, perform: { newIndex in
-                    withAnimation {
-                        proxy.scrollTo(selectedAssetIndex, anchor: .center)
-                    }
-                })
-                .onAppear {
+            .frame(height: 90)
+            .flipsForRightToLeftLayoutDirection(true)
+            .environment(\.layoutDirection, .rightToLeft)
+            .onChange(of: selectedAssetIndex, perform: { newIndex in
+                withAnimation {
                     proxy.scrollTo(selectedAssetIndex, anchor: .center)
                 }
+            })
+            .onAppear {
+                proxy.scrollTo(selectedAssetIndex, anchor: .center)
+            }
         }
     }
 }

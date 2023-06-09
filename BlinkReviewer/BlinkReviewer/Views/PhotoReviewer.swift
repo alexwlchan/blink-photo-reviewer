@@ -12,13 +12,9 @@ struct PhotoReviewer: View {
     @EnvironmentObject var photosLibrary: PhotosLibrary
     @ObservedObject var fullSizeImage: PHAssetImage = PHAssetImage(nil, size: PHImageManagerMaximumSize, deliveryMode: .highQualityFormat)
     
-    @State var selectedAssetIndex: Int
+    @State var selectedAssetIndex: Int = -1
     
     @State var showStatistics: Bool = false
-    
-    init(selectedAssetIndex: Int) {
-        self.selectedAssetIndex = selectedAssetIndex
-    }
     
     var body: some View {
         if photosLibrary.isPhotoLibraryAuthorized {
@@ -30,6 +26,9 @@ struct PhotoReviewer: View {
                     
 //                    FullSizeImage(image: fullSizeImage)
 //                        .background(.black)
+                }
+                .onAppear {
+                    selectedAssetIndex = photosLibrary.assets2.count - 1
                 }
                 .background(.black)
 //                .onAppear {

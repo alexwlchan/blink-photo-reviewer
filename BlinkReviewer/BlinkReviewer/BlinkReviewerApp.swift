@@ -13,7 +13,7 @@ struct BlinkReviewerApp: App {
     
     var body: some Scene {
         WindowGroup {
-            PhotoReviewer(selectedAssetIndex: photosLibrary.assets2.count - 1)
+            PhotoReviewer()
                 .environmentObject(photosLibrary)
         }
     }
