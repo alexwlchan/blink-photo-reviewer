@@ -36,8 +36,31 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
     func photoLibraryDidChange(_ changeInstance: PHChange) {
         print("calling photoLibraryDidChange")
         print(changeInstance.description)
-        updateStatus(isChange: true)
+        updateStatus(changeInstance)
     }
+    
+    private func updateStatus(_ changeInstance: PHChange) {
+        DispatchQueue.main.async {
+            let options = PHFetchOptions()
+            options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
+            options.fetchLimit = 500
+            
+//            print()
+            
+            if let changeDetails = changeInstance.changeDetails(for: self.assets2) {
+                self.assets2 = changeDetails.fetchResultAfterChanges
+            } else {
+                self.assets2 = PHAsset.fetchAssets(with: PHAssetMediaType.image, options: options)
+            }
+
+            self.approvedAssets = PHAsset.fetchAssets(in: self.approved, options: nil)
+            self.rejectedAssets = PHAsset.fetchAssets(in: self.rejected, options: nil)
+            self.needsActionAssets = PHAsset.fetchAssets(in: self.needsAction, options: nil)
+            
+            self.isPhotoLibraryAuthorized = PHPhotoLibrary.authorizationStatus() == .authorized
+        }
+    }
+
 
     private func updateStatus(isChange: Bool) {
         DispatchQueue.main.async {
