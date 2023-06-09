@@ -114,6 +114,17 @@ struct PhotoReviewer: View {
             
                 photosLibrary.updateAsset(atIndex: selectedAssetIndex)
 
+            case 32: // "u"
+                if asset.state() != nil {
+                    let lastUnreviewed = photosLibrary.assets[0..<selectedAssetIndex].lastIndex(where: { asset in
+                        asset.state() == nil
+                    })
+                    
+                    if let theIndex = lastUnreviewed {
+                        selectedAssetIndex = theIndex
+                    }
+                }
+            
             
             default:
                 print(event)
