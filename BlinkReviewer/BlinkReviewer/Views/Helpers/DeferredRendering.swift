@@ -10,7 +10,8 @@ import SwiftUI
 /// ```
 ///
 /// will not display the text "Hello, world!" until five seconds after the
-/// view is initially rendered.
+/// view is initially rendered.  If the view is destroyed within the delay,
+/// it never renders.
 ///
 /// This is based on code xwritten by Yonat and Charlton Provatas on
 /// Stack Overflow, see https://stackoverflow.com/a/74765430/1558022
