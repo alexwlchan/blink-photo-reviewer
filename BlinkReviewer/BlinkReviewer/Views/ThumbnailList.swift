@@ -34,7 +34,7 @@ struct ThumbnailList: View {
                     ForEach(Array(displayAssets().enumerated()), id: \.element.localIdentifier) { index, asset in
                         ThumbnailImage(
                             thumbnail: PHAssetImage(asset, size: CGSize(width: 70, height: 70), deliveryMode: .opportunistic),
-                            state: asset.state(),
+                            state: photosLibrary.state(for: asset),
                             isFavorite: asset.isFavorite,
                             isSelected: displayAssets()[displaySelectedAssetIndex()].localIdentifier == asset.localIdentifier
                         ).onTapGesture {

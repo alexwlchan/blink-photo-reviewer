@@ -12,6 +12,10 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
 
     @Published var assets = getAllPhotos()
     @Published var isPhotoLibraryAuthorized = false
+    
+    @Published var approvedAssets: Set<PHAsset> = Set()
+    @Published var rejectedAssets: Set<PHAsset> = Set()
+    @Published var needsActionAssets: Set<PHAsset> = Set()
 
     override init() {
         super.init()
@@ -30,25 +34,39 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
     private func updateStatus() {
         DispatchQueue.main.async {
             self.assets = getAllPhotos()
+            
+            self.approvedAssets = self.getPhotosIn(album: getAlbum(withName: "Approved"))
+            self.rejectedAssets = self.getPhotosIn(album: getAlbum(withName: "Rejected"))
+            self.needsActionAssets = self.getPhotosIn(album: getAlbum(withName: "Needs Action"))
+            
             self.isPhotoLibraryAuthorized = PHPhotoLibrary.authorizationStatus() == .authorized
         }
     }
     
-    func countApproved() -> Int {
-        let album = getAlbum(withName: "Approved")
+    private func getPhotosIn(album: PHAssetCollection) -> Set<PHAsset> {
+        var result: Set<PHAsset> = Set()
         
-        return PHAsset.fetchAssets(in: album, options: nil).count
+        PHAsset.fetchAssets(in: album, options: nil)
+            .enumerateObjects({ (asset, _, _) in
+                result.insert(asset)
+            })
+        
+        return result
     }
     
-    func countRejected() -> Int {
-        let album = getAlbum(withName: "Rejected")
+    func state(for asset: PHAsset) -> ReviewState? {
+        if self.rejectedAssets.contains(asset) {
+            return .Rejected
+        }
         
-        return PHAsset.fetchAssets(in: album, options: nil).count
-    }
-    
-    func countNeedsAction() -> Int {
-        let album = getAlbum(withName: "Needs Action")
+        if self.needsActionAssets.contains(asset) {
+            return .NeedsAction
+        }
         
-        return PHAsset.fetchAssets(in: album, options: nil).count
+        if self.approvedAssets.contains(asset) {
+            return .Approved
+        }
+        
+        return nil
     }
 }

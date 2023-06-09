@@ -38,25 +38,6 @@ extension PHAsset {
         return result
     }
     
-    func state() -> ReviewState? {
-        var result: ReviewState? = nil
-        
-        self.albums().forEach { album in
-            switch (album.localizedTitle) {
-                case "Approved":
-                    result = .Approved
-                case "Rejected":
-                    result = .Rejected
-                case "Needs Action":
-                    result = .NeedsAction
-                default:
-                    break
-            }
-        }
-        
-        return result
-    }
-    
     private func getImageForSize(size: CGSize) -> NSImage {
         // This implementation is based on code in a Stack Overflow answer
         // by Francois Nadeau: https://stackoverflow.com/a/48755517/1558022

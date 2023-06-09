@@ -135,9 +135,9 @@ struct PhotoReviewer: View {
                 photosLibrary.updateAsset(atIndex: selectedAssetIndex)
 
             case 32: // "u"
-                if asset.state() != nil {
+                if photosLibrary.state(for: asset) != nil {
                     let lastUnreviewed = photosLibrary.assets[0..<selectedAssetIndex].lastIndex(where: { asset in
-                        asset.state() == nil
+                        photosLibrary.state(for: asset) == nil
                     })
                     
                     if let theIndex = lastUnreviewed {
