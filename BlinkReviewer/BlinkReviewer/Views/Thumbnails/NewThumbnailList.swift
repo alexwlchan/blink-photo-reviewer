@@ -12,13 +12,23 @@ struct NewThumbnailList: View {
     @Binding var focusedAssetIndex: Int
     
     var body: some View {
-        PHAssetHStack(photosLibrary.assets2) { asset, index in
-            NewThumbnailImage(
-                photosLibrary.getThumbnail(for: asset),
-                state: photosLibrary.state(of: asset),
-                isFavorite: asset.isFavorite,
-                isFocused: index == focusedAssetIndex
-            )
+        ScrollViewReader { proxy in
+            PHAssetHStack(photosLibrary.assets2) { asset, index in
+                NewThumbnailImage(
+                    photosLibrary.getThumbnail(for: asset),
+                    state: photosLibrary.state(of: asset),
+                    isFavorite: asset.isFavorite,
+                    isFocused: index == focusedAssetIndex
+                )
+            }
+            .onChange(of: focusedAssetIndex, perform: { newIndex in
+                withAnimation {
+                    proxy.scrollTo(
+                        photosLibrary.assets2.object(at: newIndex).localIdentifier,
+                        anchor: .center
+                    )
+                }
+            })
         }
     }
 }
