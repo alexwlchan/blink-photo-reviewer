@@ -9,13 +9,16 @@ import SwiftUI
 
 struct NewThumbnailList: View {
     @EnvironmentObject var photosLibrary: PhotosLibrary
-    @EnvironmentObject var thumbnailManager: ThumbnailManager
     @Binding var focusedAssetIndex: Int
     
     var body: some View {
         PHAssetHStack(photosLibrary.assets2) { asset, index in
-            NewThumbnailImage(asset, isFocused: index == focusedAssetIndex)
-                .environmentObject(photosLibrary)
+            NewThumbnailImage(
+                photosLibrary.getThumbnail(for: asset),
+                state: photosLibrary.state(of: asset),
+                isFavorite: asset.isFavorite,
+                isFocused: index == focusedAssetIndex
+            )
         }
     }
 }

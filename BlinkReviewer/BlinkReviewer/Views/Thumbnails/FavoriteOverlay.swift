@@ -5,14 +5,14 @@ import Photos
 ///
 /// This is meant to match the way favorite items are marked in Photos.
 struct FavoriteHeartIcon: ViewModifier {
-    let asset: PHAsset
+    let isFavorite: Bool
     
-    init(_ asset: PHAsset) {
-        self.asset = asset
+    init(_ isFavorite: Bool) {
+        self.isFavorite = isFavorite
     }
     
     func body(content: Content) -> some View {
-        if asset.isFavorite {
+        if isFavorite {
             content.overlay(alignment: Alignment(horizontal: .leading, vertical: .bottom)) {
                 Image(systemName: "heart.fill")
                     .foregroundColor(.white)
@@ -26,7 +26,7 @@ struct FavoriteHeartIcon: ViewModifier {
 }
 
 extension View {
-    func favoriteHeartIcon(for asset: PHAsset) -> some View {
-        modifier(FavoriteHeartIcon(asset))
+    func favoriteHeartIcon(_ isFavorite: Bool) -> some View {
+        modifier(FavoriteHeartIcon(isFavorite))
     }
 }

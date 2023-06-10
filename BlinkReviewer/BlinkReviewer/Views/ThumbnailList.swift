@@ -34,7 +34,7 @@ struct ThumbnailList: View {
                         //                Text("asset \(index)")
                         ThumbnailImage(
                             thumbnail: PHAssetImage(asset, size: CGSize(width: 70, height: 70), deliveryMode: .opportunistic),
-                            state: photosLibrary.state(for: asset),
+                            state: photosLibrary.state(of: asset),
                             isFavorite: asset.isFavorite,
                             isSelected: photosLibrary.assets2.count - 1 - index == selectedAssetIndex
                         ).onTapGesture {

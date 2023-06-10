@@ -97,7 +97,7 @@ struct PhotoReviewer: View {
             
             case let e where e.characters == "1" || e.characters == "2" || e.characters == "3":
                 print("time to review!")
-                let state = photosLibrary.state(for: focusedAsset)
+                let state = photosLibrary.state(of: focusedAsset)
             
                 let approved = getAlbum(withName: "Approved")
                 let rejected = getAlbum(withName: "Rejected")

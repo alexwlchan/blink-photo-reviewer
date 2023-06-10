@@ -7,32 +7,30 @@ import Photos
 /// mean some information gets cropped out -- that's okay, these are only
 /// small previews, not complete images.
 struct NewThumbnailImage: View {
-    @EnvironmentObject var photosLibrary: PhotosLibrary
-    
-    var asset: PHAsset
+    @ObservedObject var assetImage: PHAssetImage
+    var state: ReviewState?
     var isFocused: Bool
+    var isFavorite: Bool
     
     private var size: CGFloat
     private var cornerRadius: CGFloat
-    
-    @ObservedObject var assetImage: PHAssetImage
-    
-    init(_ asset: PHAsset, isFocused: Bool) {
-        self.asset = asset
+
+    // Implementation note: the reason we pass in a bunch of individual
+    // properties rather than the whole asset is because we need an
+    // @EnvironmentObject (the PhotosLibrary) to create the PHAssetImage,
+    // so we can stick the latter in an @ObservedObject.
+    //
+    // But EnvironmentObject values aren't passed down until you call the
+    // `body` method, which is too late!  So instead we have the parent
+    // view call into PhotosLibrary and pass in the relevant values here.
+    init(_ assetImage: PHAssetImage, state: ReviewState?, isFavorite: Bool, isFocused: Bool) {
+        self.assetImage = assetImage
+        self.state = state
+        self.isFavorite = isFavorite
         self.isFocused = isFocused
         
         self.size = isFocused ? 70 : 50
         self.cornerRadius = isFocused ? 7 : 5
-        
-        self.assetImage = PHAssetImage(
-            asset,
-            size: CGSize(width: self.size, height: self.size),
-            deliveryMode: .fastFormat
-        )
-    }
-    
-    private var state: ReviewState? {
-        photosLibrary.state(for: asset)
     }
     
     var body: some View {
@@ -45,20 +43,6 @@ struct NewThumbnailImage: View {
             .reviewStateBorder(for: state, with: cornerRadius)
             .reviewStateIcon(for: state)
             .reviewStateColor(isRejected: state == .Rejected)
-            .favoriteHeartIcon(for: asset)
-    }
-}
-
-struct NewThumbnailImage_Previews: PreviewProvider {
-    static var asset: PHAsset = PHAsset.fetchAssets(with: nil).firstObject!
-    
-    static var previews: some View {
-        NewThumbnailImage(asset, isFocused: false)
-            .environmentObject(PhotosLibrary())
-            .previewDisplayName("thumbnail, not focused")
-        
-        NewThumbnailImage(asset, isFocused: true)
-            .environmentObject(PhotosLibrary())
-            .previewDisplayName("thumbnail, focused")
+            .favoriteHeartIcon(isFavorite)
     }
 }

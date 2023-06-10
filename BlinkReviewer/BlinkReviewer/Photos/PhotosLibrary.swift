@@ -123,7 +123,7 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
         }
     }
     
-    func state(for asset: PHAsset) -> ReviewState? {
+    func state(of asset: PHAsset) -> ReviewState? {
         if self.rejectedAssets.contains(asset) {
             return .Rejected
         }
@@ -137,5 +137,38 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
         }
         
         return nil
+    }
+    
+    // Implements a basic cache for thumbnail images.
+    //
+    // Thumbnail images are small and easily reused; I've put them here because
+    // we already pass this class around as a shared @EnvironmentObject.
+    //
+    // For some reason SwiftUI insists on trying to recreate all the thumbnail
+    // views when you step between images -- I think there's probably a way to
+    // have it cache the views rather than me doing it manually, but I'm not
+    // smart enough to debug that.  If I don't cache it, there's a "flash" as
+    // it reloads the thumbnails every time.
+    //
+    // TODO: Investigate using SwiftUI to do this.
+    // TODO: If that doesn't work, replace this Dictionary with NSCache or an
+    // LRU cache.  For some reason NSCache didn't store entries when I tried it,
+    // but I didn't try for very long.
+    private var thumbnailCache = Dictionary<PHAsset, PHAssetImage>()
+    
+    func getThumbnail(for asset: PHAsset) -> PHAssetImage {
+        if let cachedThumbnail = thumbnailCache[asset] {
+            return cachedThumbnail
+        }
+        
+        let newThumbnail = PHAssetImage(
+            asset,
+            size: CGSize(width: 70, height: 70),
+            deliveryMode: .fastFormat
+        )
+        
+        thumbnailCache[asset] = newThumbnail
+        
+        return newThumbnail
     }
 }
