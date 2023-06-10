@@ -36,11 +36,9 @@ struct PhotoReviewer: View {
         if photosLibrary.isPhotoLibraryAuthorized {
             ZStack {
                 VStack {
-                    PHAssetHStack(photosLibrary.assets2) { asset, index in
-                        NewThumbnailImage(asset, isFocused: index == focusedAssetIndex)
-                            .environmentObject(photosLibrary)
-                    }
-                    .frame(height: 90)
+                    NewThumbnailList(focusedAssetIndex: $focusedAssetIndex)
+                        .environmentObject(photosLibrary)
+                        .frame(height: 90)
                     
                     FocusedImage(assetImage: focusedAssetImage)
                     
