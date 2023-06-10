@@ -163,6 +163,26 @@ struct PhotoReviewer: View {
             case let e where e.characters == "s":
                 showStatistics.toggle()
             
+            case let e where e.characters == "u":
+                if photosLibrary.state(of: focusedAsset) != nil {
+                    if let lastUnreviewed = (focusedAssetIndex..<photosLibrary.assets2.count).first(where: { index in
+                        photosLibrary.state(of: photosLibrary.assets2.object(at: index)) == nil
+                    }) {
+                        focusedAssetIndex = lastUnreviewed
+                    }
+                }
+            
+            case let e where e.characters == "?":
+                while true {
+                    let randomIndex = (0..<photosLibrary.assets2.count).randomElement()!
+                    
+                    if photosLibrary.state(of: photosLibrary.assets2.object(at: randomIndex)) == nil {
+                        focusedAssetIndex = randomIndex
+                        break
+                    }
+                }
+            
+
             default:
                 logger.info("Received unhandled keyboard event: \(event, privacy: .public)")
                 break
