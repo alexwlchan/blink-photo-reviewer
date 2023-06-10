@@ -57,6 +57,7 @@ class PHAssetImage: NSObject, ObservableObject {
         
         set {
             self._asset = newValue
+            self.isDegraded = true
             regenerateImage()
         }
     }
@@ -65,11 +66,11 @@ class PHAssetImage: NSObject, ObservableObject {
         if let thisAsset = asset {
             if let nsImage = imageCache[thisAsset] {
                 self.image = nsImage
+                self.isDegraded = false
                 return
             }
 
             print("regenerating image for \(thisAsset.localIdentifier)")
-
             
             // This implementation is based on code in a Stack Overflow answer
             // by Francois Nadeau: https://stackoverflow.com/a/48755517/1558022
@@ -110,6 +111,7 @@ class PHAssetImage: NSObject, ObservableObject {
                                 self.imageCache[thisAsset] = imageResult
                             }
                         } else {
+                            self.isDegraded = true
                             print("Error getting image: \(String(describing: info))")
                         }
                     }

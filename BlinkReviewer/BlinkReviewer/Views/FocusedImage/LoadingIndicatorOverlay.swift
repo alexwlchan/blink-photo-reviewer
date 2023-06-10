@@ -26,8 +26,8 @@ struct LoadingIndicatorOverlay: ViewModifier {
                         // a second or two.  This causes the progress indicator to
                         // "flash" -- it appears then almost instantly disappears.
                         //
-                        // Deferring the rendering by a second avoids this "flash".
-                        for: .seconds(1)
+                        // Deferring the rendering slightly avoids this "flash".
+                        for: .milliseconds(100)
                     )
             }
         } else {

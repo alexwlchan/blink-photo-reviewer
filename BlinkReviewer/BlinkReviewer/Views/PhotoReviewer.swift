@@ -58,7 +58,7 @@ struct PhotoReviewer: View {
                         Spacer()
                         
                         if showDebug {
-                            Debug(asset: focusedAsset)
+                            Debug(asset: focusedAsset, focusedAssetIndex: focusedAssetIndex)
                         }
                         
                         if showStatistics {
