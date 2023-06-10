@@ -4,9 +4,10 @@ import Photos
 /// Show some debug information; the asset identifier.
 struct Debug: View {
     var asset: PHAsset
+    var focusedAssetIndex: Int
     
     var body: some View {
-        Text("\(asset.localIdentifier)")
+        Text("\(asset.localIdentifier) / asset \(focusedAssetIndex)")
             .font(.title)
             .padding(10)
             .foregroundColor(.white)
