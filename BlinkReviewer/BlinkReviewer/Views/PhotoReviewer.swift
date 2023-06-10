@@ -33,7 +33,11 @@ struct PhotoReviewer: View {
     @ObservedObject var focusedAssetImage = PHAssetImage(nil, size: PHImageManagerMaximumSize, deliveryMode: .highQualityFormat)
     
     var body: some View {
-        if photosLibrary.isPhotoLibraryAuthorized {
+        if !photosLibrary.isPhotoLibraryAuthorized {
+            Text("Waiting for Photos Library authorization…")
+        } else if photosLibrary.assets2.count == 0 {
+            Text("Waiting for Photos Library data…")
+        } else {
             ZStack {
                 VStack {
                     NewThumbnailList(focusedAssetIndex: $focusedAssetIndex)
@@ -74,8 +78,6 @@ struct PhotoReviewer: View {
             .onChange(of: focusedAsset) { newFocusedAsset in
                 focusedAssetImage.asset = newFocusedAsset
             }
-        } else {
-            Text("Waiting for Photos Library authorization…")
         }
     }
 

@@ -18,27 +18,23 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
     @Published var rejectedAssets: PHFetchResult<PHAsset> = PHFetchResult()
     @Published var needsActionAssets: PHFetchResult<PHAsset> = PHFetchResult()
     
-    private let approved = getAlbum(withName: "Approved")
-    private let rejected = getAlbum(withName: "Rejected")
-    private let needsAction = getAlbum(withName: "Needs Action")
+    private lazy var approved = getAlbum(withName: "Approved")
+    private lazy var rejected = getAlbum(withName: "Rejected")
+    private lazy var needsAction = getAlbum(withName: "Needs Action")
     
     override init() {
         super.init()
         PHPhotoLibrary.shared().register(self)
-        updateStatus(isChange: false)
+        getInitialData()
     }
     
-    func updateAsset(atIndex index: Int) {
-//        self.assets[index] = PHAsset.fetchAssets(withLocalIdentifiers: [self.assets[index].localIdentifier], options: nil).firstObject!
-    }
-
     func photoLibraryDidChange(_ changeInstance: PHChange) {
-        print("--> calling photoLibraryDidChange \(changeInstance.description)")
-        print(changeInstance.description)
-        updateStatus(changeInstance)
-    }
-    
-    private func updateStatus(_ changeInstance: PHChange) {
+        // If we've just received permission to read the user's Photos Library, go
+        // ahead and populate all the initial data structures.
+        if !self.isPhotoLibraryAuthorized && PHPhotoLibrary.authorizationStatus() == .authorized {
+            getInitialData()
+        }
+        
         DispatchQueue.main.async {
             let start = DispatchTime.now()
             var elapsed = start
@@ -91,7 +87,7 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
     }
 
 
-    private func updateStatus(isChange: Bool) {
+    private func getInitialData() {
         DispatchQueue.main.async {
             let start = DispatchTime.now()
             var elapsed = start
@@ -111,15 +107,19 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
             options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
             options.fetchLimit = 500
             
-            self.assets2 = PHAsset.fetchAssets(with: PHAssetMediaType.image, options: options)
+            self.isPhotoLibraryAuthorized = PHPhotoLibrary.authorizationStatus() == .authorized
+            
+            if (self.isPhotoLibraryAuthorized) {
+                self.assets2 = PHAsset.fetchAssets(with: PHAssetMediaType.image, options: options)
 
-            self.approvedAssets = PHAsset.fetchAssets(in: self.approved, options: nil)
-            self.rejectedAssets = PHAsset.fetchAssets(in: self.rejected, options: nil)
-            self.needsActionAssets = PHAsset.fetchAssets(in: self.needsAction, options: nil)
+                self.approvedAssets = PHAsset.fetchAssets(in: self.approved, options: nil)
+                self.rejectedAssets = PHAsset.fetchAssets(in: self.rejected, options: nil)
+                self.needsActionAssets = PHAsset.fetchAssets(in: self.needsAction, options: nil)
+            }
             
             printElapsed("get all photos data (new)")
             
-            self.isPhotoLibraryAuthorized = PHPhotoLibrary.authorizationStatus() == .authorized
+            
         }
     }
     
