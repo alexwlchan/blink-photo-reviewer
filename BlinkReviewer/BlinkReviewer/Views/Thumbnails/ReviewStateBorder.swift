@@ -21,7 +21,7 @@ struct ReviewStateBorder: ViewModifier {
             RoundedRectangle(cornerRadius: cornerRadius)
                 .stroke(
                     state?.color() ?? .gray.opacity(0.7),
-                    lineWidth: state != nil ? 3.0 : 1.0
+                    lineWidth: state != nil ? 3.0 : 3.0 * 5.0 / 7.0
                 )
         }
     }

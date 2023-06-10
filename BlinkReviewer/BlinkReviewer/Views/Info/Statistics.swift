@@ -1,12 +1,9 @@
-//
-//  Statistics.swift
-//  BlinkReviewer
-//
-//  Created by Alex Chan on 09/06/2023.
-//
-
 import SwiftUI
 
+/// Show a couple of stats about how much reviewing has been done, e.g.
+///
+///     15,279 photos, 9,158 approved, 17 rejected, 181 need action
+///     
 struct Statistics: View {
     @EnvironmentObject var photosLibrary: PhotosLibrary
     

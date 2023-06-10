@@ -46,6 +46,22 @@ struct PhotoReviewer: View {
                     
                     Spacer()
                 }
+                
+                HStack {
+                    Spacer()
+                    
+                    VStack {
+                        Spacer()
+                        
+                        if showDebug {
+                            Debug(asset: focusedAsset)
+                        }
+                        
+                        if showStatistics {
+                            Statistics().environmentObject(photosLibrary)
+                        }
+                    }.padding()
+                }.padding()
             }
             .onAppear {
                 NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
@@ -133,6 +149,12 @@ struct PhotoReviewer: View {
                     PHAssetChangeRequest(for: focusedAsset).isFavorite = !focusedAsset.isFavorite
                 }
 
+            case let e where e.characters == "d":
+                showDebug.toggle()
+            
+            case let e where e.characters == "s":
+                showStatistics.toggle()
+            
             default:
                 logger.info("Received unhandled keyboard event: \(event, privacy: .public)")
                 break
