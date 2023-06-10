@@ -40,7 +40,7 @@ struct PhotoReviewer: View {
         } else {
             ZStack {
                 VStack {
-                    NewThumbnailList(focusedAssetIndex: $focusedAssetIndex)
+                    ThumbnailList(focusedAssetIndex: $focusedAssetIndex)
                         .environmentObject(photosLibrary)
                         .frame(height: 90)
                     
