@@ -24,7 +24,7 @@ struct NewThumbnailImage: View {
     // `body` method, which is too late!  So instead we have the parent
     // view call into PhotosLibrary and pass in the relevant values here.
     init(_ assetImage: PHAssetImage, state: ReviewState?, isFavorite: Bool, isFocused: Bool) {
-        print("Redrawing thumbnail image! \(assetImage.asset?.localIdentifier ?? "(unknown)")")
+        print("Redrawing thumbnail image! \(assetImage.asset?.localIdentifier ?? "(unknown)") @ \(DispatchTime.now())")
         
         self.assetImage = assetImage
         self.state = state
