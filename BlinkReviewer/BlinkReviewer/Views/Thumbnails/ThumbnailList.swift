@@ -19,7 +19,9 @@ struct ThumbnailList: View {
                     state: photosLibrary.state(of: asset),
                     isFocused: index == focusedAssetIndex,
                     isFavorite: asset.isFavorite
-                )
+                ).onTapGesture {
+                    focusedAssetIndex = index
+                }
             }
             .onChange(of: focusedAssetIndex, perform: { newIndex in
                 withAnimation {
