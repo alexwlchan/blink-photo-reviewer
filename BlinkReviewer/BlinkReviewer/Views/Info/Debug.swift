@@ -13,5 +13,6 @@ struct Debug: View {
             .background(.black.opacity(0.7))
             .cornerRadius(7.0)
             .shadow(radius: 2.0)
+            .textSelection(.enabled)
     }
 }
