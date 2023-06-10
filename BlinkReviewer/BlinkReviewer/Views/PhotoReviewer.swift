@@ -27,6 +27,7 @@ struct PhotoReviewer: View {
     
     @State var showStatistics: Bool = false
     @State var showDebug: Bool = false
+    @State var showInfo: Bool = false
     
     // This contains the big image that is currently in focus.  See the comments
     // on FocusedImage for why this state is defined outside that view.
@@ -51,20 +52,29 @@ struct PhotoReviewer: View {
                     Spacer()
                 }
                 
-                HStack {
+                VStack {
                     Spacer()
                     
-                    VStack {
-                        Spacer()
-                        
-                        if showDebug {
+                    if showDebug {
+                        HStack {
+                            Spacer()
                             Debug(asset: focusedAsset, focusedAssetIndex: focusedAssetIndex)
-                        }
-                        
-                        if showStatistics {
+                        }.padding()
+                    }
+                    
+                    if showInfo {
+                        HStack {
+                            Spacer()
+                            Info(asset: focusedAsset)
+                        }.padding()
+                    }
+                    
+                    if showStatistics {
+                        HStack {
+                            Spacer()
                             Statistics().environmentObject(photosLibrary)
-                        }
-                    }.padding()
+                        }.padding()
+                    }
                 }.padding()
             }
             .background(.black)
@@ -162,6 +172,9 @@ struct PhotoReviewer: View {
             
             case let e where e.characters == "s":
                 showStatistics.toggle()
+            
+            case let e where e.characters == "i":
+                showInfo.toggle()
             
             case let e where e.characters == "u":
                 if photosLibrary.state(of: focusedAsset) != nil {

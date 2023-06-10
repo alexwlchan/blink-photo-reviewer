@@ -75,7 +75,6 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
         }
     }
 
-
     private func getInitialData() {
         DispatchQueue.main.async {
             let start = DispatchTime.now()

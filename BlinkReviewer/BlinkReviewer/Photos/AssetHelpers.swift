@@ -21,6 +21,10 @@ extension PHAsset {
         
         return result
     }
+    
+    func originalFilename() -> String {
+        PHAssetResource.assetResources(for: self).first!.originalFilename
+    }
 
     /// Returns true if an asset is in the given album, false otherwise.
     private func isInAlbum(_ album: PHAssetCollection) -> Bool {
