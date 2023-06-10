@@ -52,7 +52,6 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
             
             let options = PHFetchOptions()
             options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-            options.fetchLimit = 500
             
 //            print()
             
@@ -105,7 +104,6 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
             
             let options = PHFetchOptions()
             options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-            options.fetchLimit = 500
             
             self.isPhotoLibraryAuthorized = PHPhotoLibrary.authorizationStatus() == .authorized
             
