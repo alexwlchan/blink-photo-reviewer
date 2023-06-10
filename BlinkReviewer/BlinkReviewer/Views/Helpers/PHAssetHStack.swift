@@ -23,14 +23,15 @@ import Photos
 ///
 struct PHAssetHStack<Content: View>: View {
     var subview: (PHAsset, Int) -> Content
-    var fetchResult: PHFetchResult<PHAsset>
+    var collection: PHFetchResultCollection
     
     init(
         _ fetchResult: PHFetchResult<PHAsset>,
         @ViewBuilder subview: @escaping (PHAsset, Int) -> Content
     ) {
+        print("--> creating PHAssetHStack")
         self.subview = subview
-        self.fetchResult = fetchResult
+        self.collection = PHFetchResultCollection(fetchResult)
     }
     
     var body: some View {
@@ -42,7 +43,7 @@ struct PHAssetHStack<Content: View>: View {
                 // the thumbnails every time you change position.
                 ForEach(
                     Array(
-                        zip(PHFetchResultCollection(fetchResult).indices, PHFetchResultCollection(fetchResult))
+                        zip(self.collection.indices, self.collection)
                     ),
                     id: \.1.localIdentifier
                 ) { index, asset in
