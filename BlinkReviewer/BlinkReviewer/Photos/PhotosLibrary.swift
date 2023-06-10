@@ -33,7 +33,7 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
     }
 
     func photoLibraryDidChange(_ changeInstance: PHChange) {
-        print("calling photoLibraryDidChange")
+        print("--> calling photoLibraryDidChange \(changeInstance.description)")
         print(changeInstance.description)
         updateStatus(changeInstance)
     }
@@ -63,25 +63,25 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
             if let assetsChangeDetails = changeInstance.changeDetails(for: self.assets2) {
                 self.assets2 = assetsChangeDetails.fetchResultAfterChanges
             } else {
-                self.assets2 = PHAsset.fetchAssets(with: PHAssetMediaType.image, options: options)
+//                self.assets2 = PHAsset.fetchAssets(with: PHAssetMediaType.image, options: options)
             }
             
             if let approvedChangeDetails = changeInstance.changeDetails(for: self.approvedAssets) {
                 self.approvedAssets = approvedChangeDetails.fetchResultAfterChanges
             } else {
-                self.approvedAssets = PHAsset.fetchAssets(in: self.approved, options: nil)
+//                self.approvedAssets = PHAsset.fetchAssets(in: self.approved, options: nil)
             }
             
             if let rejectedChangeDetails = changeInstance.changeDetails(for: self.rejectedAssets) {
                 self.rejectedAssets = rejectedChangeDetails.fetchResultAfterChanges
             } else {
-                self.rejectedAssets = PHAsset.fetchAssets(in: self.rejected, options: nil)
+//                self.rejectedAssets = PHAsset.fetchAssets(in: self.rejected, options: nil)
             }
             
             if let needsActionChangeDetails = changeInstance.changeDetails(for: self.needsActionAssets) {
                 self.needsActionAssets = needsActionChangeDetails.fetchResultAfterChanges
             } else {
-                self.needsActionAssets = PHAsset.fetchAssets(in: self.needsAction, options: nil)
+//                self.needsActionAssets = PHAsset.fetchAssets(in: self.needsAction, options: nil)
             }
             
             printElapsed("get all photos data (update)")

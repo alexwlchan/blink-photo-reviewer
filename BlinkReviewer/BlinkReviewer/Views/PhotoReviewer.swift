@@ -104,12 +104,17 @@ struct PhotoReviewer: View {
                 let needsAction = getAlbum(withName: "Needs Action")
             
                 try! PHPhotoLibrary.shared().performChangesAndWait {
-                    // Strictly speaking, the first condition is a combination of two:
+                    // The first condition is a combination of two:
                     //
-                    //   1. The action is `toggle-approved` and the photo is approved,
-                    //      in which case toggling means un-approving it.
-                    //   2. The action is anything else and the photo is approved, in
-                    //      which case setting the new status means removing approved.
+                    //      -- the photo is already approved and you hit the "approve" hotkey,
+                    //      -- so un-approve it
+                    //      state == .Approved && e.characters == "1"
+                    //
+                    //      -- the photo is already approved and you selected a different review
+                    //      -- state, so unapprove it
+                    //      state == .Approved && e.characters != "1"
+                    //
+                    // We can optimise it into a single case, but it does make sense!
                     //
                     // Similar logic applies for all three conditions.
                     if state == .Approved {

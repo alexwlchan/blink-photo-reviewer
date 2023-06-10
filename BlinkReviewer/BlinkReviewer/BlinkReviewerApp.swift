@@ -13,8 +13,7 @@ struct BlinkReviewerApp: App {
     
     var body: some Scene {
         WindowGroup {
-            PhotoReviewer()
-                .environmentObject(photosLibrary)
+            PhotoReviewer().environmentObject(photosLibrary)
         }
     }
 }
