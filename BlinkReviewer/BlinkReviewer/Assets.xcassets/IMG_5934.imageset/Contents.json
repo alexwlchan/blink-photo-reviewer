@@ -1,11 +1,6 @@
 {
   "images" : [
-    {
-      "filename" : "IMG_5934.jpg",
-      "idiom" : "universal",
-      "scale" : "1x",
-      "unassigned" : true
-    }
+
   ],
   "info" : {
     "author" : "xcode",
