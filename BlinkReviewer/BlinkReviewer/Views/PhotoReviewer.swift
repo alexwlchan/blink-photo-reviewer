@@ -43,6 +43,7 @@ struct PhotoReviewer: View {
                     ThumbnailList(focusedAssetIndex: $focusedAssetIndex)
                         .environmentObject(photosLibrary)
                         .frame(height: 90)
+                        .background(.gray.opacity(0.7))
                     
                     FocusedImage(assetImage: focusedAssetImage)
                         .environmentObject(photosLibrary)
@@ -66,6 +67,7 @@ struct PhotoReviewer: View {
                     }.padding()
                 }.padding()
             }
+            .background(.black)
             .onAppear {
                 NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
                     handleKeyEventNew(event)
