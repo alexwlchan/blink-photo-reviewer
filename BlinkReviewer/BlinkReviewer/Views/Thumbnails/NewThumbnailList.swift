@@ -14,7 +14,7 @@ struct NewThumbnailList: View {
     
     var body: some View {
         PHAssetHStack(photosLibrary.assets2) { asset, index in
-            NewThumbnailImage(asset, assetImage: thumbnailManager.getThumbnail(for: asset), isFocused: index == focusedAssetIndex)
+            NewThumbnailImage(asset, isFocused: index == focusedAssetIndex)
                 .environmentObject(photosLibrary)
         }
     }
