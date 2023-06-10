@@ -42,9 +42,9 @@ struct NewThumbnailImage: View {
             .clipped()
             .frame(width: self.size, height: self.size, alignment: .center)
             .cornerRadius(cornerRadius)
-            .reviewStateBorder(for: state, with: cornerRadius)
-            .reviewStateIcon(for: state)
             .reviewStateColor(isRejected: state == .Rejected)
-            .favoriteHeartIcon(isFavorite)
+            .reviewStateBorder(for: state, with: cornerRadius)
+            .reviewStateIcon(for: state, isFocused)
+            .favoriteHeartIcon(isFavorite, isFocused)
     }
 }

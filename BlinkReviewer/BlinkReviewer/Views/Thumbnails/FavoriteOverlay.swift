@@ -6,9 +6,11 @@ import Photos
 /// This is meant to match the way favorite items are marked in Photos.
 struct FavoriteHeartIcon: ViewModifier {
     let isFavorite: Bool
+    let isFocused: Bool
     
-    init(_ isFavorite: Bool) {
+    init(_ isFavorite: Bool, _ isFocused: Bool) {
         self.isFavorite = isFavorite
+        self.isFocused = isFocused
     }
     
     func body(content: Content) -> some View {
@@ -17,6 +19,7 @@ struct FavoriteHeartIcon: ViewModifier {
                 Image(systemName: "heart.fill")
                     .foregroundColor(.white)
                     .padding(3)
+                    .font(isFocused ? .title3 : .body)
                     .shadow(radius: 2.0)
             }
         } else {
@@ -26,7 +29,7 @@ struct FavoriteHeartIcon: ViewModifier {
 }
 
 extension View {
-    func favoriteHeartIcon(_ isFavorite: Bool) -> some View {
-        modifier(FavoriteHeartIcon(isFavorite))
+    func favoriteHeartIcon(_ isFavorite: Bool, _ isFocused: Bool) -> some View {
+        modifier(FavoriteHeartIcon(isFavorite, isFocused))
     }
 }

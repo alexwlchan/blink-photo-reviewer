@@ -4,9 +4,11 @@ import SwiftUI
 /// for "Approved" images.
 struct ReviewStateIcon: ViewModifier {
     let state: ReviewState?
+    let isFocused: Bool
     
-    init(_ state: ReviewState?) {
+    init(_ state: ReviewState?, _ isFocused: Bool) {
         self.state = state
+        self.isFocused = isFocused
     }
     
     func body(content: Content) -> some View {
@@ -16,7 +18,7 @@ struct ReviewStateIcon: ViewModifier {
                     .foregroundStyle(.white, thisState.color())
                     .symbolRenderingMode(.palette)
                     .padding(2)
-                    .font(.title2)
+                    .font(isFocused ? .title2 : .title3)
                     .shadow(radius: 2.0)
             }
         } else {
@@ -26,7 +28,7 @@ struct ReviewStateIcon: ViewModifier {
 }
 
 extension View {
-    func reviewStateIcon(for state: ReviewState?) -> some View {
-        modifier(ReviewStateIcon(state))
+    func reviewStateIcon(for state: ReviewState?, _ isFocused: Bool) -> some View {
+        modifier(ReviewStateIcon(state, isFocused))
     }
 }
