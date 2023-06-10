@@ -41,13 +41,22 @@ struct PHAssetHStack<Content: View>: View {
                 // array index as the id here, because the app gets way slower if
                 // you use the PHFetchResult index -- it tries to regenerate a bunch of
                 // the thumbnails every time you change position.
-                ForEach(
-                    Array(
-                        zip(self.collection.indices, self.collection)
-                    ),
-                    id: \.1.localIdentifier
-                ) { index, asset in
-                    subview(asset, index)
+                //
+                // Note: an older implementation of this code had
+                //
+                // ```swift
+                //      ForEach(
+                //          Array(zip(self.collection.indices, self.collection)),
+                //          id: \.1.localIdentifier
+                //      )
+                // ```
+                //
+                // For some reason this caused the app to slow to a crawl -- I think it was
+                // creating the entire Array, which is quite expensive.  I switched the
+                // PHFetchResultCollection to vend a struct with both the asset and the
+                // position, but now it does it by random access -- this seems faster.
+                ForEach(self.collection, id: \.asset.localIdentifier) { indexedAsset in
+                    subview(indexedAsset.asset, indexedAsset.position)
                 }
                 
                 // Note: these two uses of RTL direction are a way to get the LazyHStack

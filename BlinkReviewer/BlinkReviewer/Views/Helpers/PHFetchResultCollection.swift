@@ -15,12 +15,22 @@ import SwiftUI
 ///         ...
 ///     }
 /// }
+/// ```
+///
+/// This collection vends the IndexedPHAsset struct, which tells us both
+/// what asset we're on and where we are -- this is necessary for performance
+/// reasons.  See the comment above the ForEach in PHAssetHStack.
 ///
 /// This is based on code written by Slava Semeniuk on Stack Overflow:
 /// https://stackoverflow.com/q/62745595/1558022
-///
+
+struct IndexedPHAsset {
+    var position: Int
+    var asset: PHAsset
+}
+
 struct PHFetchResultCollection: RandomAccessCollection, Equatable {
-    typealias Element = PHAsset
+    typealias Element = IndexedPHAsset
     typealias Index = Int
 
     let fetchResult: PHFetchResult<PHAsset>
@@ -32,8 +42,11 @@ struct PHFetchResultCollection: RandomAccessCollection, Equatable {
     var startIndex: Int { 0 }
     var endIndex: Int { fetchResult.count }
 
-    subscript(position: Int) -> PHAsset {
-        fetchResult.object(at: position)
+    subscript(position: Int) -> IndexedPHAsset {
+        IndexedPHAsset(
+            position: position,
+            asset: fetchResult.object(at: position)
+        )
     }
 }
 
@@ -52,8 +65,8 @@ struct PHFetchResultCollection_Previews: PreviewProvider {
         VStack {
             Text("These dates should be in descending order:")
             
-            ForEach(self.resultCollection, id: \.localIdentifier) { asset in
-                Text("\(asset.creationDate?.ISO8601Format() ?? "(unknown)")")
+            ForEach(self.resultCollection, id: \.asset.localIdentifier) { indexedAsset in
+                Text("\(indexedAsset.asset.creationDate?.ISO8601Format() ?? "(unknown)")")
             }
         }
     }
