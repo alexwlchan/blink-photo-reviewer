@@ -70,7 +70,7 @@ struct PhotoReviewer: View {
             .background(.black)
             .onAppear {
                 NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
-                    handleKeyEventNew(event)
+                    handleKeyDown(event)
                     return event
                 }
             }
@@ -84,7 +84,7 @@ struct PhotoReviewer: View {
         }
     }
 
-    private func handleKeyEventNew(_ event: NSEvent) {
+    private func handleKeyDown(_ event: NSEvent) {
         let logger = Logger()
         
         switch event {
