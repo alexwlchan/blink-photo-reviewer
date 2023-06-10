@@ -14,6 +14,11 @@ import Photos
 struct FocusedImage: View {
     @ObservedObject var assetImage: PHAssetImage
     
+    // We don't use anything from PhotosLibrary directly in this view, but we
+    // do want to re-render it when we get a change to PhotosLibrary -- e.g.
+    // when an asset is added to an album.
+    @EnvironmentObject var photosLibrary: PhotosLibrary
+    
     var body: some View {
         Image(nsImage: assetImage.image)
             .resizable()

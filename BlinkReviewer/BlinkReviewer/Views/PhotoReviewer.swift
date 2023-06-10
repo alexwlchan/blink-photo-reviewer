@@ -45,6 +45,7 @@ struct PhotoReviewer: View {
                         .frame(height: 90)
                     
                     FocusedImage(assetImage: focusedAssetImage)
+                        .environmentObject(photosLibrary)
                     
                     Spacer()
                 }
