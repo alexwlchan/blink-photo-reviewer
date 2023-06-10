@@ -110,7 +110,7 @@ class PHAssetImage: NSObject, ObservableObject {
                                 self.imageCache[thisAsset] = imageResult
                             }
                         } else {
-                            print("Error getting image: \(info)")
+                            print("Error getting image: \(String(describing: info))")
                         }
                     }
                 )
