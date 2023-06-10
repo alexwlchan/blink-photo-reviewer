@@ -26,7 +26,7 @@ struct PhotoReviewer: View {
     }
     
     @State var showStatistics: Bool = false
-    @State var showDebug: Bool = true
+    @State var showDebug: Bool = false
     
     // This contains the big image that is currently in focus.  See the comments
     // on FocusedImage for why this state is defined outside that view.
