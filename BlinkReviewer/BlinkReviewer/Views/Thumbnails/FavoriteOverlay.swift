@@ -12,13 +12,15 @@ struct FavoriteHeartIcon: ViewModifier {
     }
     
     func body(content: Content) -> some View {
-        content.overlay(alignment: Alignment(horizontal: .leading, vertical: .bottom)) {
-            if asset.isFavorite {
+        if asset.isFavorite {
+            content.overlay(alignment: Alignment(horizontal: .leading, vertical: .bottom)) {
                 Image(systemName: "heart.fill")
                     .foregroundColor(.white)
                     .padding(3)
                     .shadow(radius: 2.0)
             }
+        } else {
+            content
         }
     }
 }
