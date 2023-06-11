@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "94D750EB2A31A796005859E7"
-               BuildableName = "BlinkReviewer.app"
-               BlueprintName = "BlinkReviewer"
-               ReferencedContainer = "container:BlinkReviewer.xcodeproj">
+               BuildableName = "Blink.app"
+               BlueprintName = "Blink"
+               ReferencedContainer = "container:Blink.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -28,30 +28,6 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES"
       shouldAutocreateTestPlan = "YES">
-      <Testables>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "94D750FC2A31A798005859E7"
-               BuildableName = "BlinkReviewerTests.xctest"
-               BlueprintName = "BlinkReviewerTests"
-               ReferencedContainer = "container:BlinkReviewer.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "94D751062A31A798005859E7"
-               BuildableName = "BlinkReviewerUITests.xctest"
-               BlueprintName = "BlinkReviewerUITests"
-               ReferencedContainer = "container:BlinkReviewer.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-      </Testables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -68,9 +44,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "94D750EB2A31A796005859E7"
-            BuildableName = "BlinkReviewer.app"
-            BlueprintName = "BlinkReviewer"
-            ReferencedContainer = "container:BlinkReviewer.xcodeproj">
+            BuildableName = "Blink.app"
+            BlueprintName = "Blink"
+            ReferencedContainer = "container:Blink.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -85,9 +61,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "94D750EB2A31A796005859E7"
-            BuildableName = "BlinkReviewer.app"
-            BlueprintName = "BlinkReviewer"
-            ReferencedContainer = "container:BlinkReviewer.xcodeproj">
+            BuildableName = "Blink.app"
+            BlueprintName = "Blink"
+            ReferencedContainer = "container:Blink.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
