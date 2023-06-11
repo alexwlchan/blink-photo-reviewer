@@ -116,7 +116,6 @@
 			isa = PBXGroup;
 			children = (
 				940331722A336B5100200C5D /* DeferredRendering.swift */,
-				94C5FFF12A33ADD4004ADDF5 /* PHFetchResultCollection.swift */,
 				94C5FFF52A33B698004ADDF5 /* PHAssetHStack.swift */,
 			);
 			path = Helpers;
@@ -159,6 +158,7 @@
 			isa = PBXGroup;
 			children = (
 				94D2C8B82A320E6F00BEE15B /* ReviewState.swift */,
+				94C5FFF12A33ADD4004ADDF5 /* PHFetchResultCollection.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
