@@ -83,10 +83,10 @@ struct PhotoReviewer: View {
             }
             .background(.black)
             .onAppear {
-                NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
-                    handleKeyDown(event)
-                    return event
-                }
+                NSEvent.addLocalMonitorForEvents(
+                    matching: .keyDown,
+                    handler: handleKeyDown
+                )
             }
             // These two lines update the big image that fills most of the window.
             // See the comments on FocusedImage for more explanation of why this is
@@ -217,7 +217,14 @@ struct PhotoReviewer: View {
         self.focusedAssetIndex += (delta ?? 0)
     }
 
-    private func handleKeyDown(_ event: NSEvent) {
+    /// Handle any keypresses in the app.
+    ///
+    /// Note: this function should return `nil` for any events that it
+    /// processes; any events it returns will be passed to other event handlers
+    /// to see if anything else knows what to do with them.  Among other
+    /// issues, this results in an annoying "funk" sound playing on
+    /// every event, because the OS thinks the event is unhandled.
+    private func handleKeyDown(_ event: NSEvent) -> NSEvent? {
         let logger = Logger()
         
         switch event {
@@ -226,12 +233,14 @@ struct PhotoReviewer: View {
                 if focusedAssetIndex < photosLibrary.assets.count - 1 {
                     focusedAssetIndex += 1
                 }
+                return nil
             
             case let e where e.specialKey == NSEvent.SpecialKey.rightArrow:
                 print("to the right!")
                 if focusedAssetIndex > 0 {
                     focusedAssetIndex -= 1
                 }
+                return nil
             
             case let e where e.characters == "1" || e.characters == "2" || e.characters == "3":
                 print("time to review!")
@@ -277,6 +286,7 @@ struct PhotoReviewer: View {
                 if focusedAssetIndex < photosLibrary.assets.count - 1 {
                     focusedAssetIndex += 1
                 }
+                return nil
             
             case let e where e.characters == "c":
                 let crossStitch = getAlbum(withName: "Cross stitch")
@@ -285,19 +295,26 @@ struct PhotoReviewer: View {
                     focusedAsset.toggle(inAlbum: crossStitch)
                 }
             
+                return nil
+            
             case let e where e.characters == "f":
                 try! PHPhotoLibrary.shared().performChangesAndWait {
                     PHAssetChangeRequest(for: focusedAsset).isFavorite = !focusedAsset.isFavorite
                 }
+            
+                return nil
 
             case let e where e.characters == "d":
                 showDebug.toggle()
+                return nil
             
             case let e where e.characters == "s":
                 showStatistics.toggle()
+                return nil
             
             case let e where e.characters == "i":
                 showInfo.toggle()
+                return nil
             
             case let e where e.characters == "u":
                 if photosLibrary.state(of: focusedAsset) != nil {
@@ -307,6 +324,7 @@ struct PhotoReviewer: View {
                         focusedAssetIndex = lastUnreviewed
                     }
                 }
+                return nil
             
             case let e where e.characters == "?":
                 while true {
@@ -317,11 +335,11 @@ struct PhotoReviewer: View {
                         break
                     }
                 }
-            
+                return nil
 
             default:
                 logger.info("Received unhandled keyboard event: \(event, privacy: .public)")
-                break
+                return event
         }
     }
 }
