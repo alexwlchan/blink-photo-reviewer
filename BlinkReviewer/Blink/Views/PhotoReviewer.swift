@@ -26,7 +26,7 @@ struct PhotoReviewer: View {
     @State var _focusedAsset: PHAsset? = nil
     
     var focusedAsset: PHAsset {
-        return photosLibrary.assets.object(at: focusedAssetIndex)
+        return photosLibrary.asset(at: focusedAssetIndex)
     }
     
     @State var showStatistics: Bool = false
@@ -83,10 +83,10 @@ struct PhotoReviewer: View {
             }
             .background(.black)
             .onAppear {
-                NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
-                    handleKeyDown(event)
-                    return event
-                }
+                NSEvent.addLocalMonitorForEvents(
+                    matching: .keyDown,
+                    handler: handleKeyDown
+                )
             }
             // These two lines update the big image that fills most of the window.
             // See the comments on FocusedImage for more explanation of why this is
@@ -126,7 +126,7 @@ struct PhotoReviewer: View {
         //
         // e.g. the change is about album data, or all the changes are further
         // along than the focused asset.
-        if photosLibrary.assets.object(at: focusedAssetIndex) == self._focusedAsset {
+        if photosLibrary.asset(at: focusedAssetIndex) == self._focusedAsset {
             logger.debug("Focused asset is in the same place as before, nothing to do [\(changeId, privacy: .public)]")
             return
         }
@@ -175,7 +175,7 @@ struct PhotoReviewer: View {
         // If we've got a delta, check to see if it points us to the right asset.
         //
         // If it does, we're done!
-        if photosLibrary.assets.object(at: focusedAssetIndex + (delta ?? 0)) == self._focusedAsset {
+        if photosLibrary.asset(at: focusedAssetIndex + (delta ?? 0)) == self._focusedAsset {
             logger.debug("Incremental changes found the new position of the asset [\(changeId, privacy: .public)]")
             focusedAssetIndex += delta ?? 0
             return
@@ -196,7 +196,7 @@ struct PhotoReviewer: View {
         let matchingAssetInUpdatedLibrary =
             (0..<photosLibrary.assets.count)
                 .first(where: {
-                    photosLibrary.assets.object(at: $0).localIdentifier ==
+                    photosLibrary.asset(at: $0).localIdentifier ==
                         self._focusedAsset?.localIdentifier
                 })
         
@@ -217,7 +217,14 @@ struct PhotoReviewer: View {
         self.focusedAssetIndex += (delta ?? 0)
     }
 
-    private func handleKeyDown(_ event: NSEvent) {
+    /// Handle any keypresses in the app.
+    ///
+    /// Note: this function should return `nil` for any events that it
+    /// processes; any events it returns will be passed to other event handlers
+    /// to see if anything else knows what to do with them.  Among other
+    /// issues, this results in an annoying "funk" sound playing on
+    /// every event, because the OS thinks the event is unhandled.
+    private func handleKeyDown(_ event: NSEvent) -> NSEvent? {
         let logger = Logger()
         
         switch event {
@@ -226,12 +233,14 @@ struct PhotoReviewer: View {
                 if focusedAssetIndex < photosLibrary.assets.count - 1 {
                     focusedAssetIndex += 1
                 }
+                return nil
             
             case let e where e.specialKey == NSEvent.SpecialKey.rightArrow:
                 print("to the right!")
                 if focusedAssetIndex > 0 {
                     focusedAssetIndex -= 1
                 }
+                return nil
             
             case let e where e.characters == "1" || e.characters == "2" || e.characters == "3":
                 print("time to review!")
@@ -277,6 +286,7 @@ struct PhotoReviewer: View {
                 if focusedAssetIndex < photosLibrary.assets.count - 1 {
                     focusedAssetIndex += 1
                 }
+                return nil
             
             case let e where e.characters == "c":
                 let crossStitch = getAlbum(withName: "Cross stitch")
@@ -285,43 +295,51 @@ struct PhotoReviewer: View {
                     focusedAsset.toggle(inAlbum: crossStitch)
                 }
             
+                return nil
+            
             case let e where e.characters == "f":
                 try! PHPhotoLibrary.shared().performChangesAndWait {
                     PHAssetChangeRequest(for: focusedAsset).isFavorite = !focusedAsset.isFavorite
                 }
+            
+                return nil
 
             case let e where e.characters == "d":
                 showDebug.toggle()
+                return nil
             
             case let e where e.characters == "s":
                 showStatistics.toggle()
+                return nil
             
             case let e where e.characters == "i":
                 showInfo.toggle()
+                return nil
             
             case let e where e.characters == "u":
                 if photosLibrary.state(of: focusedAsset) != nil {
                     if let lastUnreviewed = (focusedAssetIndex..<photosLibrary.assets.count).first(where: { index in
-                        photosLibrary.state(of: photosLibrary.assets.object(at: index)) == nil
+                        photosLibrary.state(ofAssetAtIndex: index) == nil
                     }) {
                         focusedAssetIndex = lastUnreviewed
                     }
                 }
+                return nil
             
             case let e where e.characters == "?":
                 while true {
                     let randomIndex = (0..<photosLibrary.assets.count).randomElement()!
                     
-                    if photosLibrary.state(of: photosLibrary.assets.object(at: randomIndex)) == nil {
+                    if photosLibrary.state(ofAssetAtIndex: randomIndex) == nil {
                         focusedAssetIndex = randomIndex
                         break
                     }
                 }
-            
+                return nil
 
             default:
                 logger.info("Received unhandled keyboard event: \(event, privacy: .public)")
-                break
+                return event
         }
     }
 }

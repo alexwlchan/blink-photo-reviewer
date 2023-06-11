@@ -26,7 +26,7 @@ struct ThumbnailList: View {
             .onChange(of: focusedAssetIndex, perform: { newIndex in
                 withAnimation {
                     proxy.scrollTo(
-                        photosLibrary.assets.object(at: newIndex).localIdentifier,
+                        photosLibrary.asset(at: newIndex).localIdentifier,
                         anchor: .center
                     )
                 }
