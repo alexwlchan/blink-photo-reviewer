@@ -319,7 +319,7 @@ struct PhotoReviewer: View {
             case let e where e.characters == "u":
                 if photosLibrary.state(of: focusedAsset) != nil {
                     if let lastUnreviewed = (focusedAssetIndex..<photosLibrary.assets.count).first(where: { index in
-                        photosLibrary.state(of: photosLibrary.assets.object(at: index)) == nil
+                        photosLibrary.state(ofAssetAtIndex: index) == nil
                     }) {
                         focusedAssetIndex = lastUnreviewed
                     }
@@ -330,7 +330,7 @@ struct PhotoReviewer: View {
                 while true {
                     let randomIndex = (0..<photosLibrary.assets.count).randomElement()!
                     
-                    if photosLibrary.state(of: photosLibrary.assets.object(at: randomIndex)) == nil {
+                    if photosLibrary.state(ofAssetAtIndex: randomIndex) == nil {
                         focusedAssetIndex = randomIndex
                         break
                     }

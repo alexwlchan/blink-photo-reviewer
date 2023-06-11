@@ -129,6 +129,20 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
         assets.object(at: index)
     }
     
+    /// Get the review state of a given asset.
+    ///
+    /// These methods are called repeatedly on every view (when we get the
+    /// state of thumbnails), so they need to be *fast*.
+    ///
+    /// This is why we cache the list of rejected/needs action/approved assets --
+    /// to make this method fast and performant.
+    ///
+    /// Note: it's possibly for an asset to be in multiple albums if the user
+    /// fiddles with it, so we show the "most destructive" state first -- the
+    /// state that might cause data loss if the user deletes all their rejected
+    /// images.  If they toggle the state in the app, we'll fix it.
+    ///
+    /// TODO: Log a warning here? Resolve somehow?
     func state(of asset: PHAsset) -> ReviewState? {
         if self.rejectedAssets.contains(asset) {
             return .Rejected
@@ -143,6 +157,10 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
         }
         
         return nil
+    }
+    
+    func state(ofAssetAtIndex index: Int) -> ReviewState? {
+        state(of: asset(at: index))
     }
     
     // Implements a basic cache for thumbnail images.
