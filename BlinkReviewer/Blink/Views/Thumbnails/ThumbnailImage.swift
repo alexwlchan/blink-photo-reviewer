@@ -7,6 +7,15 @@ import Photos
 /// mean some information gets cropped out -- that's okay, these are only
 /// small previews, not complete images.
 struct ThumbnailImage: View {
+    
+    // Implementation note: the reason we pass in a bunch of individual
+    // properties rather than the whole asset is because we need an
+    // @EnvironmentObject (the PhotosLibrary) to create the PHAssetImage,
+    // so we can stick the latter in an @ObservedObject.
+    //
+    // But EnvironmentObject values aren't passed down until you call the
+    // `body` method, which is too late!  So instead we have the parent
+    // view call into PhotosLibrary and pass in the relevant values here.
     @ObservedObject var assetImage: PHAssetImage
     var state: ReviewState?
     var isFocused: Bool
@@ -19,23 +28,6 @@ struct ThumbnailImage: View {
     private func cornerRadius() -> CGFloat {
         isFocused ? 7 : 5
     }
-
-    // Implementation note: the reason we pass in a bunch of individual
-    // properties rather than the whole asset is because we need an
-    // @EnvironmentObject (the PhotosLibrary) to create the PHAssetImage,
-    // so we can stick the latter in an @ObservedObject.
-    //
-    // But EnvironmentObject values aren't passed down until you call the
-    // `body` method, which is too late!  So instead we have the parent
-    // view call into PhotosLibrary and pass in the relevant values here.
-//    init(_ assetImage: PHAssetImage, state: ReviewState?, isFavorite: Bool, isFocused: Bool) {
-//        print("Redrawing thumbnail image! \(assetImage.asset?.localIdentifier ?? "(unknown)") @ \(DispatchTime.now())")
-//        
-//        self.assetImage = assetImage
-//        self.state = state
-//        self.isFavorite = isFavorite
-//        self.isFocused = isFocused
-//    }
     
     var body: some View {
         Image(nsImage: assetImage.image)
