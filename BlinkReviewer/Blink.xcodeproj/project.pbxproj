@@ -76,7 +76,7 @@
 		94D750EF2A31A796005859E7 /* BlinkApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlinkApp.swift; sourceTree = "<group>"; };
 		94D750F32A31A797005859E7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		94D750F62A31A797005859E7 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		94D750F82A31A797005859E7 /* BlinkReviewer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BlinkReviewer.entitlements; sourceTree = "<group>"; };
+		94D750F82A31A797005859E7 /* Blink.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Blink.entitlements; sourceTree = "<group>"; };
 		94D750FD2A31A798005859E7 /* BlinkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BlinkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		94D751012A31A798005859E7 /* BlinkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlinkTests.swift; sourceTree = "<group>"; };
 		94D751072A31A798005859E7 /* BlinkUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BlinkUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -191,7 +191,7 @@
 				94D7511A2A31A7A6005859E7 /* Views */,
 				94D750EF2A31A796005859E7 /* BlinkApp.swift */,
 				94D750F32A31A797005859E7 /* Assets.xcassets */,
-				94D750F82A31A797005859E7 /* BlinkReviewer.entitlements */,
+				94D750F82A31A797005859E7 /* Blink.entitlements */,
 				94D750F52A31A797005859E7 /* Preview Content */,
 			);
 			path = Blink;
