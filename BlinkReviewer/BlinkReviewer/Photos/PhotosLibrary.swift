@@ -12,7 +12,7 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
 
     @Published var isPhotoLibraryAuthorized = false
     
-    @Published var assets2: PHFetchResult<PHAsset> = PHFetchResult()
+    @Published var assets: PHFetchResult<PHAsset> = PHFetchResult()
     
     @Published var approvedAssets: PHFetchResult<PHAsset> = PHFetchResult()
     @Published var rejectedAssets: PHFetchResult<PHAsset> = PHFetchResult()
@@ -69,8 +69,8 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
             let options = PHFetchOptions()
             options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
             
-            if let assetsChangeDetails = changeInstance.changeDetails(for: self.assets2) {
-                self.assets2 = assetsChangeDetails.fetchResultAfterChanges
+            if let assetsChangeDetails = changeInstance.changeDetails(for: self.assets) {
+                self.assets = assetsChangeDetails.fetchResultAfterChanges
                 self.latestChangeDetails = assetsChangeDetails
             }
             
@@ -114,7 +114,7 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
             self.isPhotoLibraryAuthorized = PHPhotoLibrary.authorizationStatus() == .authorized
             
             if (self.isPhotoLibraryAuthorized) {
-                self.assets2 = PHAsset.fetchAssets(with: PHAssetMediaType.image, options: options)
+                self.assets = PHAsset.fetchAssets(with: PHAssetMediaType.image, options: options)
 
                 self.approvedAssets = PHAsset.fetchAssets(in: self.approved, options: nil)
                 self.rejectedAssets = PHAsset.fetchAssets(in: self.rejected, options: nil)

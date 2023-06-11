@@ -13,7 +13,7 @@ struct ThumbnailList: View {
     
     var body: some View {
         ScrollViewReader { proxy in
-            PHAssetHStack(photosLibrary.assets2) { asset, index in
+            PHAssetHStack(photosLibrary.assets) { asset, index in
                 ThumbnailImage(
                     assetImage: photosLibrary.getThumbnail(for: asset),
                     state: photosLibrary.state(of: asset),
@@ -26,7 +26,7 @@ struct ThumbnailList: View {
             .onChange(of: focusedAssetIndex, perform: { newIndex in
                 withAnimation {
                     proxy.scrollTo(
-                        photosLibrary.assets2.object(at: newIndex).localIdentifier,
+                        photosLibrary.assets.object(at: newIndex).localIdentifier,
                         anchor: .center
                     )
                 }

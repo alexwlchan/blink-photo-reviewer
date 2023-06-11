@@ -26,7 +26,7 @@ struct PhotoReviewer: View {
     @State var _focusedAsset: PHAsset? = nil
     
     var focusedAsset: PHAsset {
-        return photosLibrary.assets2.object(at: focusedAssetIndex)
+        return photosLibrary.assets.object(at: focusedAssetIndex)
     }
     
     @State var showStatistics: Bool = false
@@ -40,7 +40,7 @@ struct PhotoReviewer: View {
     var body: some View {
         if !photosLibrary.isPhotoLibraryAuthorized {
             Text("Waiting for Photos Library authorization…")
-        } else if photosLibrary.assets2.count == 0 {
+        } else if photosLibrary.assets.count == 0 {
             Text("Waiting for Photos Library data…")
         } else {
             ZStack {
@@ -126,7 +126,7 @@ struct PhotoReviewer: View {
         //
         // e.g. the change is about album data, or all the changes are further
         // along than the focused asset.
-        if photosLibrary.assets2.object(at: focusedAssetIndex) == self._focusedAsset {
+        if photosLibrary.assets.object(at: focusedAssetIndex) == self._focusedAsset {
             logger.debug("Focused asset is in the same place as before, nothing to do [\(changeId, privacy: .public)]")
             return
         }
@@ -175,7 +175,7 @@ struct PhotoReviewer: View {
         // If we've got a delta, check to see if it points us to the right asset.
         //
         // If it does, we're done!
-        if photosLibrary.assets2.object(at: focusedAssetIndex + (delta ?? 0)) == self._focusedAsset {
+        if photosLibrary.assets.object(at: focusedAssetIndex + (delta ?? 0)) == self._focusedAsset {
             logger.debug("Incremental changes found the new position of the asset [\(changeId, privacy: .public)]")
             focusedAssetIndex += delta ?? 0
             return
@@ -194,9 +194,9 @@ struct PhotoReviewer: View {
         // This is potentially quite slow, especially if we've already gone a long way
         // into the Photos Library, which is why we leave it for last.
         let matchingAssetInUpdatedLibrary =
-            (0..<photosLibrary.assets2.count)
+            (0..<photosLibrary.assets.count)
                 .first(where: {
-                    photosLibrary.assets2.object(at: $0).localIdentifier ==
+                    photosLibrary.assets.object(at: $0).localIdentifier ==
                         self._focusedAsset?.localIdentifier
                 })
         
@@ -223,7 +223,7 @@ struct PhotoReviewer: View {
         switch event {
             case let e where e.specialKey == NSEvent.SpecialKey.leftArrow:
                 print("to the left!")
-                if focusedAssetIndex < photosLibrary.assets2.count - 1 {
+                if focusedAssetIndex < photosLibrary.assets.count - 1 {
                     focusedAssetIndex += 1
                 }
             
@@ -274,7 +274,7 @@ struct PhotoReviewer: View {
                     }
                 }
             
-                if focusedAssetIndex < photosLibrary.assets2.count - 1 {
+                if focusedAssetIndex < photosLibrary.assets.count - 1 {
                     focusedAssetIndex += 1
                 }
             
@@ -301,8 +301,8 @@ struct PhotoReviewer: View {
             
             case let e where e.characters == "u":
                 if photosLibrary.state(of: focusedAsset) != nil {
-                    if let lastUnreviewed = (focusedAssetIndex..<photosLibrary.assets2.count).first(where: { index in
-                        photosLibrary.state(of: photosLibrary.assets2.object(at: index)) == nil
+                    if let lastUnreviewed = (focusedAssetIndex..<photosLibrary.assets.count).first(where: { index in
+                        photosLibrary.state(of: photosLibrary.assets.object(at: index)) == nil
                     }) {
                         focusedAssetIndex = lastUnreviewed
                     }
@@ -310,9 +310,9 @@ struct PhotoReviewer: View {
             
             case let e where e.characters == "?":
                 while true {
-                    let randomIndex = (0..<photosLibrary.assets2.count).randomElement()!
+                    let randomIndex = (0..<photosLibrary.assets.count).randomElement()!
                     
-                    if photosLibrary.state(of: photosLibrary.assets2.object(at: randomIndex)) == nil {
+                    if photosLibrary.state(of: photosLibrary.assets.object(at: randomIndex)) == nil {
                         focusedAssetIndex = randomIndex
                         break
                     }

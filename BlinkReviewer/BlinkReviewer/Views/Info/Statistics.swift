@@ -8,7 +8,7 @@ struct Statistics: View {
     @EnvironmentObject var photosLibrary: PhotosLibrary
     
     var body: some View {
-        Text("\(photosLibrary.assets2.count) photos, \(photosLibrary.approvedAssets.count) approved, \(photosLibrary.rejectedAssets.count) rejected, \(photosLibrary.needsActionAssets.count) need action")
+        Text("\(photosLibrary.assets.count) photos, \(photosLibrary.approvedAssets.count) approved, \(photosLibrary.rejectedAssets.count) rejected, \(photosLibrary.needsActionAssets.count) need action")
             .font(.title)
             .padding(10)
             .foregroundColor(.white)
