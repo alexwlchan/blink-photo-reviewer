@@ -18,6 +18,22 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
     @Published var rejectedAssets: PHFetchResult<PHAsset> = PHFetchResult()
     @Published var needsActionAssets: PHFetchResult<PHAsset> = PHFetchResult()
     
+    // We publish the latest changes we detect from the Photos library.
+    //
+    // Views can subscribe to updates with
+    //
+    // ```swift
+    // .onChange(of: photosLibrary.latestChangeDetails, perform: { lastChangeDetails in
+    //   ...
+    // }
+    // ```
+    //
+    // and then access the individual properties to work out how to rearrange the
+    // UI to preserve the user's focused position (if possible).
+    //
+    // See https://developer.apple.com/documentation/photokit/phfetchresultchangedetails/1613898-enumeratemoves
+    @Published var latestChangeDetails: PHFetchResultChangeDetails<PHAsset>? = nil
+    
     private lazy var approved = getAlbum(withName: "Approved")
     private lazy var rejected = getAlbum(withName: "Rejected")
     private lazy var needsAction = getAlbum(withName: "Needs Action")
@@ -55,6 +71,7 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
             
             if let assetsChangeDetails = changeInstance.changeDetails(for: self.assets2) {
                 self.assets2 = assetsChangeDetails.fetchResultAfterChanges
+                self.latestChangeDetails = assetsChangeDetails
             }
             
             if let approvedChangeDetails = changeInstance.changeDetails(for: self.approvedAssets) {
