@@ -1,6 +1,6 @@
 //
-//  BlinkReviewerApp.swift
-//  BlinkReviewer
+//  BlinkApp.swift
+//  BlinkApp
 //
 //  Created by Alex Chan on 08/06/2023.
 //
@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct BlinkReviewerApp: App {
+struct BlinkApp: App {
     let photosLibrary = PhotosLibrary()
     
     var body: some Scene {

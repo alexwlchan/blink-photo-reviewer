@@ -1,13 +1,11 @@
-//
-//  PhotosLibrary.swift
-//  BlinkReviewer
-//
-//  Created by Alex Chan on 09/06/2023.
-//
-
 import Foundation
 import Photos
 
+/// Manage most of the interactions with the Photos Library.
+///
+/// This includes loading all the asset data, and reacting to changes
+/// in the Photos Library (both external and triggered by Blink).
+///
 class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
 
     @Published var isPhotoLibraryAuthorized = false

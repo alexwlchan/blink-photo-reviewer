@@ -1,13 +1,13 @@
 //
-//  BlinkReviewerUITests.swift
-//  BlinkReviewerUITests
+//  BlinkUITests.swift
+//  BlinkUITests
 //
 //  Created by Alex Chan on 08/06/2023.
 //
 
 import XCTest
 
-final class BlinkReviewerUITests: XCTestCase {
+final class BlinkUITests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.

@@ -1,13 +1,13 @@
 //
-//  BlinkReviewerUITestsLaunchTests.swift
-//  BlinkReviewerUITests
+//  BlinkUITestsLaunchTests.swift
+//  BlinkUITests
 //
 //  Created by Alex Chan on 08/06/2023.
 //
 
 import XCTest
 
-final class BlinkReviewerUITestsLaunchTests: XCTestCase {
+final class BlinkUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
