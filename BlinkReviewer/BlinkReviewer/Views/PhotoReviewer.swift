@@ -202,6 +202,7 @@ struct PhotoReviewer: View {
         
         if let newIndex = matchingAssetInUpdatedLibrary {
             logger.debug("Found an asset with matching identifier by doing a linear search [\(changeId, privacy: .public)]")
+            self.focusedAssetIndex = newIndex
             return
         }
         
