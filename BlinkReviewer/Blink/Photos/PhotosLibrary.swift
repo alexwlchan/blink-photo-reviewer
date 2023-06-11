@@ -125,6 +125,10 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
         }
     }
     
+    func asset(at index: Int) -> PHAsset {
+        assets.object(at: index)
+    }
+    
     func state(of asset: PHAsset) -> ReviewState? {
         if self.rejectedAssets.contains(asset) {
             return .Rejected

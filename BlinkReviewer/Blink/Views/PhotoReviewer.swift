@@ -26,7 +26,7 @@ struct PhotoReviewer: View {
     @State var _focusedAsset: PHAsset? = nil
     
     var focusedAsset: PHAsset {
-        return photosLibrary.assets.object(at: focusedAssetIndex)
+        return photosLibrary.asset(at: focusedAssetIndex)
     }
     
     @State var showStatistics: Bool = false
@@ -126,7 +126,7 @@ struct PhotoReviewer: View {
         //
         // e.g. the change is about album data, or all the changes are further
         // along than the focused asset.
-        if photosLibrary.assets.object(at: focusedAssetIndex) == self._focusedAsset {
+        if photosLibrary.asset(at: focusedAssetIndex) == self._focusedAsset {
             logger.debug("Focused asset is in the same place as before, nothing to do [\(changeId, privacy: .public)]")
             return
         }
@@ -175,7 +175,7 @@ struct PhotoReviewer: View {
         // If we've got a delta, check to see if it points us to the right asset.
         //
         // If it does, we're done!
-        if photosLibrary.assets.object(at: focusedAssetIndex + (delta ?? 0)) == self._focusedAsset {
+        if photosLibrary.asset(at: focusedAssetIndex + (delta ?? 0)) == self._focusedAsset {
             logger.debug("Incremental changes found the new position of the asset [\(changeId, privacy: .public)]")
             focusedAssetIndex += delta ?? 0
             return
@@ -196,7 +196,7 @@ struct PhotoReviewer: View {
         let matchingAssetInUpdatedLibrary =
             (0..<photosLibrary.assets.count)
                 .first(where: {
-                    photosLibrary.assets.object(at: $0).localIdentifier ==
+                    photosLibrary.asset(at: $0).localIdentifier ==
                         self._focusedAsset?.localIdentifier
                 })
         
