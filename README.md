@@ -70,6 +70,9 @@ I'm gradually sanding off the rough edges and maybe it'll be suitable for other 
 
 Parts of this app are inspired by [Darkroom] and their [Flag & Reject workflow], but I've tried to put my own spin on it, including the third "Needs Action" state, and making it easier to find photos I haven't reviewed yet.
 
+[Darkroom]: https://darkroom.co/
+[Flag & Reject workflow]: https://darkroom.co/blog/2021-03-flag-reject
+
 ## Licence
 
 MIT.
