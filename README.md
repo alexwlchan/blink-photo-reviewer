@@ -1,76 +1,85 @@
-# photo-reviewer
+# blink-photo-reviewer
 
-This is a lightweight app for reviewing my photos from Photos.app.
-I can navigate and review photos entirely using my keyboard.
+<img src="photo-reviewer.jpg">
 
-This video shows you how I use it:
+Blink is a lightweight Mac app I made to help me review my photo library.
 
-https://github.com/alexwlchan/photo-reviewer/assets/301220/dffbe69d-0717-40ef-a091-d06f40cc948e
+I can navigate between photos with arrow keys, and it snaps between them, making it easy to compare similar photos and pick the best shot.
+Once I've decided, I can use keyboard shortcuts to file each photo into one of three buckets: Approved, Rejected, and Needs Action.
 
-Here's what's happening:
-
-*   I use the arrow keys to switch between two similar photos, and compare them.
-    Then I use `1`/`2` to approve one photo, and reject the other.
-    Notice how the photos get a green/red border in the thumbnail viewer.
-*   The next photo is a screenshot, which I need to take action on it.
-    I press `3` to mark the photo as Needs Action; notice how it gets a blue border.
-*   The final photo is one I've already approved; I press `f` to mark it as a favourite.
-    Notice it gets a heart icon in the thumbnail.
-
-I can use the following commands:
-
-*   ⬅️ / ➡️ – navigate back and forth
-*   1️⃣ – approve the photo, which adds it to the "Approved" album
-*   2️⃣ – reject the photo, which adds it to the "Rejected" album
-*   3️⃣ – add the photo to the "Needs Action" album
-*   `f` – mark the photo as a favourite
-*   `c` – add the photo to my "Cross stitch" album
-*   `o` – open the photo in Photos.app
-*   `u` – jump to the next photo which is unreviewed
-*   `?` – jump to a random photo which is unreviewed
-
-
+I can also use single keystrokes to perform other review actions, like marking a photo as favourite or adding photos to key albums.
 
 ## Motivation
 
-When I take photos, I often take a lot of similar shots so that I'm more likely to get a good picture.
-This means I have a growing photo library full of pictures which are blurry/similar/duplicates – I'd like to filter down to just the best version of each shot.
+I have a lot of photos.
+When I'm trying to get a shot, I'll often take multiple pictures in the hope of getting at least one that's good.
+This means my camera roll is full of lots of similar images.
 
-A while back I tried using [Darkroom] and their [Flag & Reject workflow].
-I like the idea, and I used it for a while, but the app was very buggy and slow on my Mac – it would sometimes crash, sometimes take 10+ seconds to switch between photos.
+I always intend to go back and clean up my camera roll afterwards -- pick the best version of each shot, and delete all the rest.
+In practice, I never did this review step -- I had no good way to track my progress, to know what I'd already reviewed and what was new.
 
-This app is my replacement for the reviewing portion of Darkroom – I can switch between photos quickly, and control it entirely using the keyboard.
+<img src="review-states.jpg">
 
-[Darkroom]: https://darkroom.co/
-[Flag & Reject workflow]: https://medium.com/@jasperhauser/manage-your-growing-darkroom-photo-library-with-flag-reject-77c9e1816ef2
+This app is designed to make reviewing quick and easy.
+I can flip between photos quickly, so I can compare shots and pick the one I like best.
+Then with a few keystrokes, I can mark that photo as **Approved** and the other photos as **Rejected**, then move on.
 
+I can also review a photo as **Needs Action**.
+I use this when I need to do something with a photo, and I don't just want to keep it forever or delete it immediately -- useful, for example, for all the screenshots I've saved that should be turned into bug reports.
 
+I can also add other categories.
+In particular, I take a lot of photos of [my cross-stitch projects][cross-stitch], and I have an album with all of them.
+I can add new photos to that album with one keystroke.
 
+[cross-stitch]: https://alexwlchan.net/all-posts/?tag=cross-stitch
+
+## Prior art: Darkroom
+
+Parts of this app are inspired by [Darkroom] and their [Flag & Reject workflow].
+I used that workflow for a while, and I quite liked it, but it had a few limitations for my use case.
+
+*   It only has two review options – Flagged and Rejected.
+    In practice, I found myself leaving a bunch of photos unreviewed, because what I really wanted was my "Needs Action" state.
+
+*   I wanted a way to find photos I hadn't reviewed yet, so I can deal with my long tail of old duplicates.
+    I couldn't find a good way to do this with Darkroom.
+
+*   The Mac app was quite laggy, sometimes taking multiple seconds to switch between photos or review an image.
+    Reviewing a lot of photos was a slow and frustrating experience, so I kept not doing it.
+    
 ## How it works
 
-<img src="architecture.png">
+When I review a photo in Blink, it gets filed into an album in my Photos Library.
+It doesn't delete the photos – I have to go into Photos and do that manually.
 
-The UI is rendered by a Python web server.
-On the rendered page, I capture keyboard input with the [`document.keydown` event][event], and this sends appropriate messages to the web server.
+(This is intentional.
+I'm still new to using PhotoKit, and I don't want to hose my own photo library with a misplaced "delete photos" call.)
 
-The web server runs scripts in a mixture of Swift/AppleScript, which update my photos in Photos.app as appropriate.
-Most of the heavy lifting is done with the [PhotoKit framework].
-I'm not touching the Photos SQLite database directly, or trying to analyse the structure of the Photos Library package.
+## What's in the name?
 
-If you're interested in the details of how I'm talking to Photos.app, you might want to look in the [actions folder](./actions).
+The name comes from [blink diffing], a technique used by astronomers to spot differences between two pictures of the night sky.
+They'd rapidly "blink" between two pictures of the same patch of sky, and that helped them spot the difference.
+I do the same thing to spot the difference between similar photos in my library.
 
-[event]: https://developer.mozilla.org/en-US/docs/Web/API/Element/keydown_event
+Among other things, blink diffing was used to discover the planet Pluto in the 1930s, and the app's icon features an image of Pluto [from NASA's *New Horizons* spacecraft][nh_pluto].
+
+[blink diffing]: https://en.wikipedia.org/wiki/Blink_comparator
+[nh_pluto]: https://www.planetary.org/articles/09241425-lose-yourself-in-this-pluto
+
+## Technology
+
+The app is written in Swift and SwiftUI.
+All the interactions with the Photos Library use the [PhotoKit framework].
+
 [PhotoKit framework]: https://developer.apple.com/documentation/photokit
 
+## Development status
 
+I'm already using this app for my own photo library, but it's not suitable for anybody else to use (yet!).
+Among other things, it will probably crash for you on first run – it relies on specific aspects of my photos library.
 
-## Usage
+I'm gradually sanding off the rough edges and maybe it'll be suitable for other people eventually, but for now I'm only sharing it so other people can see and learn from my PhotoKit code.
 
-This is only designed for use on my Mac, so it might not work elsewhere.
+## Licence
 
-If you want to try, you can start the app with:
-
-```console
-$ pip3 install --user requirements.txt
-$ python3 server.py
-```
+MIT.
