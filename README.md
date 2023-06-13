@@ -32,20 +32,6 @@ In particular, I take a lot of photos of [my cross-stitch projects][cross-stitch
 I can add new photos to that album with one keystroke.
 
 [cross-stitch]: https://alexwlchan.net/all-posts/?tag=cross-stitch
-
-## Prior art: Darkroom
-
-Parts of this app are inspired by [Darkroom] and their [Flag & Reject workflow].
-I used that workflow for a while, and I quite liked it, but it had a few limitations for my use case.
-
-*   It only has two review options – Flagged and Rejected.
-    In practice, I found myself leaving a bunch of photos unreviewed, because what I really wanted was my "Needs Action" state.
-
-*   I wanted a way to find photos I hadn't reviewed yet, so I can deal with my long tail of old duplicates.
-    I couldn't find a good way to do this with Darkroom.
-
-*   The Mac app was quite laggy, sometimes taking multiple seconds to switch between photos or review an image.
-    Reviewing a lot of photos was a slow and frustrating experience, so I kept not doing it.
     
 ## How it works
 
