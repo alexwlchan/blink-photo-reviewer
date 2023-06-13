@@ -13,7 +13,6 @@ struct PhotoReviewer: View {
     let logger = Logger()
     
     @EnvironmentObject var photosLibrary: PhotosLibrary
-    @ObservedObject var fullSizeImage: PHAssetImage = PHAssetImage(nil, size: PHImageManagerMaximumSize, deliveryMode: .highQualityFormat)
     
     // Which asset is currently in focus?
     //
@@ -35,7 +34,7 @@ struct PhotoReviewer: View {
     
     // This contains the big image that is currently in focus.  See the comments
     // on FocusedImage for why this state is defined outside that view.
-    @ObservedObject var focusedAssetImage = PHAssetImage(nil, size: PHImageManagerMaximumSize, deliveryMode: .highQualityFormat)
+    @ObservedObject var focusedAssetImage = PHAssetImage(nil, size: PHImageManagerMaximumSize, deliveryMode: .highQualityFormat, generateImageAutomatically: true)
     
     var body: some View {
         if !photosLibrary.isPhotoLibraryAuthorized {

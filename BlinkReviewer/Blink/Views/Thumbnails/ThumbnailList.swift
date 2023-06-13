@@ -74,9 +74,11 @@ struct ThumbnailList: View {
                     ForEach(IdentifierListCollection(photosLibrary.assetIdentifiers) , id: \.assetIdentifier) { indexedAssetIdentifier in
                         ThumbnailImage(
                             assetImage: photosLibrary.getThumbnail(for: photosLibrary.assets.object(at: indexedAssetIdentifier.position)),
-                            state: photosLibrary.state(of: photosLibrary.assets.object(at: indexedAssetIdentifier.position)),
+                            state: photosLibrary.state(ofLocalIdentifier: indexedAssetIdentifier.assetIdentifier),
                             isFocused: indexedAssetIdentifier.position == focusedAssetIndex,
-                            isFavorite: photosLibrary.assets.object(at: indexedAssetIdentifier.position).isFavorite
+                            isFavorite: photosLibrary.isFavorite(localIdentifier: indexedAssetIdentifier.assetIdentifier)
+                                
+                                // photosLibrary.assets.object(at: indexedAssetIdentifier.position).isFavorite
                         ).onTapGesture {
                             focusedAssetIndex = indexedAssetIdentifier.position
                         }

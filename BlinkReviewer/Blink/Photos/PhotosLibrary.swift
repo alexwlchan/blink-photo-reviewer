@@ -11,7 +11,6 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
     @Published var isPhotoLibraryAuthorized = false
     
     @Published var assets: PHFetchResult<PHAsset> = PHFetchResult()
-    @Published var assetIdentifiers: [String] = []
     
     @Published var approvedAssets: PHFetchResult<PHAsset> = PHFetchResult()
     @Published var rejectedAssets: PHFetchResult<PHAsset> = PHFetchResult()
@@ -44,6 +43,8 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
     }
     
     func photoLibraryDidChange(_ changeInstance: PHChange) {
+        
+        print("calling photoLibraryDidChange")
         // If we've just received permission to read the user's Photos Library, go
         // ahead and populate all the initial data structures.
         if !self.isPhotoLibraryAuthorized && PHPhotoLibrary.authorizationStatus() == .authorized {
@@ -162,6 +163,22 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
         return nil
     }
     
+    func state(ofLocalIdentifier localIdentifier: String) -> ReviewState? {
+        if self.rejectedAssetIdentifiers.contains(localIdentifier) {
+            return .Rejected
+        }
+        
+        if self.needsActionAssetIdentifiers.contains(localIdentifier) {
+            return .NeedsAction
+        }
+        
+        if self.approvedAssetIdentifiers.contains(localIdentifier) {
+            return .Approved
+        }
+        
+        return nil
+    }
+    
     func state(ofAssetAtIndex index: Int) -> ReviewState? {
         state(of: asset(at: index))
     }
@@ -191,7 +208,8 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
         let newThumbnail = PHAssetImage(
             asset,
             size: CGSize(width: 70, height: 70),
-            deliveryMode: .fastFormat
+            deliveryMode: .opportunistic,
+            generateImageAutomatically: false
         )
         
         thumbnailCache[asset] = newThumbnail
@@ -199,9 +217,50 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
         return newThumbnail
     }
     
+    @Published var assetIdentifiers: [String] = []
+    private var favoriteAssetIdentifiers: Set<String> = Set()
+    
+    private var approvedAssetIdentifiers: Set<String> = Set()
+    private var rejectedAssetIdentifiers: Set<String> = Set()
+    private var needsActionAssetIdentifiers: Set<String> = Set()
+    
     private func updatedCacheAssetIdentifiers() -> Void {
+        var assetIdentifiers: [String] = []
+        var favoriteIdentifiers: Set<String> = Set()
+        
         self.assets.enumerateObjects({ (asset, _, _) in
-            self.assetIdentifiers.append(asset.localIdentifier)
+            assetIdentifiers.append(asset.localIdentifier)
+            
+            if asset.isFavorite {
+                favoriteIdentifiers.insert(asset.localIdentifier)
+            }
         })
+        
+        self.assetIdentifiers = assetIdentifiers
+        self.favoriteAssetIdentifiers = favoriteIdentifiers
+        
+        var approvedAssetIdentifiers: Set<String> = Set()
+        var rejectedAssetIdentifiers: Set<String> = Set()
+        var needsActionAssetIdentifiers: Set<String> = Set()
+        
+        self.approvedAssets.enumerateObjects { (asset, _, _) in
+            approvedAssetIdentifiers.insert(asset.localIdentifier)
+        }
+        
+        self.rejectedAssets.enumerateObjects { (asset, _, _) in
+            rejectedAssetIdentifiers.insert(asset.localIdentifier)
+        }
+        
+        self.needsActionAssets.enumerateObjects { (asset, _, _) in
+            needsActionAssetIdentifiers.insert(asset.localIdentifier)
+        }
+        
+        self.approvedAssetIdentifiers = approvedAssetIdentifiers
+        self.rejectedAssetIdentifiers = rejectedAssetIdentifiers
+        self.needsActionAssetIdentifiers = needsActionAssetIdentifiers
+    }
+    
+    func isFavorite(localIdentifier: String) -> Bool {
+        favoriteAssetIdentifiers.contains(localIdentifier)
     }
 }

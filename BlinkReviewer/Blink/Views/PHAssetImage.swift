@@ -23,11 +23,14 @@ class PHAssetImage: NSObject, ObservableObject {
 
     @Published var image = NSImage()
     @Published var isDegraded = false
+    
+    var generateImageAutomatically: Bool
 
-    init(_ asset: PHAsset?, size: CGSize, deliveryMode: PHImageRequestOptionsDeliveryMode) {
+    init(_ asset: PHAsset?, size: CGSize, deliveryMode: PHImageRequestOptionsDeliveryMode, generateImageAutomatically: Bool) {
         self.size = size
         self.deliveryMode = deliveryMode
         self.imageCache = Dictionary()
+        self.generateImageAutomatically = generateImageAutomatically
         
         super.init()
         
@@ -58,11 +61,14 @@ class PHAssetImage: NSObject, ObservableObject {
         set {
             self._asset = newValue
             self.isDegraded = true
-            regenerateImage()
+            
+            if (self.generateImageAutomatically) {
+                regenerateImage()
+            }
         }
     }
         
-    private func regenerateImage() {
+    func regenerateImage() {
         if let thisAsset = asset {
             if let nsImage = imageCache[thisAsset] {
                 self.image = nsImage

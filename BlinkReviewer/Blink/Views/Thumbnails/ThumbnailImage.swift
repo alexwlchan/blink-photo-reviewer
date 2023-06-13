@@ -30,15 +30,22 @@ struct ThumbnailImage: View {
     }
     
     var body: some View {
+//        Image(systemName: "checkmark.circle.fill")
+//            .
         Image(nsImage: assetImage.image)
             .resizable()
             .scaledToFill()
-            .clipped()
-            .frame(width: size(), height: size(), alignment: .center)
-            .cornerRadius(cornerRadius())
-            .reviewStateColor(isRejected: state == .Rejected)
-            .reviewStateBorder(for: state, with: cornerRadius())
-            .reviewStateIcon(for: state, isFocused)
-            .favoriteHeartIcon(isFavorite, isFocused)
+//            .clipped()
+//            .frame(width: size(), height: size(), alignment: .center)
+//            .cornerRadius(cornerRadius())
+//            .reviewStateColor(isRejected: state == .Rejected)
+//            .reviewStateBorder(for: state, with: cornerRadius())
+//            .reviewStateIcon(for: state, isFocused)
+//            .favoriteHeartIcon(isFavorite, isFocused)
+            .onAppear(perform: {
+                print("calling onAppear for \(assetImage.asset?.localIdentifier)")
+                assetImage.regenerateImage()
+            })
     }
+        
 }
