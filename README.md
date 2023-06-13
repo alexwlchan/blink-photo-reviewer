@@ -66,6 +66,10 @@ Among other things, it will probably crash for you on first run – it relies on
 
 I'm gradually sanding off the rough edges and maybe it'll be suitable for other people eventually, but for now I'm only sharing it so other people can see and learn from my PhotoKit code.
 
+## Prior art: Darkroom
+
+Parts of this app are inspired by [Darkroom] and their [Flag & Reject workflow], but I've tried to put my own spin on it, including the third "Needs Action" state, and making it easier to find photos I haven't reviewed yet.
+
 ## Licence
 
 MIT.
