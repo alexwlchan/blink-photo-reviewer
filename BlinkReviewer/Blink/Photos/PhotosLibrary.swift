@@ -11,6 +11,7 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
     @Published var isPhotoLibraryAuthorized = false
     
     @Published var assets: PHFetchResult<PHAsset> = PHFetchResult()
+    @Published var assetIdentifiers: [String] = []
     
     @Published var approvedAssets: PHFetchResult<PHAsset> = PHFetchResult()
     @Published var rejectedAssets: PHFetchResult<PHAsset> = PHFetchResult()
@@ -70,6 +71,7 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
             if let assetsChangeDetails = changeInstance.changeDetails(for: self.assets) {
                 self.assets = assetsChangeDetails.fetchResultAfterChanges
                 self.latestChangeDetails = assetsChangeDetails
+                self.updatedCacheAssetIdentifiers()
             }
             
             if let approvedChangeDetails = changeInstance.changeDetails(for: self.approvedAssets) {
@@ -113,6 +115,7 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
             
             if (self.isPhotoLibraryAuthorized) {
                 self.assets = PHAsset.fetchAssets(with: PHAssetMediaType.image, options: options)
+                self.updatedCacheAssetIdentifiers()
 
                 self.approvedAssets = PHAsset.fetchAssets(in: self.approved, options: nil)
                 self.rejectedAssets = PHAsset.fetchAssets(in: self.rejected, options: nil)
@@ -194,5 +197,11 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
         thumbnailCache[asset] = newThumbnail
         
         return newThumbnail
+    }
+    
+    private func updatedCacheAssetIdentifiers() -> Void {
+        self.assets.enumerateObjects({ (asset, _, _) in
+            self.assetIdentifiers.append(asset.localIdentifier)
+        })
     }
 }

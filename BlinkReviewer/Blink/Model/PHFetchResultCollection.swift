@@ -31,6 +31,7 @@ struct IndexedPHAsset {
 
 struct PHFetchResultCollection: RandomAccessCollection, Equatable {
     typealias Element = IndexedPHAsset
+//    typealias Subsequence = [IndexedPHAsset]
     typealias Index = Int
 
     let fetchResult: PHFetchResult<PHAsset>
@@ -48,6 +49,15 @@ struct PHFetchResultCollection: RandomAccessCollection, Equatable {
             asset: fetchResult.object(at: position)
         )
     }
+    
+//    subscript(bounds: Range<Int>) -> Subsequence {
+//        zip(bounds, fetchResult.objects(at: IndexSet(integersIn: bounds))).map { position, asset in
+//            IndexedPHAsset(
+//                position: position,
+//                asset: asset
+//            )
+//        }
+//    }
 }
 
 struct PHFetchResultCollection_Previews: PreviewProvider {
