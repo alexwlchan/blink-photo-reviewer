@@ -272,10 +272,6 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
 
           print("Time to \(label):\n  \(elapsedInterval) seconds (\(totalInterval) total)")
         }
-        
-        let c = IdentifierListCollection(self.assetIdentifiers)
-        c.index(1, offsetBy: 20000)
-        printElapsed("get item 10001")
     }
     
     func isFavorite(localIdentifier: String) -> Bool {

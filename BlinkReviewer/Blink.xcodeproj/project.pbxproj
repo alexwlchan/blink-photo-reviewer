@@ -34,6 +34,7 @@
 		94D751222A31BD8E005859E7 /* PhotoReviewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D751212A31BD8E005859E7 /* PhotoReviewer.swift */; };
 		94D7512B2A31D6AC005859E7 /* AssetHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D7512A2A31D6AC005859E7 /* AssetHelpers.swift */; };
 		94F7E39E2A331A9E00763DB9 /* Statistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F7E39D2A331A9E00763DB9 /* Statistics.swift */; };
+		94FCD4ED2A3A358D00D884A1 /* RandomAccessLocalIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FCD4EC2A3A358D00D884A1 /* RandomAccessLocalIdentifiers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -85,6 +86,7 @@
 		94D751212A31BD8E005859E7 /* PhotoReviewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoReviewer.swift; sourceTree = "<group>"; };
 		94D7512A2A31D6AC005859E7 /* AssetHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetHelpers.swift; sourceTree = "<group>"; };
 		94F7E39D2A331A9E00763DB9 /* Statistics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Statistics.swift; sourceTree = "<group>"; };
+		94FCD4EC2A3A358D00D884A1 /* RandomAccessLocalIdentifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomAccessLocalIdentifiers.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,6 +117,7 @@
 		940331742A336BEB00200C5D /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				94FCD4EC2A3A358D00D884A1 /* RandomAccessLocalIdentifiers.swift */,
 				940331722A336B5100200C5D /* DeferredRendering.swift */,
 				94C5FFF52A33B698004ADDF5 /* PHAssetHStack.swift */,
 			);
@@ -388,6 +391,7 @@
 				94C5FFF22A33ADD4004ADDF5 /* PHFetchResultCollection.swift in Sources */,
 				94A083662A33F50900238964 /* Debug.swift in Sources */,
 				94A083682A33F6E900238964 /* ThumbnailList.swift in Sources */,
+				94FCD4ED2A3A358D00D884A1 /* RandomAccessLocalIdentifiers.swift in Sources */,
 				94D750F02A31A796005859E7 /* BlinkApp.swift in Sources */,
 				940331732A336B5100200C5D /* DeferredRendering.swift in Sources */,
 				94A0835E2A33E49E00238964 /* FocusedImage.swift in Sources */,

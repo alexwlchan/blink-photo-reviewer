@@ -3,21 +3,24 @@ import Photos
 
 struct NewThumbnailImage: View {
     var fetchResult: PHFetchResult<PHAsset>
+    var fetchResultPosition: Int
     
     @State var nsImage: NSImage = NSImage()
     
+    
     var isFocused: Bool
-    var indexedAssetIdentifier: IndexedAssetIdentifier
+    var localIdentifier: String
     
     private var size: CGFloat
     private var cornerRadius: CGFloat
     
-    init(_ indexedAssetIdentifier: IndexedAssetIdentifier, isFocused: Bool, fetchResult: PHFetchResult<PHAsset>) {
+    init(_ localIdentifier: String, isFocused: Bool, fetchResult: PHFetchResult<PHAsset>, fetchResultPosition: Int) {
         print("creating NewTHumbnailImage...")
         
         self.isFocused = isFocused
-        self.indexedAssetIdentifier = indexedAssetIdentifier
+        self.localIdentifier = localIdentifier
         self.fetchResult = fetchResult
+        self.fetchResultPosition = fetchResultPosition
         
         self.size = isFocused ? 70 : 50
         self.cornerRadius = isFocused ? 7 : 5
@@ -49,7 +52,7 @@ struct NewThumbnailImage: View {
 //            .favoriteHeartIcon(self.asset?.isFavorite ?? false, isFocused)
             .onAppear(perform: {
                 print("calling onAppear for NewThumbnailImage")
-                let asset = fetchResult.object(at: indexedAssetIdentifier.position)
+                let asset = fetchResult.object(at: fetchResultPosition)
                 self.asset = asset
                 
                 self.nsImage = PHAssetImage(
