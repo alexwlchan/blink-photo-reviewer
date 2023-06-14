@@ -1,4 +1,5 @@
 import Foundation
+import OrderedCollections
 import Photos
 
 /// Manage most of the interactions with the Photos Library.
@@ -174,26 +175,29 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
     // smart enough to debug that.  If I don't cache it, there's a "flash" as
     // it reloads the thumbnails every time.
     //
-    // TODO: Investigate using SwiftUI to do this.
-    // TODO: If that doesn't work, replace this Dictionary with NSCache or an
-    // LRU cache.  For some reason NSCache didn't store entries when I tried it,
-    // but I didn't try for very long.
-    private var thumbnailCache = Dictionary<PHAsset, PHAssetImage>()
+    // TODO: Investigate the SwiftUI caching behaviour.
+    //
+    // Note: the size of both this and the following cache are designed to balance
+    // memory usage and performance.  Everything on the screen and just off it
+    // should be kept in cache, so I can e.g. switch between all the variants
+    // of a single shot, but I don't need more than that.
+    //
+    // On my M2 MacBook Air, these numbers mean the app peaks at ~250MB of memory,
+    // which seems pretty reasonable.
+    private var thumbnailCache = LRUCache<PHAsset, PHAssetImage>(withMaxSize: 100)
     
     func getThumbnail(for asset: PHAsset) -> PHAssetImage {
-        if let cachedThumbnail = thumbnailCache[asset] {
-            return cachedThumbnail
+        if thumbnailCache[asset] == nil {
+            let newImage = PHAssetImage(
+                asset,
+                size: CGSize(width: 70, height: 70),
+                deliveryMode: .opportunistic
+            )
+            
+            thumbnailCache[asset] = newImage
         }
-        
-        let newThumbnail = PHAssetImage(
-            asset,
-            size: CGSize(width: 70, height: 70),
-            deliveryMode: .opportunistic
-        )
-        
-        thumbnailCache[asset] = newThumbnail
-        
-        return newThumbnail
+
+        return thumbnailCache[asset]!
     }
     
     // Implement a similar cache for full-sized images.
@@ -204,21 +208,19 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
     //
     // TODO: Surely it should be possible to make SwiftUI cache views like
     // this for us?
-    private var fullSizeImageCache = Dictionary<PHAsset, PHAssetImage>()
+    private var fullSizeImageCache = LRUCache<PHAsset, PHAssetImage>(withMaxSize: 10)
     
     func getFullSizedImage(for asset: PHAsset) -> PHAssetImage {
-        if let cachedImage = fullSizeImageCache[asset] {
-            return cachedImage
+        if fullSizeImageCache[asset] == nil {
+            let newImage = PHAssetImage(
+                asset,
+                size: PHImageManagerMaximumSize,
+                deliveryMode: .opportunistic
+            )
+            
+            fullSizeImageCache[asset] = newImage
         }
-        
-        let newImage = PHAssetImage(
-            asset,
-            size: PHImageManagerMaximumSize,
-            deliveryMode: .opportunistic
-        )
-        
-        fullSizeImageCache[asset] = newImage
-        
-        return newImage
+
+        return fullSizeImageCache[asset]!
     }
 }

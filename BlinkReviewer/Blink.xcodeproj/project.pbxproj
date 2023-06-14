@@ -34,6 +34,8 @@
 		94D751222A31BD8E005859E7 /* PhotoReviewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D751212A31BD8E005859E7 /* PhotoReviewer.swift */; };
 		94D7512B2A31D6AC005859E7 /* AssetHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D7512A2A31D6AC005859E7 /* AssetHelpers.swift */; };
 		94F7E39E2A331A9E00763DB9 /* Statistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F7E39D2A331A9E00763DB9 /* Statistics.swift */; };
+		94FCD4F42A3A62A800D884A1 /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = 94FCD4F32A3A62A800D884A1 /* OrderedCollections */; };
+		94FCD4F62A3A64F800D884A1 /* LRUCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FCD4F52A3A64F800D884A1 /* LRUCache.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -85,6 +87,7 @@
 		94D751212A31BD8E005859E7 /* PhotoReviewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoReviewer.swift; sourceTree = "<group>"; };
 		94D7512A2A31D6AC005859E7 /* AssetHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetHelpers.swift; sourceTree = "<group>"; };
 		94F7E39D2A331A9E00763DB9 /* Statistics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Statistics.swift; sourceTree = "<group>"; };
+		94FCD4F52A3A64F800D884A1 /* LRUCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LRUCache.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +95,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				94FCD4F42A3A62A800D884A1 /* OrderedCollections in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -159,6 +163,7 @@
 			children = (
 				94D2C8B82A320E6F00BEE15B /* ReviewState.swift */,
 				94C5FFF12A33ADD4004ADDF5 /* PHFetchResultCollection.swift */,
+				94FCD4F52A3A64F800D884A1 /* LRUCache.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -261,6 +266,9 @@
 			dependencies = (
 			);
 			name = Blink;
+			packageProductDependencies = (
+				94FCD4F32A3A62A800D884A1 /* OrderedCollections */,
+			);
 			productName = BlinkReviewer;
 			productReference = 94D750EC2A31A796005859E7 /* Blink.app */;
 			productType = "com.apple.product-type.application";
@@ -333,6 +341,9 @@
 				Base,
 			);
 			mainGroup = 94D750E32A31A796005859E7;
+			packageReferences = (
+				94FCD4F22A3A62A800D884A1 /* XCRemoteSwiftPackageReference "swift-collections" */,
+			);
 			productRefGroup = 94D750ED2A31A796005859E7 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -394,6 +405,7 @@
 				945F17B82A33DAC7004FC479 /* ReviewStateSaturation.swift in Sources */,
 				94D751222A31BD8E005859E7 /* PhotoReviewer.swift in Sources */,
 				94D2C8B92A320E6F00BEE15B /* ReviewState.swift in Sources */,
+				94FCD4F62A3A64F800D884A1 /* LRUCache.swift in Sources */,
 				94F7E39E2A331A9E00763DB9 /* Statistics.swift in Sources */,
 				94D2C8C12A32FCE300BEE15B /* PHAssetImage.swift in Sources */,
 				941E18FA2A35362600A2EA98 /* Info.swift in Sources */,
@@ -706,6 +718,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		94FCD4F22A3A62A800D884A1 /* XCRemoteSwiftPackageReference "swift-collections" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-collections.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		94FCD4F32A3A62A800D884A1 /* OrderedCollections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 94FCD4F22A3A62A800D884A1 /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = OrderedCollections;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 94D750E42A31A796005859E7 /* Project object */;
 }
