@@ -27,6 +27,8 @@ class PHAssetImage: NSObject, ObservableObject {
     var generateImageAutomatically: Bool
 
     init(_ asset: PHAsset?, size: CGSize, deliveryMode: PHImageRequestOptionsDeliveryMode, generateImageAutomatically: Bool) {
+        print("creating PHAssetImage...")
+        
         self.size = size
         self.deliveryMode = deliveryMode
         self.imageCache = Dictionary()

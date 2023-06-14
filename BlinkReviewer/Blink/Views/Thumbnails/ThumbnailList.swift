@@ -72,14 +72,7 @@ struct ThumbnailList: View {
                     // PHFetchResultCollection to vend a struct with cboth the asset and the
                     // position, but now it does it by random access -- this seems faster.
                     ForEach(IdentifierListCollection(photosLibrary.assetIdentifiers) , id: \.assetIdentifier) { indexedAssetIdentifier in
-                        ThumbnailImage(
-                            assetImage: photosLibrary.getThumbnail(for: photosLibrary.assets.object(at: indexedAssetIdentifier.position)),
-                            state: photosLibrary.state(ofLocalIdentifier: indexedAssetIdentifier.assetIdentifier),
-                            isFocused: indexedAssetIdentifier.position == focusedAssetIndex,
-                            isFavorite: photosLibrary.isFavorite(localIdentifier: indexedAssetIdentifier.assetIdentifier)
-                                
-                                // photosLibrary.assets.object(at: indexedAssetIdentifier.position).isFavorite
-                        ).onTapGesture {
+                        NewThumbnailImage(isFocused: indexedAssetIdentifier.position == focusedAssetIndex, indexedAssetIdentifier: indexedAssetIdentifier).environmentObject(photosLibrary).onTapGesture {
                             focusedAssetIndex = indexedAssetIdentifier.position
                         }
                     }
