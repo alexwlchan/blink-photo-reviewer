@@ -13,7 +13,6 @@ struct PhotoReviewer: View {
     let logger = Logger()
     
     @EnvironmentObject var photosLibrary: PhotosLibrary
-    @ObservedObject var fullSizeImage: PHAssetImage = PHAssetImage(nil, size: PHImageManagerMaximumSize, deliveryMode: .highQualityFormat)
     
     // Which asset is currently in focus?
     //
