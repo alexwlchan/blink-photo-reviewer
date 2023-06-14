@@ -195,4 +195,30 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
         
         return newThumbnail
     }
+    
+    // Implement a similar cache for full-sized images.
+    //
+    // This is to avoid having to rebuild the PHAssetImage every time --
+    // which causes a brief "pop" as it starts by loading the low-res fuzzy image,
+    // then the high-res image pops in a second or so later.
+    //
+    // TODO: Surely it should be possible to make SwiftUI cache views like
+    // this for us?
+    private var fullSizeImageCache = Dictionary<PHAsset, PHAssetImage>()
+    
+    func getFullSizedImage(for asset: PHAsset) -> PHAssetImage {
+        if let cachedImage = fullSizeImageCache[asset] {
+            return cachedImage
+        }
+        
+        let newImage = PHAssetImage(
+            asset,
+            size: PHImageManagerMaximumSize,
+            deliveryMode: .opportunistic
+        )
+        
+        fullSizeImageCache[asset] = newImage
+        
+        return newImage
+    }
 }

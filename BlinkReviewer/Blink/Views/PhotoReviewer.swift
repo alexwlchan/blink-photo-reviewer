@@ -32,10 +32,6 @@ struct PhotoReviewer: View {
     @State var showDebug: Bool = false
     @State var showInfo: Bool = false
     
-    // This contains the big image that is currently in focus.  See the comments
-    // on FocusedImage for why this state is defined outside that view.
-    @ObservedObject var focusedAssetImage = PHAssetImage(nil, size: PHImageManagerMaximumSize, deliveryMode: .highQualityFormat)
-    
     var body: some View {
         if !photosLibrary.isPhotoLibraryAuthorized {
             Text("Waiting for Photos Library authorization…")
@@ -49,8 +45,7 @@ struct PhotoReviewer: View {
                         .frame(height: 90)
                         .background(.gray.opacity(0.3))
                     
-                    FocusedImage(assetImage: focusedAssetImage)
-                        .environmentObject(photosLibrary)
+                    FocusedImage(focusedAssetImage: photosLibrary.getFullSizedImage(for: focusedAsset))
                     
                     Spacer()
                 }
@@ -86,13 +81,6 @@ struct PhotoReviewer: View {
                     matching: .keyDown,
                     handler: handleKeyDown
                 )
-            }
-            // These two lines update the big image that fills most of the window.
-            // See the comments on FocusedImage for more explanation of why this is
-            // managed this way.
-            .onAppear { focusedAssetImage.asset = focusedAsset }
-            .onChange(of: focusedAssetIndex) { _ in
-                focusedAssetImage.asset = focusedAsset
             }
             // These two methods are used to preserve position when there are changes
             // in the Photos Library, e.g. deleted assets.
