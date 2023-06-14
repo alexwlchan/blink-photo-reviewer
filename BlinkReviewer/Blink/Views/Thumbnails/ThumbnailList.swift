@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ThumbnailList: View {
+    
+    
     @EnvironmentObject var photosLibrary: PhotosLibrary
     @Binding var focusedAssetIndex: Int
     
@@ -19,10 +21,11 @@ struct ThumbnailList: View {
                         (position, localIdentifier) in
                             NewThumbnailImage(
                                 localIdentifier,
-                                isFocused: position == focusedAssetIndex,
                                 fetchResult: photosLibrary.assets,
-                                fetchResultPosition: position
+                                fetchResultPosition: position,
+                                state: photosLibrary.state(ofLocalIdentifier: localIdentifier)
                             )
+                            .frame(width: position == focusedAssetIndex ? 70 : 50, height: position == focusedAssetIndex ? 70 : 50, alignment: .center)
                             .onTapGesture {
                                 focusedAssetIndex = position
                             }

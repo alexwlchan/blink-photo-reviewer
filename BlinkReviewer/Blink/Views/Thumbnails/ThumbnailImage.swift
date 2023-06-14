@@ -2,67 +2,66 @@ import SwiftUI
 import Photos
 
 struct NewThumbnailImage: View {
+    
+    
+    // Implementation note: the reason we pass in a bunch of individual
+    // properties rather than the whole asset is because we need an
+    // @EnvironmentObject (the PhotosLibrary) to create the PHAssetImage,
+    // so we can stick the latter in an @ObservedObject.
+    //
+    // But EnvironmentObject values aren't passed down until you call the
+    // `body` method, which is too late!  So instead we have the parent
+    // view call into PhotosLibrary and pass in the relevant values here.
     var fetchResult: PHFetchResult<PHAsset>
     var fetchResultPosition: Int
     
+    @ObservedObject var phassetImage: PHAssetImage = PHAssetImage(
+        nil,
+        size: CGSize(width: 70, height: 70),
+        deliveryMode: .opportunistic,
+        generateImageAutomatically: true
+    )
+    
     @State var nsImage: NSImage = NSImage()
     
-    
-    var isFocused: Bool
+//    var isFocused: Bool
     var localIdentifier: String
+    var state: ReviewState?
     
     private var size: CGFloat
     private var cornerRadius: CGFloat
     
-    init(_ localIdentifier: String, isFocused: Bool, fetchResult: PHFetchResult<PHAsset>, fetchResultPosition: Int) {
-        print("creating NewTHumbnailImage...")
-        
-        self.isFocused = isFocused
+    init(_ localIdentifier: String, fetchResult: PHFetchResult<PHAsset>, fetchResultPosition: Int, state: ReviewState?) {
+        print("Creating ThumbnailImage...")
+//        self.isFocused = isFocused
         self.localIdentifier = localIdentifier
-        self.fetchResult = fetchResult
         self.fetchResultPosition = fetchResultPosition
         
-        self.size = isFocused ? 70 : 50
-        self.cornerRadius = isFocused ? 7 : 5
+        self.size = 70
+        self.cornerRadius = 7
+        self.state = state
+        self.fetchResult = fetchResult
     }
 
-    
-//    private func size() -> CGFloat { isFocused ? 70 : 50 }
-//    private func cornerRadius() -> CGFloat { isFocused ? 7 : 5 }
-    
     @State private var asset: PHAsset? = nil
-    
-//    @State private var isFocused: Bool = false
-    @State private var state: ReviewState? = nil
-//    private var size: CGFloat =
-    
-    
+        
     var body: some View {
-//        Image(systemName: "checkmark.circle.fill")
-//            .
-        Image(nsImage: nsImage)
+        Image(nsImage: self.phassetImage.image)
             .resizable()
             .scaledToFill()
             .clipped()
 //            .frame(width: size, height: size, alignment: .center)
-//            .cornerRadius(cornerRadius())
-//            .reviewStateColor(isRejected: state == .Rejected)
-//            .reviewStateBorder(for: state, with: cornerRadius())
-//            .reviewStateIcon(for: staxte, isFocused)
-//            .favoriteHeartIcon(self.asset?.isFavorite ?? false, isFocused)
+            .cornerRadius(cornerRadius)
+            .reviewStateColor(isRejected: state == .Rejected)
+            .reviewStateBorder(for: state, with: cornerRadius)
+            .reviewStateIcon(for: state, true)
+            .favoriteHeartIcon(self.asset?.isFavorite ?? false, true)
             .onAppear(perform: {
-                print("calling onAppear for NewThumbnailImage")
+                print("calling onAppear()")
                 let asset = fetchResult.object(at: fetchResultPosition)
                 self.asset = asset
                 
-                self.nsImage = PHAssetImage(
-                    asset,
-                    size: CGSize(width: size, height: size),
-                    deliveryMode: .opportunistic,
-                    generateImageAutomatically: true
-                ).image
-//                print("calling onAppear for \(assetImage.asset?.localIdentifier)")
-//                assetImage.regenerateImage()
+                self.phassetImage.asset = asset
             })
     }
 
