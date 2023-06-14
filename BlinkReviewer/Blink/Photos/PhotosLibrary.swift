@@ -1,5 +1,4 @@
 import Foundation
-import OrderedCollections
 import Photos
 
 /// Manage most of the interactions with the Photos Library.
