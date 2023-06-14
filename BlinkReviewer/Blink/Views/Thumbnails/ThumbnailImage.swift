@@ -34,7 +34,7 @@ struct ThumbnailImage: View {
 //            .
         Image(nsImage: assetImage.image)
             .resizable()
-            .scaledToFill()
+//            .scaledToFill()
 //            .clipped()
 //            .frame(width: size(), height: size(), alignment: .center)
 //            .cornerRadius(cornerRadius())
