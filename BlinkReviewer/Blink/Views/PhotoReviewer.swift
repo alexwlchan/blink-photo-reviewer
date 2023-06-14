@@ -201,11 +201,19 @@ struct PhotoReviewer: View {
         let logger = Logger()
         
         switch event {
+            case let e where e.specialKey == NSEvent.SpecialKey.leftArrow && NSEvent.modifierFlags.contains(.command):
+                focusedAssetIndex = photosLibrary.assets.count - 1
+                return nil
+            
             case let e where e.specialKey == NSEvent.SpecialKey.leftArrow:
                 print("to the left!")
                 if focusedAssetIndex < photosLibrary.assets.count - 1 {
                     focusedAssetIndex += 1
                 }
+                return nil
+            
+            case let e where e.specialKey == NSEvent.SpecialKey.rightArrow && NSEvent.modifierFlags.contains(.command):
+                focusedAssetIndex = 0
                 return nil
             
             case let e where e.specialKey == NSEvent.SpecialKey.rightArrow:
