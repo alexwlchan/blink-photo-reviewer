@@ -2,15 +2,30 @@ import SwiftUI
 import Photos
 
 struct NewThumbnailImage: View {
-    @EnvironmentObject var photosLibrary: PhotosLibrary
+    var fetchResult: PHFetchResult<PHAsset>
     
     @State var nsImage: NSImage = NSImage()
     
     var isFocused: Bool
     var indexedAssetIdentifier: IndexedAssetIdentifier
     
-    private func size() -> CGFloat { isFocused ? 70 : 50 }
-    private func cornerRadius() -> CGFloat { isFocused ? 7 : 5 }
+    private var size: CGFloat
+    private var cornerRadius: CGFloat
+    
+    init(_ indexedAssetIdentifier: IndexedAssetIdentifier, isFocused: Bool, fetchResult: PHFetchResult<PHAsset>) {
+        print("creating NewTHumbnailImage...")
+        
+        self.isFocused = isFocused
+        self.indexedAssetIdentifier = indexedAssetIdentifier
+        self.fetchResult = fetchResult
+        
+        self.size = isFocused ? 70 : 50
+        self.cornerRadius = isFocused ? 7 : 5
+    }
+
+    
+//    private func size() -> CGFloat { isFocused ? 70 : 50 }
+//    private func cornerRadius() -> CGFloat { isFocused ? 7 : 5 }
     
     @State private var asset: PHAsset? = nil
     
@@ -26,19 +41,20 @@ struct NewThumbnailImage: View {
             .resizable()
             .scaledToFill()
             .clipped()
-            .frame(width: size(), height: size(), alignment: .center)
-            .cornerRadius(cornerRadius())
-            .reviewStateColor(isRejected: state == .Rejected)
-            .reviewStateBorder(for: state, with: cornerRadius())
-            .reviewStateIcon(for: state, isFocused)
-            .favoriteHeartIcon(self.asset?.isFavorite ?? false, isFocused)
+//            .frame(width: size, height: size, alignment: .center)
+//            .cornerRadius(cornerRadius())
+//            .reviewStateColor(isRejected: state == .Rejected)
+//            .reviewStateBorder(for: state, with: cornerRadius())
+//            .reviewStateIcon(for: staxte, isFocused)
+//            .favoriteHeartIcon(self.asset?.isFavorite ?? false, isFocused)
             .onAppear(perform: {
-                let asset = photosLibrary.asset(at: indexedAssetIdentifier.position)
+                print("calling onAppear for NewThumbnailImage")
+                let asset = fetchResult.object(at: indexedAssetIdentifier.position)
                 self.asset = asset
                 
                 self.nsImage = PHAssetImage(
                     asset,
-                    size: CGSize(width: size(), height: size()),
+                    size: CGSize(width: size, height: size),
                     deliveryMode: .opportunistic,
                     generateImageAutomatically: true
                 ).image

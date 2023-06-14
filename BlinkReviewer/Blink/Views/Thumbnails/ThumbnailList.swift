@@ -7,9 +7,15 @@
 
 import SwiftUI
 
-struct IndexedAssetIdentifier {
+struct IndexedAssetIdentifier: Identifiable {
+    var id: String {
+        self.assetIdentifier
+    }
+    
     var position: Int
     var assetIdentifier: String
+    
+//    var id: String = assetIdentifier
 }
 
 struct IdentifierListCollection: RandomAccessCollection {
@@ -71,10 +77,13 @@ struct ThumbnailList: View {
                     // creating the entire Array, which is quite expensive.  I switched the
                     // PHFetchResultCollection to vend a struct with cboth the asset and the
                     // position, but now it does it by random access -- this seems faster.
-                    ForEach(IdentifierListCollection(photosLibrary.assetIdentifiers) , id: \.assetIdentifier) { indexedAssetIdentifier in
-                        NewThumbnailImage(isFocused: indexedAssetIdentifier.position == focusedAssetIndex, indexedAssetIdentifier: indexedAssetIdentifier).environmentObject(photosLibrary).onTapGesture {
-                            focusedAssetIndex = indexedAssetIdentifier.position
-                        }
+                    
+                    ForEach(IdentifierListCollection(photosLibrary.assetIdentifiers)) { indexedAssetIdentifier in
+//                        Circle()
+                        NewThumbnailImage(indexedAssetIdentifier, isFocused: indexedAssetIdentifier.position == focusedAssetIndex, fetchResult: photosLibrary.assets)
+//                        .onTapGesture {
+//                            focusedAssetIndex = indexedAssetIdentifier.position
+//                        }
                     }
                     
                     // Note: these two uses of RTL direction are a way to get the LazyHStack
@@ -95,12 +104,12 @@ struct ThumbnailList: View {
                 .flipsForRightToLeftLayoutDirection(true)
                 .environment(\.layoutDirection, .rightToLeft)
                 .onChange(of: focusedAssetIndex, perform: { newIndex in
-                    withAnimation {
+//                    withAnimation {
                         proxy.scrollTo(
                             photosLibrary.asset(at: newIndex).localIdentifier,
                             anchor: .center
                         )
-                    }
+//                    }
                 })
         }
     }

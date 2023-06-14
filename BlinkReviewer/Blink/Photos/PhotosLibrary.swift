@@ -258,6 +258,24 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
         self.approvedAssetIdentifiers = approvedAssetIdentifiers
         self.rejectedAssetIdentifiers = rejectedAssetIdentifiers
         self.needsActionAssetIdentifiers = needsActionAssetIdentifiers
+        
+        let start = DispatchTime.now()
+        var elapsed = start
+
+        func printElapsed(_ label: String) -> Void {
+          let now = DispatchTime.now()
+
+          let totalInterval = Double(now.uptimeNanoseconds - start.uptimeNanoseconds) / 1_000_000_000
+          let elapsedInterval = Double(now.uptimeNanoseconds - elapsed.uptimeNanoseconds) / 1_000_000_000
+
+          elapsed = DispatchTime.now()
+
+          print("Time to \(label):\n  \(elapsedInterval) seconds (\(totalInterval) total)")
+        }
+        
+        let c = IdentifierListCollection(self.assetIdentifiers)
+        c.index(1, offsetBy: 20000)
+        printElapsed("get item 10001")
     }
     
     func isFavorite(localIdentifier: String) -> Bool {
