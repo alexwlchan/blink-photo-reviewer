@@ -188,7 +188,7 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
         let newThumbnail = PHAssetImage(
             asset,
             size: CGSize(width: 70, height: 70),
-            deliveryMode: .fastFormat
+            deliveryMode: .opportunistic
         )
         
         thumbnailCache[asset] = newThumbnail
