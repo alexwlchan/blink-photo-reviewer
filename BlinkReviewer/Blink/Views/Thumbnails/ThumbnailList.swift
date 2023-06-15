@@ -14,7 +14,15 @@ struct ThumbnailList: View {
     var body: some View {
         ScrollViewReader { proxy in
             PHAssetHStack(assetIdentifiers: photosLibrary.assetIdentifiers) { localIdentifier, index in
-                ThumbnailImage(index: index, isFocused: index == focusedAssetIndex)
+                ThumbnailImage(
+                    index: index,
+                    state: photosLibrary.state(ofLocalIdentifier: localIdentifier),
+                    isFavorite: photosLibrary.isFavorite(localIdentifier: localIdentifier),
+                    isFocused: index == focusedAssetIndex,
+                    getAssetImage: {
+                        photosLibrary.getThumbnail(for: photosLibrary.asset(at: index))
+                    }
+                )
                 .environmentObject(photosLibrary)
                 .onTapGesture {
                     focusedAssetIndex = index

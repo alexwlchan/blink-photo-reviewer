@@ -13,9 +13,15 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
     @Published var assets: PHFetchResult<PHAsset> = PHFetchResult()
     @Published var assetIdentifiers: [String] = []
     
-    @Published var approvedAssets: PHFetchResult<PHAsset> = PHFetchResult()
-    @Published var rejectedAssets: PHFetchResult<PHAsset> = PHFetchResult()
-    @Published var needsActionAssets: PHFetchResult<PHAsset> = PHFetchResult()
+    var approvedAssets: PHFetchResult<PHAsset> = PHFetchResult()
+    var rejectedAssets: PHFetchResult<PHAsset> = PHFetchResult()
+    var needsActionAssets: PHFetchResult<PHAsset> = PHFetchResult()
+    
+    private var approvedAssetIdentifiers: Set<String> = Set()
+    private var rejectedAssetIdentifiers: Set<String> = Set()
+    private var needsActionAssetIdentifiers: Set<String> = Set()
+    
+    private var favoriteAssetIdentifiers: Set<String> = Set()
     
     // We publish the latest changes we detect from the Photos library.
     //
@@ -86,6 +92,8 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
                 self.needsActionAssets = needsActionChangeDetails.fetchResultAfterChanges
             }
             
+            self.regenerateAssetIdentifiers()
+            
             printElapsed("get all photos data (update)")
             
             self.isPhotoLibraryAuthorized = PHPhotoLibrary.authorizationStatus() == .authorized
@@ -115,11 +123,12 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
             
             if (self.isPhotoLibraryAuthorized) {
                 self.assets = PHAsset.fetchAssets(with: PHAssetMediaType.image, options: options)
-                self.regenerateAssetIdentifiers()
 
                 self.approvedAssets = PHAsset.fetchAssets(in: self.approved, options: nil)
                 self.rejectedAssets = PHAsset.fetchAssets(in: self.rejected, options: nil)
                 self.needsActionAssets = PHAsset.fetchAssets(in: self.needsAction, options: nil)
+                
+                self.regenerateAssetIdentifiers()
             }
             
             printElapsed("get all photos data (new)")
@@ -164,6 +173,26 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
     
     func state(ofAssetAtIndex index: Int) -> ReviewState? {
         state(of: asset(at: index))
+    }
+    
+    func state(ofLocalIdentifier localIdentifier: String) -> ReviewState? {
+        if self.rejectedAssetIdentifiers.contains(localIdentifier) {
+            return .Rejected
+        }
+        
+        if self.needsActionAssetIdentifiers.contains(localIdentifier) {
+            return .NeedsAction
+        }
+        
+        if self.approvedAssetIdentifiers.contains(localIdentifier) {
+            return .Approved
+        }
+        
+        return nil
+    }
+    
+    func isFavorite(localIdentifier: String) -> Bool {
+        self.favoriteAssetIdentifiers.contains(localIdentifier)
     }
     
     // Implements a basic cache for thumbnail images.
@@ -227,12 +256,39 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
     }
     
     private func regenerateAssetIdentifiers() -> Void {
-        var result: [String] = []
+        var assetIdentifiers: [String] = []
+        var favoriteAssetIdentifiers: Set<String> = Set()
         
         self.assets.enumerateObjects { asset, _, _ in
-            result.append(asset.localIdentifier)
+            assetIdentifiers.append(asset.localIdentifier)
+            
+            if asset.isFavorite {
+                favoriteAssetIdentifiers.insert(asset.localIdentifier)
+            }
         }
         
-        self.assetIdentifiers = result
+        var approvedAssetIdentifiers: Set<String> = Set()
+        
+        self.approvedAssets.enumerateObjects { asset, _, _ in
+            approvedAssetIdentifiers.insert(asset.localIdentifier)
+        }
+        
+        var rejectedAssetIdentifiers: Set<String> = Set()
+        
+        self.rejectedAssets.enumerateObjects { asset, _, _ in
+            rejectedAssetIdentifiers.insert(asset.localIdentifier)
+        }
+        
+        var needsActionAssetIdentifiers: Set<String> = Set()
+        
+        self.needsActionAssets.enumerateObjects { asset, _, _ in
+            needsActionAssetIdentifiers.insert(asset.localIdentifier)
+        }
+        
+        self.assetIdentifiers = assetIdentifiers
+        self.favoriteAssetIdentifiers = favoriteAssetIdentifiers
+        self.approvedAssetIdentifiers = approvedAssetIdentifiers
+        self.rejectedAssetIdentifiers = rejectedAssetIdentifiers
+        self.needsActionAssetIdentifiers = needsActionAssetIdentifiers
     }
 }

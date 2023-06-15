@@ -21,8 +21,6 @@ struct ThumbnailImageInner: View {
 /// small previews, not complete images.
 struct ThumbnailImage: View {
     
-    @EnvironmentObject var photosLibrary: PhotosLibrary
-    
     // Implementation note: the reason we pass in a bunch of individual
     // properties rather than the whole asset is because we need an
     // @EnvironmentObject (the PhotosLibrary) to create the PHAssetImage,
@@ -34,14 +32,21 @@ struct ThumbnailImage: View {
     @State var assetImage: PHAssetImage? = nil
     
     var index: Int
-    @State var state: ReviewState? = nil
+    var state: ReviewState?
     var isFocused: Bool
-    @State var isFavorite: Bool = false
+    var isFavorite: Bool
+    private var getAssetImage: () -> PHAssetImage
     
-    init(index: Int, isFocused: Bool) {
-        print("creating thumbnail image")
+    // need to pass in state hre also + favorites
+    init(index: Int, state: ReviewState?, isFavorite: Bool, isFocused: Bool, getAssetImage: @escaping () -> PHAssetImage) {
+//        print("creating thumbnail image")
         self.index = index
+        
+        self.isFavorite = isFavorite
+        self.state = state
+        
         self.isFocused = isFocused
+        self.getAssetImage = getAssetImage
     }
     
     private func size() -> CGFloat {
@@ -64,12 +69,7 @@ struct ThumbnailImage: View {
         } else {
             ProgressView()
                 .onAppear {
-                    let asset = photosLibrary.asset(at: index)
-                    
-                    self.state = photosLibrary.state(of: asset)
-                    self.isFavorite = asset.isFavorite
-                    
-                    self.assetImage = photosLibrary.getThumbnail(for: asset)
+                    self.assetImage = getAssetImage()
                 }
         }
         
