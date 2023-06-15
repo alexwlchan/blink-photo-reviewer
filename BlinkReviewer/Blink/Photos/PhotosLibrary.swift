@@ -308,6 +308,61 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
         self.assetIdentifiers = assetIdentifiers
         self.favoriteAssetIdentifiers = favoriteAssetIdentifiers
     }
+    
+    func setState(ofAsset asset: PHAsset, to newState: ReviewState) -> Void {
+        let existingState = self.state(of: asset)
+    
+        try! PHPhotoLibrary.shared().performChangesAndWait {
+            // The first condition is a combination of two:
+            //
+            //      -- the photo is already approved and you hit the "approve" hotkey,
+            //      -- so un-approve it
+            //      state == .Approved && e.characters == "1"
+            //
+            //      -- the photo is already approved and you selected a different review
+            //      -- state, so unapprove it
+            //      state == .Approved && e.characters != "1"
+            //
+            // We can optimise it into a single case, but it does make sense!
+            //
+            // Similar logic applies for all three conditions.
+            if existingState == .Approved {
+                asset.remove(fromAlbum: self.approved)
+            } else if newState == .Approved {
+                asset.add(toAlbum: self.approved)
+            }
+
+            if existingState == .Rejected {
+                asset.remove(fromAlbum: self.rejected)
+            } else if newState == .Rejected {
+                asset.add(toAlbum: self.rejected)
+            }
+
+            if existingState == .NeedsAction {
+                asset.remove(fromAlbum: self.needsAction)
+            } else if newState == .NeedsAction {
+                asset.add(toAlbum: self.needsAction)
+            }
+        }
+        
+        if existingState == .Approved {
+            self.approvedAssetIdentifiers.remove(asset.localIdentifier)
+        } else if newState == .Approved {
+            self.approvedAssetIdentifiers.insert(asset.localIdentifier)
+        }
+
+        if existingState == .Rejected {
+            self.rejectedAssetIdentifiers.remove(asset.localIdentifier)
+        } else if newState == .Rejected {
+            self.rejectedAssetIdentifiers.insert(asset.localIdentifier)
+        }
+
+        if existingState == .NeedsAction {
+            self.needsActionAssetIdentifiers.remove(asset.localIdentifier)
+        } else if newState == .NeedsAction {
+            self.needsActionAssetIdentifiers.insert(asset.localIdentifier)
+        }
+    }
 }
 
 func getSetOfIdentifiers(fetchResult: PHFetchResult<PHAsset>) -> Set<String> {
