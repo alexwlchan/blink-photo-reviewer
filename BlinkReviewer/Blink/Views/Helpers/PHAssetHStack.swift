@@ -37,18 +37,15 @@ struct AssetIdentifiersCollection: RandomAccessCollection, Equatable {
 /// items in the FetchResult, if necessary.
 ///
 struct PHAssetHStack<Content: View>: View {
-    var subview: (PHAsset, Int) -> Content
-    var fetchResult: PHFetchResult<PHAsset>
+    var subview: (String, Int) -> Content
     var assetIdentifiers: [String]
     
     init(
-        _ fetchResult: PHFetchResult<PHAsset>,
         assetIdentifiers: [String],
-        @ViewBuilder subview: @escaping (PHAsset, Int) -> Content
+        @ViewBuilder subview: @escaping (String, Int) -> Content
     ) {
         print("--> creating PHAssetHStack")
         self.subview = subview
-        self.fetchResult = fetchResult
         self.assetIdentifiers = assetIdentifiers
     }
     
@@ -76,7 +73,7 @@ struct PHAssetHStack<Content: View>: View {
                 //
                 // Note: enumerated is okay
                 ForEach(AssetIdentifiersCollection(assetIdentifiers: self.assetIdentifiers), id: \.1) { index, localIdentifier in
-                    subview(self.fetchResult.object(at: index), index)
+                    subview(localIdentifier, index)
                 }
                 
                 // Note: these two uses of RTL direction are a way to get the LazyHStack

@@ -193,8 +193,7 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
             let newImage = PHAssetImage(
                 asset,
                 size: CGSize(width: 70, height: 70),
-                deliveryMode: .opportunistic,
-                regenerateImmediately: false
+                deliveryMode: .opportunistic
             )
             
             thumbnailCache[asset] = newImage
@@ -218,8 +217,7 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
             let newImage = PHAssetImage(
                 asset,
                 size: PHImageManagerMaximumSize,
-                deliveryMode: .opportunistic,
-                regenerateImmediately: true
+                deliveryMode: .opportunistic
             )
             
             fullSizeImageCache[asset] = newImage
