@@ -11,6 +11,7 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
     @Published var isPhotoLibraryAuthorized = false
     
     @Published var assets: PHFetchResult<PHAsset> = PHFetchResult()
+    @Published var assetIdentifiers: [String] = []
     
     @Published var approvedAssets: PHFetchResult<PHAsset> = PHFetchResult()
     @Published var rejectedAssets: PHFetchResult<PHAsset> = PHFetchResult()
@@ -69,6 +70,7 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
             
             if let assetsChangeDetails = changeInstance.changeDetails(for: self.assets) {
                 self.assets = assetsChangeDetails.fetchResultAfterChanges
+                self.regenerateAssetIdentifiers()
                 self.latestChangeDetails = assetsChangeDetails
             }
             
@@ -113,6 +115,7 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
             
             if (self.isPhotoLibraryAuthorized) {
                 self.assets = PHAsset.fetchAssets(with: PHAssetMediaType.image, options: options)
+                self.regenerateAssetIdentifiers()
 
                 self.approvedAssets = PHAsset.fetchAssets(in: self.approved, options: nil)
                 self.rejectedAssets = PHAsset.fetchAssets(in: self.rejected, options: nil)
@@ -183,14 +186,15 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
     //
     // On my M2 MacBook Air, these numbers mean the app peaks at ~250MB of memory,
     // which seems pretty reasonable.
-    private var thumbnailCache = LRUCache<PHAsset, PHAssetImage>(withMaxSize: 100)
+    private var thumbnailCache = LRUCache<PHAsset, PHAssetImage>(withMaxSize: 500)
     
     func getThumbnail(for asset: PHAsset) -> PHAssetImage {
         if thumbnailCache[asset] == nil {
             let newImage = PHAssetImage(
                 asset,
                 size: CGSize(width: 70, height: 70),
-                deliveryMode: .opportunistic
+                deliveryMode: .opportunistic,
+                regenerateImmediately: false
             )
             
             thumbnailCache[asset] = newImage
@@ -214,12 +218,23 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
             let newImage = PHAssetImage(
                 asset,
                 size: PHImageManagerMaximumSize,
-                deliveryMode: .opportunistic
+                deliveryMode: .opportunistic,
+                regenerateImmediately: true
             )
             
             fullSizeImageCache[asset] = newImage
         }
 
         return fullSizeImageCache[asset]!
+    }
+    
+    private func regenerateAssetIdentifiers() -> Void {
+        var result: [String] = []
+        
+        self.assets.enumerateObjects { asset, _, _ in
+            result.append(asset.localIdentifier)
+        }
+        
+        self.assetIdentifiers = result
     }
 }

@@ -13,7 +13,7 @@ struct ThumbnailList: View {
     
     var body: some View {
         ScrollViewReader { proxy in
-            PHAssetHStack(photosLibrary.assets) { asset, index in
+            PHAssetHStack(photosLibrary.assets, assetIdentifiers: photosLibrary.assetIdentifiers) { asset, index in
                 ThumbnailImage(
                     assetImage: photosLibrary.getThumbnail(for: asset),
                     state: photosLibrary.state(of: asset),
