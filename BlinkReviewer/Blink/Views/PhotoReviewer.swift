@@ -45,7 +45,10 @@ struct PhotoReviewer: View {
                         .frame(height: 90)
                         .background(.gray.opacity(0.3))
                     
-                    FocusedImage(focusedAssetImage: photosLibrary.getFullSizedImage(for: focusedAsset))
+                    FocusedImage(
+                        asset: focusedAsset,
+                        focusedAssetImage: photosLibrary.getFullSizedImage(for: focusedAsset)
+                    )
                     
                     Spacer()
                 }
@@ -224,8 +227,6 @@ struct PhotoReviewer: View {
                 return nil
             
             case let e where e.characters == "1" || e.characters == "2" || e.characters == "3":
-                let oldState = photosLibrary.state(of: focusedAsset)
-            
                 let newState: ReviewState =
                     e.characters == "1" ? .Approved :
                     e.characters == "2" ? .Rejected : .NeedsAction
