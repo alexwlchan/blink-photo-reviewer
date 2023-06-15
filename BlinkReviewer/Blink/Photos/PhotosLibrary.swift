@@ -76,23 +76,57 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
             
             if let assetsChangeDetails = changeInstance.changeDetails(for: self.assets) {
                 self.assets = assetsChangeDetails.fetchResultAfterChanges
-                self.regenerateAssetIdentifiers()
+                
+                assetsChangeDetails.changedObjects.forEach { asset in
+                    if asset.isFavorite {
+                        self.favoriteAssetIdentifiers.insert(asset.localIdentifier)
+                    } else {
+                        self.favoriteAssetIdentifiers.remove(asset.localIdentifier)
+                    }
+                }
+                
+                if assetsChangeDetails.hasMoves {
+                    self.regenerateAssetIdentifiers()
+                }
+                
                 self.latestChangeDetails = assetsChangeDetails
             }
             
             if let approvedChangeDetails = changeInstance.changeDetails(for: self.approvedAssets) {
                 self.approvedAssets = approvedChangeDetails.fetchResultAfterChanges
+                
+                approvedChangeDetails.insertedObjects.forEach { asset in
+                    self.approvedAssetIdentifiers.insert(asset.localIdentifier)
+                }
+                
+                approvedChangeDetails.removedObjects.forEach { asset in
+                    self.approvedAssetIdentifiers.remove(asset.localIdentifier)
+                }
             }
             
             if let rejectedChangeDetails = changeInstance.changeDetails(for: self.rejectedAssets) {
                 self.rejectedAssets = rejectedChangeDetails.fetchResultAfterChanges
+                
+                rejectedChangeDetails.insertedObjects.forEach { asset in
+                    self.rejectedAssetIdentifiers.insert(asset.localIdentifier)
+                }
+                
+                rejectedChangeDetails.removedObjects.forEach { asset in
+                    self.rejectedAssetIdentifiers.remove(asset.localIdentifier)
+                }
             }
             
             if let needsActionChangeDetails = changeInstance.changeDetails(for: self.needsActionAssets) {
                 self.needsActionAssets = needsActionChangeDetails.fetchResultAfterChanges
+                
+                needsActionChangeDetails.insertedObjects.forEach { asset in
+                    self.needsActionAssetIdentifiers.insert(asset.localIdentifier)
+                }
+                
+                needsActionChangeDetails.removedObjects.forEach { asset in
+                    self.needsActionAssetIdentifiers.remove(asset.localIdentifier)
+                }
             }
-            
-            self.regenerateAssetIdentifiers()
             
             printElapsed("get all photos data (update)")
             
@@ -129,6 +163,10 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
                 self.needsActionAssets = PHAsset.fetchAssets(in: self.needsAction, options: nil)
                 
                 self.regenerateAssetIdentifiers()
+                
+                self.approvedAssetIdentifiers = getSetOfIdentifiers(fetchResult: self.approvedAssets)
+                self.rejectedAssetIdentifiers = getSetOfIdentifiers(fetchResult: self.rejectedAssets)
+                self.needsActionAssetIdentifiers = getSetOfIdentifiers(fetchResult: self.needsActionAssets)
             }
             
             printElapsed("get all photos data (new)")
@@ -267,28 +305,17 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
             }
         }
         
-        var approvedAssetIdentifiers: Set<String> = Set()
-        
-        self.approvedAssets.enumerateObjects { asset, _, _ in
-            approvedAssetIdentifiers.insert(asset.localIdentifier)
-        }
-        
-        var rejectedAssetIdentifiers: Set<String> = Set()
-        
-        self.rejectedAssets.enumerateObjects { asset, _, _ in
-            rejectedAssetIdentifiers.insert(asset.localIdentifier)
-        }
-        
-        var needsActionAssetIdentifiers: Set<String> = Set()
-        
-        self.needsActionAssets.enumerateObjects { asset, _, _ in
-            needsActionAssetIdentifiers.insert(asset.localIdentifier)
-        }
-        
         self.assetIdentifiers = assetIdentifiers
         self.favoriteAssetIdentifiers = favoriteAssetIdentifiers
-        self.approvedAssetIdentifiers = approvedAssetIdentifiers
-        self.rejectedAssetIdentifiers = rejectedAssetIdentifiers
-        self.needsActionAssetIdentifiers = needsActionAssetIdentifiers
     }
+}
+
+func getSetOfIdentifiers(fetchResult: PHFetchResult<PHAsset>) -> Set<String> {
+    var result: Set<String> = Set()
+    
+    fetchResult.enumerateObjects { asset, _, _ in
+        result.insert(asset.localIdentifier)
+    }
+    
+    return result
 }
