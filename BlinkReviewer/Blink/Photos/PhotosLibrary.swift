@@ -11,11 +11,25 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
     @Published var isPhotoLibraryAuthorized = false
     
     @Published var assets: PHFetchResult<PHAsset> = PHFetchResult()
-    @Published var assetIdentifiers: [String] = []
     
-    var approvedAssets: PHFetchResult<PHAsset> = PHFetchResult()
-    var rejectedAssets: PHFetchResult<PHAsset> = PHFetchResult()
-    var needsActionAssets: PHFetchResult<PHAsset> = PHFetchResult()
+    
+    @Published var approvedAssets: PHFetchResult<PHAsset> = PHFetchResult()
+    @Published var rejectedAssets: PHFetchResult<PHAsset> = PHFetchResult()
+    @Published var needsActionAssets: PHFetchResult<PHAsset> = PHFetchResult()
+    
+    // These lists/sets allow us to do some fast lookups for getting the
+    // state of an image, without going back to the Photos database.
+    // Individual database calls are fast; 25,000 if you need to retrieve
+    // all the thumbnails adds noticeable latency.
+    //
+    // 99% of the time, these match the PHFetchResult data; they differ when
+    // somebody has just modified state (e.g. reviewed a photo as "approved").
+    // We can update the internal set as soon as the PHChangeRequest completes,
+    // without waiting to get the update back from the Photos Library.
+    // That might not seem like much, but the latency is enough to feel
+    // noticeable, and tracking our own copy of that state makes the UI
+    // feel much more responsive.
+    @Published var assetIdentifiers: [String] = []
     
     private var approvedAssetIdentifiers: Set<String> = Set()
     private var rejectedAssetIdentifiers: Set<String> = Set()
