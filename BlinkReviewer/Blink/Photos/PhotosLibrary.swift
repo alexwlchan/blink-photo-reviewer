@@ -12,7 +12,6 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
     
     @Published var assets: PHFetchResult<PHAsset> = PHFetchResult()
     
-    
     @Published var approvedAssets: PHFetchResult<PHAsset> = PHFetchResult()
     @Published var rejectedAssets: PHFetchResult<PHAsset> = PHFetchResult()
     @Published var needsActionAssets: PHFetchResult<PHAsset> = PHFetchResult()
@@ -63,6 +62,18 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
         getInitialData()
     }
     
+    /// React to changes from the Photos Library.
+    ///
+    /// The PhotoKit APIs give us a bunch of information about deltas and updates,
+    /// so we don't need to reload all the information from scratch -- we can apply
+    /// partial updates to our local data.
+    ///
+    /// Note: this method is carefully tuned to balance accuracy and speed; we always
+    /// want to have the right data from Photos, but it can add noticeable latency
+    /// to UI updates if it's inefficient.
+    ///
+    /// See https://developer.apple.com/documentation/photokit/phphotolibrarychangeobserver
+    ///
     func photoLibraryDidChange(_ changeInstance: PHChange) {
         // If we've just received permission to read the user's Photos Library, go
         // ahead and populate all the initial data structures.
