@@ -119,7 +119,17 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
         // ahead and populate all the initial data structures.
         if !self.isPhotoLibraryAuthorized && PHPhotoLibrary.authorizationStatus() == .authorized {
             getInitialData()
-            self.isPhotoLibraryAuthorized = PHPhotoLibrary.authorizationStatus() == .authorized
+            
+            // This is wrapped in an async dispatch to fix a warning from Xcode:
+            //
+            //     Publishing changes from background threads is not allowed; make sure
+            //     to publish values from the main thread (via operators like receive(on:))
+            //     on model updates.
+            //
+            DispatchQueue.main.async {
+                self.isPhotoLibraryAuthorized = PHPhotoLibrary.authorizationStatus() == .authorized
+            }
+            
             return
         }
         
@@ -186,6 +196,10 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
         }
     }
     
+    /// Retrieve an asset at a particular position.
+    ///
+    /// Just a convenience wrapper around PHFetchResult.object(at: Int).
+    ///
     func asset(at index: Int) -> PHAsset {
         assets.object(at: index)
     }
@@ -240,6 +254,67 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
         return nil
     }
     
+    /// Set the review state of an asset.
+    ///
+    /// This will record the change in the Photos Library and update any internal
+    /// data structures.
+    /// 
+    func setState(ofAsset asset: PHAsset, to newState: ReviewState) -> Void {
+        let existingState = self.state(of: asset)
+    
+        try! PHPhotoLibrary.shared().performChangesAndWait {
+            // The first condition is a combination of two:
+            //
+            //      -- the photo is already approved and you hit the "approve" hotkey,
+            //      -- so un-approve it
+            //      state == .Approved && e.characters == "1"
+            //
+            //      -- the photo is already approved and you selected a different review
+            //      -- state, so unapprove it
+            //      state == .Approved && e.characters != "1"
+            //
+            // We can optimise it into a single case, but it does make sense!
+            //
+            // Similar logic applies for all three conditions.
+            if existingState == .Approved {
+                asset.remove(fromAlbum: self.approved)
+            } else if newState == .Approved {
+                asset.add(toAlbum: self.approved)
+            }
+
+            if existingState == .Rejected {
+                asset.remove(fromAlbum: self.rejected)
+            } else if newState == .Rejected {
+                asset.add(toAlbum: self.rejected)
+            }
+
+            if existingState == .NeedsAction {
+                asset.remove(fromAlbum: self.needsAction)
+            } else if newState == .NeedsAction {
+                asset.add(toAlbum: self.needsAction)
+            }
+        }
+        
+        if existingState == .Approved {
+            self.approvedAssetIdentifiers.remove(asset.localIdentifier)
+        } else if newState == .Approved {
+            self.approvedAssetIdentifiers.insert(asset.localIdentifier)
+        }
+
+        if existingState == .Rejected {
+            self.rejectedAssetIdentifiers.remove(asset.localIdentifier)
+        } else if newState == .Rejected {
+            self.rejectedAssetIdentifiers.insert(asset.localIdentifier)
+        }
+
+        if existingState == .NeedsAction {
+            self.needsActionAssetIdentifiers.remove(asset.localIdentifier)
+        } else if newState == .NeedsAction {
+            self.needsActionAssetIdentifiers.insert(asset.localIdentifier)
+        }
+    }
+    
+    /// Returns true if this asset is a favorite, false otherwise.
     func isFavorite(localIdentifier: String) -> Bool {
         self.favoriteAssetIdentifiers.contains(localIdentifier)
     }
@@ -318,61 +393,6 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
         
         self.assetIdentifiers = assetIdentifiers
         self.favoriteAssetIdentifiers = favoriteAssetIdentifiers
-    }
-    
-    func setState(ofAsset asset: PHAsset, to newState: ReviewState) -> Void {
-        let existingState = self.state(of: asset)
-    
-        try! PHPhotoLibrary.shared().performChangesAndWait {
-            // The first condition is a combination of two:
-            //
-            //      -- the photo is already approved and you hit the "approve" hotkey,
-            //      -- so un-approve it
-            //      state == .Approved && e.characters == "1"
-            //
-            //      -- the photo is already approved and you selected a different review
-            //      -- state, so unapprove it
-            //      state == .Approved && e.characters != "1"
-            //
-            // We can optimise it into a single case, but it does make sense!
-            //
-            // Similar logic applies for all three conditions.
-            if existingState == .Approved {
-                asset.remove(fromAlbum: self.approved)
-            } else if newState == .Approved {
-                asset.add(toAlbum: self.approved)
-            }
-
-            if existingState == .Rejected {
-                asset.remove(fromAlbum: self.rejected)
-            } else if newState == .Rejected {
-                asset.add(toAlbum: self.rejected)
-            }
-
-            if existingState == .NeedsAction {
-                asset.remove(fromAlbum: self.needsAction)
-            } else if newState == .NeedsAction {
-                asset.add(toAlbum: self.needsAction)
-            }
-        }
-        
-        if existingState == .Approved {
-            self.approvedAssetIdentifiers.remove(asset.localIdentifier)
-        } else if newState == .Approved {
-            self.approvedAssetIdentifiers.insert(asset.localIdentifier)
-        }
-
-        if existingState == .Rejected {
-            self.rejectedAssetIdentifiers.remove(asset.localIdentifier)
-        } else if newState == .Rejected {
-            self.rejectedAssetIdentifiers.insert(asset.localIdentifier)
-        }
-
-        if existingState == .NeedsAction {
-            self.needsActionAssetIdentifiers.remove(asset.localIdentifier)
-        } else if newState == .NeedsAction {
-            self.needsActionAssetIdentifiers.insert(asset.localIdentifier)
-        }
     }
 }
 
