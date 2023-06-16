@@ -29,6 +29,10 @@ struct ThumbnailImage: View {
     // But EnvironmentObject values aren't passed down until you call the
     // `body` method, which is too late!  So instead we have the parent
     // view call into PhotosLibrary and pass in the relevant values here.
+    //
+    // The `getAssetImage` is a callback so we can load those assets somewhat
+    // lazily; the ThumbnailImageInner is separate so it can subscribe to
+    // updates to the PHAssetImage.
     @State var assetImage: PHAssetImage? = nil
     
     var index: Int
@@ -37,9 +41,7 @@ struct ThumbnailImage: View {
     var isFavorite: Bool
     private var getAssetImage: () -> PHAssetImage
     
-    // need to pass in state hre also + favorites
     init(index: Int, state: ReviewState?, isFavorite: Bool, isFocused: Bool, getAssetImage: @escaping () -> PHAssetImage) {
-//        print("creating thumbnail image")
         self.index = index
         
         self.isFavorite = isFavorite
