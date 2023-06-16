@@ -45,7 +45,10 @@ struct PhotoReviewer: View {
                         .frame(height: 90)
                         .background(.gray.opacity(0.3))
                     
-                    FocusedImage(focusedAssetImage: photosLibrary.getFullSizedImage(for: focusedAsset))
+                    FocusedImage(
+                        asset: focusedAsset,
+                        focusedAssetImage: photosLibrary.getFullSizedImage(for: focusedAsset)
+                    )
                     
                     Spacer()
                 }
@@ -224,46 +227,30 @@ struct PhotoReviewer: View {
                 return nil
             
             case let e where e.characters == "1" || e.characters == "2" || e.characters == "3":
-                print("time to review!")
-                let state = photosLibrary.state(of: focusedAsset)
+                let newState: ReviewState =
+                    e.characters == "1" ? .Approved :
+                    e.characters == "2" ? .Rejected : .NeedsAction
             
-                let approved = getAlbum(withName: "Approved")
-                let rejected = getAlbum(withName: "Rejected")
-                let needsAction = getAlbum(withName: "Needs Action")
+                photosLibrary.setState(ofAsset: focusedAsset, to: newState)
             
-                try! PHPhotoLibrary.shared().performChangesAndWait {
-                    // The first condition is a combination of two:
-                    //
-                    //      -- the photo is already approved and you hit the "approve" hotkey,
-                    //      -- so un-approve it
-                    //      state == .Approved && e.characters == "1"
-                    //
-                    //      -- the photo is already approved and you selected a different review
-                    //      -- state, so unapprove it
-                    //      state == .Approved && e.characters != "1"
-                    //
-                    // We can optimise it into a single case, but it does make sense!
-                    //
-                    // Similar logic applies for all three conditions.
-                    if state == .Approved {
-                        focusedAsset.remove(fromAlbum: approved)
-                    } else if e.characters == "1" {
-                        focusedAsset.add(toAlbum: approved)
-                    }
-
-                    if state == .Rejected {
-                        focusedAsset.remove(fromAlbum: rejected)
-                    } else if e.characters == "2" {
-                        focusedAsset.add(toAlbum: rejected)
-                    }
-
-                    if state == .NeedsAction {
-                        focusedAsset.remove(fromAlbum: needsAction)
-                    } else if e.characters == "3" {
-                        focusedAsset.add(toAlbum: needsAction)
-                    }
+                if focusedAssetIndex < photosLibrary.assets.count - 1 {
+                    focusedAssetIndex += 1
                 }
+                
+                return nil
             
+            case let e where e.characters == "2":
+                photosLibrary.setState(ofAsset: focusedAsset, to: .Rejected)
+            
+                if focusedAssetIndex < photosLibrary.assets.count - 1 {
+                    focusedAssetIndex += 1
+                }
+                
+                return nil
+            
+            case let e where e.characters == "3":
+                photosLibrary.setState(ofAsset: focusedAsset, to: .NeedsAction)
+
                 if focusedAssetIndex < photosLibrary.assets.count - 1 {
                     focusedAssetIndex += 1
                 }

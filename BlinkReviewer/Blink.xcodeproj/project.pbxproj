@@ -14,6 +14,7 @@
 		945F17B42A33D726004FC479 /* ReviewStateIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 945F17B32A33D726004FC479 /* ReviewStateIcon.swift */; };
 		945F17B62A33D7AA004FC479 /* ReviewStateBorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 945F17B52A33D7AA004FC479 /* ReviewStateBorder.swift */; };
 		945F17B82A33DAC7004FC479 /* ReviewStateSaturation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 945F17B72A33DAC7004FC479 /* ReviewStateSaturation.swift */; };
+		9492C9702A3C3803002E44EC /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9492C96F2A3C3803002E44EC /* Timer.swift */; };
 		94A0835E2A33E49E00238964 /* FocusedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A0835D2A33E49E00238964 /* FocusedImage.swift */; };
 		94A083612A33E98000238964 /* AlbumInfoOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A083602A33E98000238964 /* AlbumInfoOverlay.swift */; };
 		94A083632A33F30300238964 /* LoadingIndicatorOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A083622A33F30300238964 /* LoadingIndicatorOverlay.swift */; };
@@ -63,6 +64,7 @@
 		945F17B32A33D726004FC479 /* ReviewStateIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewStateIcon.swift; sourceTree = "<group>"; };
 		945F17B52A33D7AA004FC479 /* ReviewStateBorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewStateBorder.swift; sourceTree = "<group>"; };
 		945F17B72A33DAC7004FC479 /* ReviewStateSaturation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewStateSaturation.swift; sourceTree = "<group>"; };
+		9492C96F2A3C3803002E44EC /* Timer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timer.swift; sourceTree = "<group>"; };
 		94A0835D2A33E49E00238964 /* FocusedImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusedImage.swift; sourceTree = "<group>"; };
 		94A083602A33E98000238964 /* AlbumInfoOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumInfoOverlay.swift; sourceTree = "<group>"; };
 		94A083622A33F30300238964 /* LoadingIndicatorOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingIndicatorOverlay.swift; sourceTree = "<group>"; };
@@ -138,6 +140,14 @@
 			path = Thumbnails;
 			sourceTree = "<group>";
 		};
+		9492C96E2A3C37FA002E44EC /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				9492C96F2A3C3803002E44EC /* Timer.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
 		94A0835F2A33E7E900238964 /* FocusedImage */ = {
 			isa = PBXGroup;
 			children = (
@@ -191,6 +201,7 @@
 		94D750EE2A31A796005859E7 /* Blink */ = {
 			isa = PBXGroup;
 			children = (
+				9492C96E2A3C37FA002E44EC /* Helpers */,
 				94D2C8B72A320E6600BEE15B /* Model */,
 				94D751272A31D61D005859E7 /* Photos */,
 				94D7511A2A31A7A6005859E7 /* Views */,
@@ -423,6 +434,7 @@
 				94A083682A33F6E900238964 /* ThumbnailList.swift in Sources */,
 				94D750F02A31A796005859E7 /* BlinkApp.swift in Sources */,
 				940331732A336B5100200C5D /* DeferredRendering.swift in Sources */,
+				9492C9702A3C3803002E44EC /* Timer.swift in Sources */,
 				94A0835E2A33E49E00238964 /* FocusedImage.swift in Sources */,
 				945F17B82A33DAC7004FC479 /* ReviewStateSaturation.swift in Sources */,
 				94D751222A31BD8E005859E7 /* PhotoReviewer.swift in Sources */,
@@ -588,7 +600,7 @@
 				CODE_SIGN_ENTITLEMENTS = Blink/Blink.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 68;
 				DEVELOPMENT_ASSET_PATHS = "\"Blink/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -615,7 +627,7 @@
 				CODE_SIGN_ENTITLEMENTS = Blink/Blink.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 68;
 				DEVELOPMENT_ASSET_PATHS = "\"Blink/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -640,7 +652,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 68;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				MARKETING_VERSION = 1.0;
@@ -658,7 +670,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 68;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				MARKETING_VERSION = 1.0;
@@ -675,7 +687,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 68;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = net.alexwlchan.BlinkReviewerUITests;
@@ -691,7 +703,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 68;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = net.alexwlchan.BlinkReviewerUITests;

@@ -16,6 +16,26 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
     @Published var rejectedAssets: PHFetchResult<PHAsset> = PHFetchResult()
     @Published var needsActionAssets: PHFetchResult<PHAsset> = PHFetchResult()
     
+    // These lists/sets allow us to do some fast lookups for getting the
+    // state of an image, without going back to the Photos database.
+    // Individual database calls are fast; 25,000 if you need to retrieve
+    // all the thumbnails adds noticeable latency.
+    //
+    // 99% of the time, these match the PHFetchResult data; they differ when
+    // somebody has just modified state (e.g. reviewed a photo as "approved").
+    // We can update the internal set as soon as the PHChangeRequest completes,
+    // without waiting to get the update back from the Photos Library.
+    // That might not seem like much, but the latency is enough to feel
+    // noticeable, and tracking our own copy of that state makes the UI
+    // feel much more responsive.
+    @Published var assetIdentifiers: [String] = []
+    
+    private var approvedAssetIdentifiers: Set<String> = Set()
+    private var rejectedAssetIdentifiers: Set<String> = Set()
+    private var needsActionAssetIdentifiers: Set<String> = Set()
+    
+    private var favoriteAssetIdentifiers: Set<String> = Set()
+    
     // We publish the latest changes we detect from the Photos library.
     //
     // Views can subscribe to updates with
@@ -42,69 +62,22 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
         getInitialData()
     }
     
-    func photoLibraryDidChange(_ changeInstance: PHChange) {
-        // If we've just received permission to read the user's Photos Library, go
-        // ahead and populate all the initial data structures.
-        if !self.isPhotoLibraryAuthorized && PHPhotoLibrary.authorizationStatus() == .authorized {
-            getInitialData()
-        }
-        
-        DispatchQueue.main.async {
-            let start = DispatchTime.now()
-            var elapsed = start
-
-            func printElapsed(_ label: String) -> Void {
-              let now = DispatchTime.now()
-
-              let totalInterval = Double(now.uptimeNanoseconds - start.uptimeNanoseconds) / 1_000_000_000
-              let elapsedInterval = Double(now.uptimeNanoseconds - elapsed.uptimeNanoseconds) / 1_000_000_000
-
-              elapsed = DispatchTime.now()
-
-              print("Time to \(label):\n  \(elapsedInterval) seconds (\(totalInterval) total)")
-            }
-            
-            let options = PHFetchOptions()
-            options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-            
-            if let assetsChangeDetails = changeInstance.changeDetails(for: self.assets) {
-                self.assets = assetsChangeDetails.fetchResultAfterChanges
-                self.latestChangeDetails = assetsChangeDetails
-            }
-            
-            if let approvedChangeDetails = changeInstance.changeDetails(for: self.approvedAssets) {
-                self.approvedAssets = approvedChangeDetails.fetchResultAfterChanges
-            }
-            
-            if let rejectedChangeDetails = changeInstance.changeDetails(for: self.rejectedAssets) {
-                self.rejectedAssets = rejectedChangeDetails.fetchResultAfterChanges
-            }
-            
-            if let needsActionChangeDetails = changeInstance.changeDetails(for: self.needsActionAssets) {
-                self.needsActionAssets = needsActionChangeDetails.fetchResultAfterChanges
-            }
-            
-            printElapsed("get all photos data (update)")
-            
-            self.isPhotoLibraryAuthorized = PHPhotoLibrary.authorizationStatus() == .authorized
-        }
-    }
-
+    /// Get the initial batch of data from the Photos Library when the app starts.
+    ///
+    /// This is populating all the cached data structures.
+    ///
+    /// You may see this method called twice, if you're running the app for the first time:
+    ///
+    ///    - When the app initially starts, we don't have permission to read the user's
+    ///      Photos Library.  This method runs pretty quickly, because we skip fetching
+    ///      anything from the database -- it'll appear empty to us.
+    ///
+    ///    - After the user grants permission, we'll call this method a second time, when
+    ///      we can actually get all the data.
+    ///
     private func getInitialData() {
         DispatchQueue.main.async {
-            let start = DispatchTime.now()
-            var elapsed = start
-
-            func printElapsed(_ label: String) -> Void {
-              let now = DispatchTime.now()
-
-              let totalInterval = Double(now.uptimeNanoseconds - start.uptimeNanoseconds) / 1_000_000_000
-              let elapsedInterval = Double(now.uptimeNanoseconds - elapsed.uptimeNanoseconds) / 1_000_000_000
-
-              elapsed = DispatchTime.now()
-
-              print("Time to \(label):\n  \(elapsedInterval) seconds (\(totalInterval) total)")
-            }
+            var timer = Timer()
             
             let options = PHFetchOptions()
             options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
@@ -117,14 +90,116 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
                 self.approvedAssets = PHAsset.fetchAssets(in: self.approved, options: nil)
                 self.rejectedAssets = PHAsset.fetchAssets(in: self.rejected, options: nil)
                 self.needsActionAssets = PHAsset.fetchAssets(in: self.needsAction, options: nil)
+                
+                self.regenerateAssetIdentifiers()
+                
+                self.approvedAssetIdentifiers = getSetOfIdentifiers(fetchResult: self.approvedAssets)
+                self.rejectedAssetIdentifiers = getSetOfIdentifiers(fetchResult: self.rejectedAssets)
+                self.needsActionAssetIdentifiers = getSetOfIdentifiers(fetchResult: self.needsActionAssets)
             }
             
-            printElapsed("get all photos data (new)")
-            
-            
+            timer.printTime("get initial Photos data (isPhotoLibraryAuthorized = \(self.isPhotoLibraryAuthorized))")
         }
     }
     
+    /// React to changes from the Photos Library.
+    ///
+    /// The PhotoKit APIs give us a bunch of information about deltas and updates,
+    /// so we don't need to reload all the information from scratch -- we can apply
+    /// partial updates to our local data.
+    ///
+    /// Note: this method is carefully tuned to balance accuracy and speed; we always
+    /// want to have the right data from Photos, but it can add noticeable latency
+    /// to UI updates if it's inefficient.
+    ///
+    /// See https://developer.apple.com/documentation/photokit/phphotolibrarychangeobserver
+    ///
+    func photoLibraryDidChange(_ changeInstance: PHChange) {
+        // If we've just received permission to read the user's Photos Library, go
+        // ahead and populate all the initial data structures.
+        if !self.isPhotoLibraryAuthorized && PHPhotoLibrary.authorizationStatus() == .authorized {
+            getInitialData()
+            
+            // This is wrapped in an async dispatch to fix a warning from Xcode:
+            //
+            //     Publishing changes from background threads is not allowed; make sure
+            //     to publish values from the main thread (via operators like receive(on:))
+            //     on model updates.
+            //
+            DispatchQueue.main.async {
+                self.isPhotoLibraryAuthorized = PHPhotoLibrary.authorizationStatus() == .authorized
+            }
+            
+            return
+        }
+        
+        DispatchQueue.main.async {
+            var timer = Timer()
+            
+            if let assetsChangeDetails = changeInstance.changeDetails(for: self.assets) {
+                self.assets = assetsChangeDetails.fetchResultAfterChanges
+                
+                assetsChangeDetails.changedObjects.forEach { asset in
+                    if asset.isFavorite {
+                        self.favoriteAssetIdentifiers.insert(asset.localIdentifier)
+                    } else {
+                        self.favoriteAssetIdentifiers.remove(asset.localIdentifier)
+                    }
+                }
+                
+                if assetsChangeDetails.hasMoves {
+                    self.regenerateAssetIdentifiers()
+                }
+                
+                self.latestChangeDetails = assetsChangeDetails
+            }
+            
+            if let approvedChangeDetails = changeInstance.changeDetails(for: self.approvedAssets) {
+                self.approvedAssets = approvedChangeDetails.fetchResultAfterChanges
+                
+                approvedChangeDetails.insertedObjects.forEach { asset in
+                    self.approvedAssetIdentifiers.insert(asset.localIdentifier)
+                }
+                
+                approvedChangeDetails.removedObjects.forEach { asset in
+                    self.approvedAssetIdentifiers.remove(asset.localIdentifier)
+                }
+            }
+            
+            if let rejectedChangeDetails = changeInstance.changeDetails(for: self.rejectedAssets) {
+                self.rejectedAssets = rejectedChangeDetails.fetchResultAfterChanges
+                
+                rejectedChangeDetails.insertedObjects.forEach { asset in
+                    self.rejectedAssetIdentifiers.insert(asset.localIdentifier)
+                }
+                
+                rejectedChangeDetails.removedObjects.forEach { asset in
+                    self.rejectedAssetIdentifiers.remove(asset.localIdentifier)
+                }
+            }
+            
+            if let needsActionChangeDetails = changeInstance.changeDetails(for: self.needsActionAssets) {
+                self.needsActionAssets = needsActionChangeDetails.fetchResultAfterChanges
+                
+                needsActionChangeDetails.insertedObjects.forEach { asset in
+                    self.needsActionAssetIdentifiers.insert(asset.localIdentifier)
+                }
+                
+                needsActionChangeDetails.removedObjects.forEach { asset in
+                    self.needsActionAssetIdentifiers.remove(asset.localIdentifier)
+                }
+            }
+            
+            timer.printTime("process change to Photos data")
+            
+            self.isPhotoLibraryAuthorized = PHPhotoLibrary.authorizationStatus() == .authorized
+        }
+    }
+    
+    /// Retrieve an asset at a particular position.
+    ///
+    /// Just a convenience wrapper around PHFetchResult.object(at: Int).
+    ///
     func asset(at index: Int) -> PHAsset {
         assets.object(at: index)
     }
@@ -163,6 +238,87 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
         state(of: asset(at: index))
     }
     
+    func state(ofLocalIdentifier localIdentifier: String) -> ReviewState? {
+        if self.rejectedAssetIdentifiers.contains(localIdentifier) {
+            return .Rejected
+        }
+        
+        if self.needsActionAssetIdentifiers.contains(localIdentifier) {
+            return .NeedsAction
+        }
+        
+        if self.approvedAssetIdentifiers.contains(localIdentifier) {
+            return .Approved
+        }
+        
+        return nil
+    }
+    
+    /// Set the review state of an asset.
+    ///
+    /// This will record the change in the Photos Library and update any internal
+    /// data structures.
+    /// 
+    func setState(ofAsset asset: PHAsset, to newState: ReviewState) -> Void {
+        let existingState = self.state(of: asset)
+    
+        try! PHPhotoLibrary.shared().performChangesAndWait {
+            // The first condition is a combination of two:
+            //
+            //      -- the photo is already approved and you hit the "approve" hotkey,
+            //      -- so un-approve it
+            //      state == .Approved && e.characters == "1"
+            //
+            //      -- the photo is already approved and you selected a different review
+            //      -- state, so unapprove it
+            //      state == .Approved && e.characters != "1"
+            //
+            // We can optimise it into a single case, but it does make sense!
+            //
+            // Similar logic applies for all three conditions.
+            if existingState == .Approved {
+                asset.remove(fromAlbum: self.approved)
+            } else if newState == .Approved {
+                asset.add(toAlbum: self.approved)
+            }
+
+            if existingState == .Rejected {
+                asset.remove(fromAlbum: self.rejected)
+            } else if newState == .Rejected {
+                asset.add(toAlbum: self.rejected)
+            }
+
+            if existingState == .NeedsAction {
+                asset.remove(fromAlbum: self.needsAction)
+            } else if newState == .NeedsAction {
+                asset.add(toAlbum: self.needsAction)
+            }
+        }
+        
+        if existingState == .Approved {
+            self.approvedAssetIdentifiers.remove(asset.localIdentifier)
+        } else if newState == .Approved {
+            self.approvedAssetIdentifiers.insert(asset.localIdentifier)
+        }
+
+        if existingState == .Rejected {
+            self.rejectedAssetIdentifiers.remove(asset.localIdentifier)
+        } else if newState == .Rejected {
+            self.rejectedAssetIdentifiers.insert(asset.localIdentifier)
+        }
+
+        if existingState == .NeedsAction {
+            self.needsActionAssetIdentifiers.remove(asset.localIdentifier)
+        } else if newState == .NeedsAction {
+            self.needsActionAssetIdentifiers.insert(asset.localIdentifier)
+        }
+    }
+    
+    /// Returns true if this asset is a favorite, false otherwise.
+    func isFavorite(localIdentifier: String) -> Bool {
+        self.favoriteAssetIdentifiers.contains(localIdentifier)
+    }
+    
     // Implements a basic cache for thumbnail images.
     //
     // Thumbnail images are small and easily reused; I've put them here because
@@ -183,7 +339,7 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
     //
     // On my M2 MacBook Air, these numbers mean the app peaks at ~250MB of memory,
     // which seems pretty reasonable.
-    private var thumbnailCache = LRUCache<PHAsset, PHAssetImage>(withMaxSize: 100)
+    private var thumbnailCache = LRUCache<PHAsset, PHAssetImage>(withMaxSize: 500)
     
     func getThumbnail(for asset: PHAsset) -> PHAssetImage {
         if thumbnailCache[asset] == nil {
@@ -222,4 +378,30 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
 
         return fullSizeImageCache[asset]!
     }
+    
+    private func regenerateAssetIdentifiers() -> Void {
+        var assetIdentifiers: [String] = []
+        var favoriteAssetIdentifiers: Set<String> = Set()
+        
+        self.assets.enumerateObjects { asset, _, _ in
+            assetIdentifiers.append(asset.localIdentifier)
+            
+            if asset.isFavorite {
+                favoriteAssetIdentifiers.insert(asset.localIdentifier)
+            }
+        }
+        
+        self.assetIdentifiers = assetIdentifiers
+        self.favoriteAssetIdentifiers = favoriteAssetIdentifiers
+    }
+}
+
+func getSetOfIdentifiers(fetchResult: PHFetchResult<PHAsset>) -> Set<String> {
+    var result: Set<String> = Set()
+    
+    fetchResult.enumerateObjects { asset, _, _ in
+        result.insert(asset.localIdentifier)
+    }
+    
+    return result
 }

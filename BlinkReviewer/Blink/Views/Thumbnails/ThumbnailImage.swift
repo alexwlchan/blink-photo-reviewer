@@ -1,6 +1,19 @@
 import SwiftUI
 import Photos
 
+struct ThumbnailImageInner: View {
+    @ObservedObject var assetImage: PHAssetImage
+    var size: CGFloat
+    
+    var body: some View {
+        Image(nsImage: assetImage.image)
+            .resizable()
+            .scaledToFill()
+            .clipped()
+            .frame(width: size, height: size, alignment: .center)
+    }
+}
+
 /// Render a single thumbnail image in the thumbnail picker.
 ///
 /// Thumbnails are square, and they expand to fill the square.  This may
@@ -16,10 +29,27 @@ struct ThumbnailImage: View {
     // But EnvironmentObject values aren't passed down until you call the
     // `body` method, which is too late!  So instead we have the parent
     // view call into PhotosLibrary and pass in the relevant values here.
-    @ObservedObject var assetImage: PHAssetImage
+    //
+    // The `getAssetImage` is a callback so we can load those assets somewhat
+    // lazily; the ThumbnailImageInner is separate so it can subscribe to
+    // updates to the PHAssetImage.
+    @State var assetImage: PHAssetImage? = nil
+    
+    var index: Int
     var state: ReviewState?
     var isFocused: Bool
     var isFavorite: Bool
+    private var getAssetImage: () -> PHAssetImage
+    
+    init(index: Int, state: ReviewState?, isFavorite: Bool, isFocused: Bool, getAssetImage: @escaping () -> PHAssetImage) {
+        self.index = index
+        
+        self.isFavorite = isFavorite
+        self.state = state
+        
+        self.isFocused = isFocused
+        self.getAssetImage = getAssetImage
+    }
     
     private func size() -> CGFloat {
         isFocused ? 70 : 50
@@ -30,15 +60,20 @@ struct ThumbnailImage: View {
     }
     
     var body: some View {
-        Image(nsImage: assetImage.image)
-            .resizable()
-            .scaledToFill()
-            .clipped()
-            .frame(width: size(), height: size(), alignment: .center)
-            .cornerRadius(cornerRadius())
-            .reviewStateColor(isRejected: state == .Rejected)
-            .reviewStateBorder(for: state, with: cornerRadius())
-            .reviewStateIcon(for: state, isFocused)
-            .favoriteHeartIcon(isFavorite, isFocused)
+        if let thisAssetImage = assetImage {
+            ThumbnailImageInner(assetImage: thisAssetImage, size: size())
+                .cornerRadius(cornerRadius())
+                .reviewStateColor(isRejected: state == .Rejected)
+                .reviewStateBorder(for: state, with: cornerRadius())
+                .reviewStateIcon(for: state, isFocused)
+                .favoriteHeartIcon(isFavorite, isFocused)
+                
+        } else {
+            ProgressView()
+                .onAppear {
+                    self.assetImage = getAssetImage()
+                }
+        }
+        
     }
 }

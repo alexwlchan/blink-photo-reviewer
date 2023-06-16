@@ -13,18 +13,29 @@ struct ThumbnailList: View {
     
     var body: some View {
         ScrollViewReader { proxy in
-            PHAssetHStack(photosLibrary.assets) { asset, index in
+            PHAssetHStack(assetIdentifiers: photosLibrary.assetIdentifiers) { localIdentifier, index in
                 ThumbnailImage(
-                    assetImage: photosLibrary.getThumbnail(for: asset),
-                    state: photosLibrary.state(of: asset),
+                    index: index,
+                    state: photosLibrary.state(ofLocalIdentifier: localIdentifier),
+                    isFavorite: photosLibrary.isFavorite(localIdentifier: localIdentifier),
                     isFocused: index == focusedAssetIndex,
-                    isFavorite: asset.isFavorite
-                ).onTapGesture {
+                    getAssetImage: {
+                        photosLibrary.getThumbnail(for: photosLibrary.asset(at: index))
+                    }
+                )
+                .environmentObject(photosLibrary)
+                .onTapGesture {
                     focusedAssetIndex = index
                 }
             }
-            .onChange(of: focusedAssetIndex, perform: { newIndex in
-                withAnimation {
+            // When the focusedAssetIndex changes, scroll to the new position.
+            //
+            // By default this is an animated scroll, but if the user is scrolling
+            // a long way, we skip the animation and jump straight to it -- if somebody
+            // jumps over several thousand images in one go, it looks better to snap
+            // rather than do a jaggy animation.
+            .onChange(of: focusedAssetIndex, perform: { [oldIndex = focusedAssetIndex] newIndex in
+                withAnimation(abs(newIndex - oldIndex) < 100 ? .default : nil) {
                     proxy.scrollTo(
                         photosLibrary.asset(at: newIndex).localIdentifier,
                         anchor: .center

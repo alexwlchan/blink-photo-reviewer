@@ -1,6 +1,20 @@
 import SwiftUI
 import Photos
 
+struct AssetIdentifiersCollection: RandomAccessCollection, Equatable {
+    typealias Element = (Int, String)
+    typealias Index = Int
+    
+    let assetIdentifiers: [String]
+
+    var startIndex: Int { 0 }
+    var endIndex: Int { assetIdentifiers.count }
+
+    subscript(position: Int) -> Element {
+        (position, assetIdentifiers[position])
+    }
+}
+
 /// Creates an HStack of PHAssets that fills in right-to-left.
 ///
 /// This provides lazy loading to the left-hand side, and assumes you're
@@ -17,21 +31,25 @@ import Photos
 /// LazyHStack to the far right, it loads every element immediately.
 ///
 /// This takes a subview which is used to render the individual entries;
-/// these subviews receive the original PHAsset and the index from the
-/// original PHFetchResult -- you can use this index to retrieve adjacent
-/// items in the FetchResult, if necessary.
+/// these subviews receive the position and identifier of the original asset.
+///
+/// Note: this operates on a list of asset identifiers, but not the assets
+/// themselves -- this is a performance optimisation.  If the user scrolls
+/// deep into the list, SwiftUI will try to render lots of entries, and if
+/// those are PHAsset elements, it'll go back to the Photos database, even
+/// though we don't really need any Photos data in our views.
 ///
 struct PHAssetHStack<Content: View>: View {
-    var subview: (PHAsset, Int) -> Content
-    var collection: PHFetchResultCollection
+    var subview: (String, Int) -> Content
+    var assetIdentifiers: [String]
     
     init(
-        _ fetchResult: PHFetchResult<PHAsset>,
-        @ViewBuilder subview: @escaping (PHAsset, Int) -> Content
+        assetIdentifiers: [String],
+        @ViewBuilder subview: @escaping (String, Int) -> Content
     ) {
         print("--> creating PHAssetHStack")
         self.subview = subview
-        self.collection = PHFetchResultCollection(fetchResult)
+        self.assetIdentifiers = assetIdentifiers
     }
     
     var body: some View {
@@ -55,8 +73,10 @@ struct PHAssetHStack<Content: View>: View {
                 // creating the entire Array, which is quite expensive.  I switched the
                 // PHFetchResultCollection to vend a struct with both the asset and the
                 // position, but now it does it by random access -- this seems faster.
-                ForEach(self.collection, id: \.asset.localIdentifier) { indexedAsset in
-                    subview(indexedAsset.asset, indexedAsset.position)
+                //
+                // Note: enumerated is okay
+                ForEach(AssetIdentifiersCollection(assetIdentifiers: self.assetIdentifiers), id: \.1) { index, localIdentifier in
+                    subview(localIdentifier, index)
                 }
                 
                 // Note: these two uses of RTL direction are a way to get the LazyHStack
@@ -76,25 +96,5 @@ struct PHAssetHStack<Content: View>: View {
         }
             .flipsForRightToLeftLayoutDirection(true)
             .environment(\.layoutDirection, .rightToLeft)
-    }
-}
-
-struct PHAssetHStack_Previews: PreviewProvider {
-    static var fetchResult: PHFetchResult<PHAsset> {
-        let options = PHFetchOptions()
-        options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-        options.fetchLimit = 25
-        
-        return PHAsset.fetchAssets(with: options)
-    }
-    
-    static var previews: some View {
-        PHAssetHStack(fetchResult) { asset, index in
-            VStack {
-                Text("view index = \(index)")
-                Text("asset ID =\n\(asset.localIdentifier)")
-                Text("fetchResult.object(at: \(index)) =\n\(fetchResult.object(at: index).localIdentifier)")
-            }
-        }
     }
 }
