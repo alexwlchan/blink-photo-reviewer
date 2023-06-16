@@ -79,22 +79,12 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
         // ahead and populate all the initial data structures.
         if !self.isPhotoLibraryAuthorized && PHPhotoLibrary.authorizationStatus() == .authorized {
             getInitialData()
+            self.isPhotoLibraryAuthorized = PHPhotoLibrary.authorizationStatus() == .authorized
+            return
         }
         
         DispatchQueue.main.async {
-            let start = DispatchTime.now()
-            var elapsed = start
-
-            func printElapsed(_ label: String) -> Void {
-              let now = DispatchTime.now()
-
-              let totalInterval = Double(now.uptimeNanoseconds - start.uptimeNanoseconds) / 1_000_000_000
-              let elapsedInterval = Double(now.uptimeNanoseconds - elapsed.uptimeNanoseconds) / 1_000_000_000
-
-              elapsed = DispatchTime.now()
-
-              print("Time to \(label):\n  \(elapsedInterval) seconds (\(totalInterval) total)")
-            }
+            var timer = Timer()
             
             if let assetsChangeDetails = changeInstance.changeDetails(for: self.assets) {
                 self.assets = assetsChangeDetails.fetchResultAfterChanges
@@ -150,7 +140,7 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
                 }
             }
             
-            printElapsed("get all photos data (update)")
+            timer.printTime("process change to Photos data")
             
             self.isPhotoLibraryAuthorized = PHPhotoLibrary.authorizationStatus() == .authorized
         }
@@ -158,19 +148,7 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
 
     private func getInitialData() {
         DispatchQueue.main.async {
-            let start = DispatchTime.now()
-            var elapsed = start
-
-            func printElapsed(_ label: String) -> Void {
-              let now = DispatchTime.now()
-
-              let totalInterval = Double(now.uptimeNanoseconds - start.uptimeNanoseconds) / 1_000_000_000
-              let elapsedInterval = Double(now.uptimeNanoseconds - elapsed.uptimeNanoseconds) / 1_000_000_000
-
-              elapsed = DispatchTime.now()
-
-              print("Time to \(label):\n  \(elapsedInterval) seconds (\(totalInterval) total)")
-            }
+            var timer = Timer()
             
             let options = PHFetchOptions()
             options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
@@ -191,9 +169,7 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
                 self.needsActionAssetIdentifiers = getSetOfIdentifiers(fetchResult: self.needsActionAssets)
             }
             
-            printElapsed("get all photos data (new)")
-            
-            
+            timer.printTime("get initial Photos data")
         }
     }
     
