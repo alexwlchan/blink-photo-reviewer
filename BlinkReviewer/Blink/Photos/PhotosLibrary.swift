@@ -62,6 +62,46 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
         getInitialData()
     }
     
+    /// Get the initial batch of data from the Photos Library when the app starts.
+    ///
+    /// This is populating all the cached data structures.
+    ///
+    /// You may see this method called twice, if you're running the app for the first time:
+    ///
+    ///    - When the app initially starts, we don't have permission to read the user's
+    ///      Photos Library.  This method runs pretty quickly, because we skip fetching
+    ///      anything from the database -- it'll appear empty to us.
+    ///
+    ///    - After the user grants permission, we'll call this method a second time, when
+    ///      we can actually get all the data.
+    ///
+    private func getInitialData() {
+        DispatchQueue.main.async {
+            var timer = Timer()
+            
+            let options = PHFetchOptions()
+            options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
+            
+            self.isPhotoLibraryAuthorized = PHPhotoLibrary.authorizationStatus() == .authorized
+            
+            if (self.isPhotoLibraryAuthorized) {
+                self.assets = PHAsset.fetchAssets(with: PHAssetMediaType.image, options: options)
+
+                self.approvedAssets = PHAsset.fetchAssets(in: self.approved, options: nil)
+                self.rejectedAssets = PHAsset.fetchAssets(in: self.rejected, options: nil)
+                self.needsActionAssets = PHAsset.fetchAssets(in: self.needsAction, options: nil)
+                
+                self.regenerateAssetIdentifiers()
+                
+                self.approvedAssetIdentifiers = getSetOfIdentifiers(fetchResult: self.approvedAssets)
+                self.rejectedAssetIdentifiers = getSetOfIdentifiers(fetchResult: self.rejectedAssets)
+                self.needsActionAssetIdentifiers = getSetOfIdentifiers(fetchResult: self.needsActionAssets)
+            }
+            
+            timer.printTime("get initial Photos data (isPhotoLibraryAuthorized = \(self.isPhotoLibraryAuthorized))")
+        }
+    }
+    
     /// React to changes from the Photos Library.
     ///
     /// The PhotoKit APIs give us a bunch of information about deltas and updates,
@@ -143,33 +183,6 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
             timer.printTime("process change to Photos data")
             
             self.isPhotoLibraryAuthorized = PHPhotoLibrary.authorizationStatus() == .authorized
-        }
-    }
-
-    private func getInitialData() {
-        DispatchQueue.main.async {
-            var timer = Timer()
-            
-            let options = PHFetchOptions()
-            options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-            
-            self.isPhotoLibraryAuthorized = PHPhotoLibrary.authorizationStatus() == .authorized
-            
-            if (self.isPhotoLibraryAuthorized) {
-                self.assets = PHAsset.fetchAssets(with: PHAssetMediaType.image, options: options)
-
-                self.approvedAssets = PHAsset.fetchAssets(in: self.approved, options: nil)
-                self.rejectedAssets = PHAsset.fetchAssets(in: self.rejected, options: nil)
-                self.needsActionAssets = PHAsset.fetchAssets(in: self.needsAction, options: nil)
-                
-                self.regenerateAssetIdentifiers()
-                
-                self.approvedAssetIdentifiers = getSetOfIdentifiers(fetchResult: self.approvedAssets)
-                self.rejectedAssetIdentifiers = getSetOfIdentifiers(fetchResult: self.rejectedAssets)
-                self.needsActionAssetIdentifiers = getSetOfIdentifiers(fetchResult: self.needsActionAssets)
-            }
-            
-            timer.printTime("get initial Photos data")
         }
     }
     
