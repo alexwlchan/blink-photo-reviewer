@@ -71,9 +71,6 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
               print("Time to \(label):\n  \(elapsedInterval) seconds (\(totalInterval) total)")
             }
             
-            let options = PHFetchOptions()
-            options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-            
             if let assetsChangeDetails = changeInstance.changeDetails(for: self.assets) {
                 self.assets = assetsChangeDetails.fetchResultAfterChanges
                 
