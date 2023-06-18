@@ -9,6 +9,8 @@ import SwiftUI
 
 @main
 struct BlinkApp: App {
+    @AppStorage("colorScheme") private var colorScheme: String = "dark"
+        
     let photosLibrary = PhotosLibrary()
         
     var body: some Scene {
@@ -19,7 +21,25 @@ struct BlinkApp: App {
         //
         // See https://www.optionalmap.com/posts/swiftui_single_window_app/
         Window("Blink", id: "main") {
-            PhotoReviewer().environmentObject(photosLibrary)
+            PhotoReviewer()
+                .environmentObject(photosLibrary)
+                .preferredColorScheme(preferredColorScheme())
+        }
+        
+        Settings {
+            SettingsView()
         }
     }
+    
+    private func preferredColorScheme() -> ColorScheme? {
+        switch(colorScheme) {
+            case "dark":
+                return .dark
+            case "light":
+                return .light
+            default:
+                return nil
+        }
+    }
+
 }

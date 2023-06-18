@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		940331732A336B5100200C5D /* DeferredRendering.swift in Sources */ = {isa = PBXBuildFile; fileRef = 940331722A336B5100200C5D /* DeferredRendering.swift */; };
+		9404B57D2A3EEBBA00068FA8 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9404B57C2A3EEBBA00068FA8 /* SettingsView.swift */; };
 		941E18FA2A35362600A2EA98 /* Info.swift in Sources */ = {isa = PBXBuildFile; fileRef = 941E18F92A35362600A2EA98 /* Info.swift */; };
 		945F17B02A33D167004FC479 /* ThumbnailImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 945F17AF2A33D167004FC479 /* ThumbnailImage.swift */; };
 		945F17B22A33D69B004FC479 /* FavoriteOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 945F17B12A33D69B004FC479 /* FavoriteOverlay.swift */; };
@@ -58,6 +59,7 @@
 
 /* Begin PBXFileReference section */
 		940331722A336B5100200C5D /* DeferredRendering.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeferredRendering.swift; sourceTree = "<group>"; };
+		9404B57C2A3EEBBA00068FA8 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		941E18F92A35362600A2EA98 /* Info.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Info.swift; sourceTree = "<group>"; };
 		945F17AF2A33D167004FC479 /* ThumbnailImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailImage.swift; sourceTree = "<group>"; };
 		945F17B12A33D69B004FC479 /* FavoriteOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteOverlay.swift; sourceTree = "<group>"; };
@@ -247,6 +249,7 @@
 				940331742A336BEB00200C5D /* Helpers */,
 				94D751212A31BD8E005859E7 /* PhotoReviewer.swift */,
 				94D2C8C02A32FCE300BEE15B /* PHAssetImage.swift */,
+				9404B57C2A3EEBBA00068FA8 /* SettingsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -434,6 +437,7 @@
 				94A083682A33F6E900238964 /* ThumbnailList.swift in Sources */,
 				94D750F02A31A796005859E7 /* BlinkApp.swift in Sources */,
 				940331732A336B5100200C5D /* DeferredRendering.swift in Sources */,
+				9404B57D2A3EEBBA00068FA8 /* SettingsView.swift in Sources */,
 				9492C9702A3C3803002E44EC /* Timer.swift in Sources */,
 				94A0835E2A33E49E00238964 /* FocusedImage.swift in Sources */,
 				945F17B82A33DAC7004FC479 /* ReviewStateSaturation.swift in Sources */,
@@ -600,7 +604,7 @@
 				CODE_SIGN_ENTITLEMENTS = Blink/Blink.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 77;
+				CURRENT_PROJECT_VERSION = 86;
 				DEVELOPMENT_ASSET_PATHS = "\"Blink/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -627,7 +631,7 @@
 				CODE_SIGN_ENTITLEMENTS = Blink/Blink.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 77;
+				CURRENT_PROJECT_VERSION = 86;
 				DEVELOPMENT_ASSET_PATHS = "\"Blink/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -652,7 +656,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 77;
+				CURRENT_PROJECT_VERSION = 86;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				MARKETING_VERSION = 1.0;
@@ -670,7 +674,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 77;
+				CURRENT_PROJECT_VERSION = 86;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				MARKETING_VERSION = 1.0;
@@ -687,7 +691,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 77;
+				CURRENT_PROJECT_VERSION = 86;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = net.alexwlchan.BlinkReviewerUITests;
@@ -703,7 +707,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 77;
+				CURRENT_PROJECT_VERSION = 86;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = net.alexwlchan.BlinkReviewerUITests;
