@@ -303,6 +303,19 @@ struct PhotoReviewer: View {
                     }
                 }
                 return nil
+            
+            case let e where e.characters == "o":
+                let task = Process()
+                task.launchPath = "/usr/bin/osascript"
+                task.arguments = ["-e", """
+                    tell application "Photos"
+                        spotlight media item id \"\(focusedAsset.localIdentifier)\"
+                        activate
+                    end tell
+                """]
+                 
+                try! task.run()
+                return nil
 
             default:
                 logger.info("Received unhandled keyboard event: \(event, privacy: .public)")
