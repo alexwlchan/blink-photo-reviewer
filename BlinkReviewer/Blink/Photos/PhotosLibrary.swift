@@ -140,6 +140,14 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
                 self.assets = assetsChangeDetails.fetchResultAfterChanges
                 
                 assetsChangeDetails.changedObjects.forEach { asset in
+                    // Flush the cached thumbnail/full-sized image for the asset; the
+                    // external edit may have been modifying the image.
+                    //
+                    // TODO: This only updates the full-size image in Blink, not the
+                    // thumbnail.  What's up with that?
+                    self.thumbnailCache.removeValue(forKey: asset)
+                    self.fullSizeImageCache.removeValue(forKey: asset)
+
                     if asset.isFavorite {
                         self.favoriteAssetIdentifiers.insert(asset.localIdentifier)
                     } else {

@@ -40,4 +40,9 @@ struct LRUCache<Key: Hashable, Value> {
             }
         }
     }
+    
+    mutating func removeValue(forKey key: Key) {
+        keyHistory.remove(key)
+        contents.removeValue(forKey: key)
+    }
 }
