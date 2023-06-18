@@ -11,14 +11,18 @@ struct SettingsView: View {
     @AppStorage("colorScheme") private var colorScheme: String = "dark"
     
     var body: some View {
-        VStack {
-            Picker("Appearance", selection: $colorScheme) {
-                Text("Dark").tag("dark")
-                Text("Light").tag("light")
-                Text("Match system").tag("match_system")
-            }
+        Picker("Appearance", selection: $colorScheme) {
+            Text("Dark").tag("dark")
+            Text("Light").tag("light")
+            Text("Match system").tag("match_system")
         }
             .padding()
     }
         
+}
+
+struct SettingsView_Previews: PreviewProvider {
+    static var previews: some View {
+        SettingsView()
+    }
 }
