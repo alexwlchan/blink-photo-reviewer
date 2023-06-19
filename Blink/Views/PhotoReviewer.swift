@@ -34,8 +34,22 @@ struct PhotoReviewer: View {
     
     var body: some View {
         if !photosLibrary.isPhotoLibraryAuthorized {
-            Text("Waiting for Photos Library authorization…")
+            VStack {
+                ProgressView().padding()
+                
+                // When you launch the app, it takes a few seconds to connect to
+                // Photos and confirm that you're authorised to read it -- even if
+                // you've given it Photos permission on a previous launch.
+                //
+                // Deferring the display of this message for a few seconds avoids
+                // a confusing interaction for the user, where it seems like the app
+                // is waiting for permission even though they've already granted it.
+                Text("Waiting for Photos Library authorization…")
+                    .deferredRendering(for: .seconds(5))
+            }
+            
         } else if photosLibrary.assets.count == 0 {
+            ProgressView().padding()
             Text("Waiting for Photos Library data…")
         } else {
             ZStack {
