@@ -13,6 +13,7 @@ struct FocusedImage: View, Identifiable {
     var body: some View {
         Image(nsImage: focusedAssetImage.image)
             .resizable()
+            .draggable(Image(nsImage: focusedAssetImage.image))
             .aspectRatio(contentMode: .fit)
             .albumInfo(for: asset)
             .loadingIndicator(isLoading: focusedAssetImage.isDegraded)
