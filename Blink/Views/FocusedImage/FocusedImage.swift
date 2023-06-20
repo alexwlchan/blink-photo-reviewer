@@ -17,5 +17,14 @@ struct FocusedImage: View, Identifiable {
             .aspectRatio(contentMode: .fit)
             .albumInfo(for: asset)
             .loadingIndicator(isLoading: focusedAssetImage.isDegraded)
+            .contextMenu {
+                Button {
+                    NSPasteboard.general.clearContents()
+                    NSPasteboard.general.writeObjects([focusedAssetImage.image])
+                } label: {
+                    Label("Copy", systemImage: "doc.on.doc")
+                        .labelStyle(.titleAndIcon)
+                }
+            }
     }
 }
