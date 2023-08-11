@@ -37,6 +37,7 @@ struct AlbumInfoOverlay: ViewModifier {
                                 .fontWeight(.bold)
                                 .font(.title2)
                                 .padding(5)
+                                .foregroundColor(.black)
                                 .background(.white.opacity(0.9))
                                 .cornerRadius(7.0)
                                 .shadow(radius: 2.0)
