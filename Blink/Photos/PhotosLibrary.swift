@@ -155,7 +155,7 @@ class PhotosLibrary: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
                     }
                 }
                 
-                if assetsChangeDetails.hasMoves {
+                if assetsChangeDetails.hasMoves || !assetsChangeDetails.removedObjects.isEmpty {
                     self.regenerateAssetIdentifiers()
                 }
                 
